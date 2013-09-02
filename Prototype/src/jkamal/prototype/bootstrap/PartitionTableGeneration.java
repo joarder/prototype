@@ -1,0 +1,27 @@
+/**
+ * @author Joarder Kamal
+ */
+
+package jkamal.prototype.bootstrap;
+
+import java.util.Set;
+import jkamal.prototype.db.Database;
+import jkamal.prototype.db.DatabaseServer;
+import jkamal.prototype.db.Partition;
+import jkamal.prototype.db.PartitionTable;
+
+public class PartitionTableGeneration {
+	public PartitionTableGeneration() {}
+		
+	public PartitionTable generatePartitionTable(DatabaseServer dbs, Database db) {
+		PartitionTable partitionTable = new PartitionTable();
+		Set<Partition> partitionSet;
+				
+		for(int i = 0; i < dbs.getDbs_node_numbers(); i++) {
+			partitionSet = dbs.getDbs_nodes().get(i).getNode_partitions();			
+			partitionTable.getPartition_table().put(i, partitionSet);
+		}
+		
+		return partitionTable;
+	}
+}
