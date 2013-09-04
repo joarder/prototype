@@ -29,7 +29,7 @@ public class PrintWorkloadDetails {
 						
 			for(int j = 0; j < workload.getWrl_transactionProp()[i]; j++) {
 				Transaction tr = workload.getWrl_transactionList().get(j);
-				tr.print();				
+				//tr.print();				
 			}			
 			
 			System.out.println();

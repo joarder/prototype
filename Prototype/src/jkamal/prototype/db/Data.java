@@ -51,23 +51,23 @@ public class Data implements Comparable<Data> {
 	
 	// Copy Constructor
 	public Data(Data data) {
-		data_id = data.getData_id();
-		data_label = data.getData_label();
-		data_size = data.getData_size();
+		this.data_id = data.getData_id();
+		this.data_label = data.getData_label();
+		this.data_size = data.getData_size();
 		
-		data_partition_id = data.getData_partition_id();
-		data_hmetis_partition_id = data.getData_hmetis_partition_id();
-		data_prototype_partition_id = data.getData_prototype_partition_id();
+		this.data_partition_id = data.getData_partition_id();
+		this.data_hmetis_partition_id = data.getData_hmetis_partition_id();
+		this.data_prototype_partition_id = data.getData_prototype_partition_id();
 		
-		data_roaming_partition_id = data.getData_roaming_partition_id();
-		data_isRoaming = data.isData_isRoaming();
+		this.data_roaming_partition_id = data.getData_roaming_partition_id();
+		this.data_isRoaming = data.isData_isRoaming();
 		
-		data_node_id = data.getData_node_id();
-		data_weight = data.getData_weight();
-		data_current_trId = data.getData_current_trId();
+		this.data_node_id = data.getData_node_id();
+		this.data_weight = data.getData_weight();
+		this.data_current_trId = data.getData_current_trId();
 		
-		data_shadow_hmetis_id = data.getData_shadow_hmetis_id();
-		data_hasShadowHMetisId = data.isData_hasShadowHMetisId();		
+		this.data_shadow_hmetis_id = data.getData_shadow_hmetis_id();
+		this.data_hasShadowHMetisId = data.isData_hasShadowHMetisId();		
 	}
 
 	public int getData_id() {
@@ -187,7 +187,7 @@ public class Data implements Comparable<Data> {
 		//return (this.data_label+"("+this.data_id+")");
 		//return (this.data_label+"[N"+this.data_node_id+"]");
 		if(this.isData_isRoaming())
-			return (this.data_label+"[P"+this.data_partition_id+"("+this.data_roaming_partition_id+")|N"+this.data_node_id+"]");
+			return (this.data_label+"[P"+this.data_partition_id+"(P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"]");
 		else
 			return (this.data_label+"[P"+this.data_partition_id+"|N"+this.data_node_id+"]");
 		//return (this.data_label+"["+this.data_current_trId+"]");

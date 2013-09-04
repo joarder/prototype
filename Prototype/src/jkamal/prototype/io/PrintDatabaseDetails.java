@@ -19,31 +19,28 @@ public class PrintDatabaseDetails {
 	
 	public void printDetails(DatabaseServer dbs, Database db) {
 		// DBS Details
-		System.out.println();
-		System.out.println("===Database Server Details========================");
-		System.out.println(" Database Server: "+dbs.getDbs_name());
-		System.out.println(" Number of Nodes: "+dbs.getDbs_node_numbers());
-		System.out.println();
+		System.out.print("\n===Database Server Details========================\n");
+		System.out.print("\n Database Server: "+dbs.getDbs_name());
+		System.out.print("\n Number of Nodes: "+dbs.getDbs_node_numbers());
 		
 		// Node Details
-		System.out.println("===Node Details========================");
+		System.out.print("\n===Node Details========================\n");
 		for(Node node : dbs.getDbs_nodes()) {						
-			System.out.print(" "+node.getNode_label());
-			System.out.print(" with ");
-			System.out.print(node.getNode_capacity()+" Partitions.");
-			System.out.print(" Current Load "+((double)node.getNode_capacity()/(double)Node.getNODE_MAX_CAPACITY())*100+"%");
-			System.out.println();
+			System.out.print("\n "+node.getNode_label()
+			+" with "
+			+node.getNode_capacity()+" Partitions."
+			+" Current Load "
+			+((double)node.getNode_capacity()/(double)Node.getNODE_MAX_CAPACITY())*100+"%");			
 		}
-		System.out.println();
+		System.out.print("\n");
 		
 		// DB Details
-		System.out.println("===Database Details========================");
-		System.out.println(" Database: "+db.getDb_name());
-		System.out.println(" Number of Partitions: "+db.getDb_partitions().size());
-		System.out.println();
+		System.out.print("\n===Database Details========================\n");
+		System.out.print("\n Database: "+db.getDb_name());
+		System.out.print("\n Number of Partitions: "+db.getDb_partitions().size());
 		
 		// Partition Table Details
-		System.out.println("===Partition Table Details========================");
+		System.out.print("\n===Partition Table Details========================\n");
 		int comma = -1;
 		for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {
 			System.out.print(" N"+entry.getKey()+"{");
@@ -58,10 +55,8 @@ public class PrintDatabaseDetails {
 				--comma;
 			}
 			
-			System.out.print("}");
-			System.out.println();
+			System.out.print("}\n");			
 		}
-		System.out.println();
 		
 		// Partition Details
 		/*System.out.println("===Partition Details========================");
@@ -74,7 +69,6 @@ public class PrintDatabaseDetails {
 		System.out.println();*/
 		
 		// Routing Table Details
-		System.out.println("===Routing Table Details========================");
-		System.out.println();
+		System.out.print("\n===Routing Table Details========================\n");		
 	}
 }

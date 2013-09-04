@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Database {
+	private int db_id;
 	private String db_name;
 	private int db_tenant;
 	private GlobalDataMap db_dataMap;
@@ -16,7 +17,8 @@ public class Database {
 	private PartitionTable db_partition_table;
 	private RoutingTable db_routing_table;
 	
-	public Database(String name, int tenant_id, String model) {
+	public Database(int id, String name, int tenant_id, String model) {
+		this.setDb_id(id);
 		this.setDb_name(name);
 		this.setDb_tenant(tenant_id);
 		this.setDb_partitions(new TreeSet<Partition>());
@@ -29,6 +31,14 @@ public class Database {
 			this.setDb_partition_model(new RandomPartition());
 		else
 			System.out.println();
+	}	
+
+	public int getDb_id() {
+		return db_id;
+	}
+
+	public void setDb_id(int db_id) {
+		this.db_id = db_id;
 	}
 
 	public String getDb_name() {

@@ -16,13 +16,13 @@ import java.util.List;
 final public class Matrix {
     private final int M;             // number of rows
     private final int N;             // number of columns
-    private final double[][] item;   // M-by-N array
+    private final MatrixElement[][] item;   // M-by-N array
     
     // create M-by-N matrix of 0's
     public Matrix(int M, int N) {
         this.M = M;
         this.N = N;
-        item = new double[M][N];
+        item = new MatrixElement[M][N];
     }
 
     public int getM() {
@@ -33,15 +33,15 @@ final public class Matrix {
 		return N;
 	}
 
-	public double[][] getItem() {
+	public MatrixElement[][] getItem() {
 		return item;
 	}
 
 	// create matrix based on 2d array
-    public Matrix(double[][] data) {
+    public Matrix(MatrixElement[][] data) {
         M = data.length;
         N = data[0].length;
-        this.item = new double[M][N];
+        this.item = new MatrixElement[M][N];
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
                     this.item[i][j] = data[i][j];
@@ -55,7 +55,7 @@ final public class Matrix {
         Matrix A = new Matrix(M, N);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                A.item[i][j] = Math.random();
+                A.item[i][j].setValue(Math.random());
         return A;
     }
 
@@ -63,15 +63,28 @@ final public class Matrix {
     public static Matrix identity(int N) {
         Matrix I = new Matrix(N, N);
         for (int i = 0; i < N; i++)
-            I.item[i][i] = 1;
+            I.item[i][i].setValue(1);
         return I;
     }
 
     // swap rows i and j
     public void swap_row(int i, int j) {
-        double[] temp = item[i];
-        item[i] = item[j];
-        item[j] = temp;
+        //double[] temp = item[i];
+        //item[i] = item[j];
+        //item[j] = temp;
+        
+    	List<Double> temp = new ArrayList<Double>();
+    	for(int col = 0; col < N; col++) {
+    		temp.add(item[i][col].getValue());
+    	}
+    	
+    	for(int col = 0; col < M; col++) {
+    		item[i][col].setValue(item[j][col].getValue());
+    	}
+
+    	for(int col = 0; col < M; col++) {
+    		item[j][col].setValue(temp.get(col));
+    	}
     }
 
     // swap cols i and j
@@ -80,16 +93,16 @@ final public class Matrix {
     	List<Double> temp = new ArrayList<Double>();
     	//System.out.println("-$-i|j("+i+", "+j+")");
     	for(int row = 0; row < M; row++) {
-    		temp.add(item[row][i]);
+    		temp.add(item[row][i].getValue());
     		//System.out.println("-@-["+item[row][i]+"]");
     	}
     	
     	for(int row = 0; row < M; row++) {
-    		item[row][i] = item[row][j];
+    		item[row][i].setValue(item[row][j].getValue());
     	}
     	
     	for(int row = 0; row < M; row++) {
-    		item[row][j] = temp.get(row);
+    		item[row][j].setValue(temp.get(row));
     	}
     }
     
@@ -98,7 +111,7 @@ final public class Matrix {
         Matrix A = new Matrix(N, M);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                A.item[j][i] = this.item[i][j];
+                A.item[j][i].setValue(this.item[i][j].getValue());
         return A;
     }
 
@@ -109,7 +122,7 @@ final public class Matrix {
         Matrix C = new Matrix(M, N);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                C.item[i][j] = A.item[i][j] + B.item[i][j];
+                C.item[i][j].setValue(A.item[i][j].getValue() + B.item[i][j].getValue());
         return C;
     }
 
@@ -121,7 +134,7 @@ final public class Matrix {
         Matrix C = new Matrix(M, N);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                C.item[i][j] = A.item[i][j] - B.item[i][j];
+                C.item[i][j].setValue(A.item[i][j].getValue() - B.item[i][j].getValue());
         return C;
     }
 
@@ -131,7 +144,7 @@ final public class Matrix {
         if (B.M != A.M || B.N != A.N) throw new RuntimeException("Illegal matrix dimensions.");
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                if (A.item[i][j] != B.item[i][j]) return false;
+                if (A.item[i][j].getValue() != B.item[i][j].getValue()) return false;
         return true;
     }
 
@@ -143,7 +156,7 @@ final public class Matrix {
         for (int i = 0; i < C.M; i++)
             for (int j = 0; j < C.N; j++)
                 for (int k = 0; k < A.N; k++)
-                    C.item[i][j] += (A.item[i][k] * B.item[k][j]);
+                    C.item[i][j].setValue(+(A.item[i][k].getValue() * B.item[k][j].getValue())); // Need to verify this line
         return C;
     }
 
@@ -163,25 +176,25 @@ final public class Matrix {
             // find pivot row and swap
             int max = i;
             for (int j = i + 1; j < N; j++)
-                if (Math.abs(A.item[j][i]) > Math.abs(A.item[max][i]))
+                if (Math.abs(A.item[j][i].getValue()) > Math.abs(A.item[max][i].getValue()))
                     max = j;
             A.swap_row(i, max);
             b.swap_row(i, max);
 
             // singular
-            if (A.item[i][i] == 0.0) throw new RuntimeException("Matrix is singular.");
+            if (A.item[i][i].getValue() == 0.0) throw new RuntimeException("Matrix is singular.");
 
             // pivot within b
             for (int j = i + 1; j < N; j++)
-                b.item[j][0] -= b.item[i][0] * A.item[j][i] / A.item[i][i];
+                b.item[j][0].setValue(-(b.item[i][0].getValue() * A.item[j][i].getValue() / A.item[i][i].getValue()));
 
             // pivot within A
             for (int j = i + 1; j < N; j++) {
-                double m = A.item[j][i] / A.item[i][i];
+                double m = A.item[j][i].getValue() / A.item[i][i].getValue();
                 for (int k = i+1; k < N; k++) {
-                    A.item[j][k] -= A.item[i][k] * m;
+                    A.item[j][k].setValue(-(A.item[i][k].getValue() * m));
                 }
-                A.item[j][i] = 0.0;
+                A.item[j][i].setValue(0.0);
             }
         }
 
@@ -190,8 +203,8 @@ final public class Matrix {
         for (int j = N - 1; j >= 0; j--) {
             double t = 0.0;
             for (int k = j + 1; k < N; k++)
-                t += A.item[j][k] * x.item[k][0];
-            x.item[j][0] = (b.item[j][0] - t) / A.item[j][j];
+                t += A.item[j][k].getValue() * x.item[k][0].getValue();
+            x.item[j][0].setValue((b.item[j][0].getValue() - t) / A.item[j][j].getValue());
         }
         return x;
    
@@ -200,8 +213,12 @@ final public class Matrix {
     // print matrix to standard output
     public void print() {
         for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) 
-                System.out.print(Math.round(item[i][j])+" ");
+            for (int j = 0; j < N; j++) {
+            	if(item[i][j].getValue() != -1)
+            		System.out.print(Math.round(item[i][j].getValue())+" ");
+            	else            	
+            		System.out.print("X ");
+            }
             System.out.println();
         }
     }
@@ -213,8 +230,8 @@ final public class Matrix {
     	
         for (int i = pos; i < M; i++) {
             for (int j = pos; j < N; j++) {
-            	if(max < item[i][j]) {
-            		max = item[i][j];
+            	if(max < item[i][j].getValue()) {
+            		max = item[i][j].getValue();
             		e.setRow_pos(i);
             		e.setCol_pos(j);
             		e.setValue(max);

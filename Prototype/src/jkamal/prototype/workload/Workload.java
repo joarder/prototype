@@ -18,18 +18,40 @@ public class Workload implements Comparable<Workload> {
 	private List<Transaction> wrl_transactionList;
 	private double[] wrl_transactionProp;
 	private TransactionDataSet wrl_transactionDataSet;
-	private Database wrl_database;
+	private int wrl_database_id;
 	private WorkloadFile wrl_workload_file;
 	private FixFile wrl_fixfile;
 	
-	public Workload(Database db, int id, int type) {
+	public Workload(int id, int type, int db_id) {
 		this.setWrl_id(id);
 		this.setWrl_label("WL-"+Integer.toString(this.getWrl_id()));
 		this.setWrl_type(type);
 		this.setWrl_transactionList(new ArrayList<Transaction>());
 		this.setWrl_transactionProp(new double[this.getWrl_type()]);
 		this.setWrl_transactionDataSet(new TransactionDataSet());
-		this.setWrl_database(db);
+		this.setWrl_database_id(db_id);
+	}
+	
+	// Copy Constructor (Need to handle the Custom Type variables !!)
+	public Workload(Workload workload) {
+		this.wrl_id = workload.getWrl_id();
+		this.wrl_label = workload.getWrl_label();
+		this.wrl_type = workload.getWrl_type();		
+		
+		List<Transaction> cloneTransactionList = new ArrayList<Transaction>();
+		Transaction cloneTransaction;
+		for(Transaction transaction : workload.getWrl_transactionList()) {
+			cloneTransaction = new Transaction(transaction);
+			cloneTransactionList.add(cloneTransaction);
+		}
+		this.wrl_transactionList = cloneTransactionList;		
+				
+		double[] cloneTransactionProp = new double[this.wrl_type];		
+		System.arraycopy(workload.getWrl_transactionProp(), 0, cloneTransactionProp, 0, workload.getWrl_transactionProp().length);
+		this.wrl_transactionProp = cloneTransactionProp;
+				
+		this.wrl_transactionDataSet = new TransactionDataSet(workload.getWrl_transactionDataSet());		
+		this.wrl_database_id = workload.getWrl_database_id(); 
 	}
 
 	public int getWrl_id() {
@@ -80,12 +102,12 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_transactionDataSet = wrl_transactionDataSet;
 	}
 
-	public Database getWrl_database() {
-		return wrl_database;
+	public int getWrl_database_id() {
+		return wrl_database_id;
 	}
 
-	public void setWrl_database(Database database) {
-		this.wrl_database = database;
+	public void setWrl_database_id(int wrl_database_id) {
+		this.wrl_database_id = wrl_database_id;
 	}
 
 	public WorkloadFile getWrl_workload_file() {
@@ -119,18 +141,16 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void print(Database db) {
-		System.out.println();
-		System.out.println("===Workload Details========================");
-		System.out.print(" "+this.toString());
-		
-		System.out.print(" having a distribution of ");
+		//System.out.println();
+		System.out.print("\n===Workload Details========================");
+		System.out.print("\n "+this.toString()+" having a distribution of ");				
 		this.printWrl_transactionProp();
-		System.out.println();
+		//System.out.println();
 		
 		for(Transaction transaction : this.getWrl_transactionList()) {
-			transaction.generateTransactionCost(db);
+			//transaction.generateTransactionCost(db);
 			transaction.print();
-			System.out.println();
+			//System.out.println();
 		}
 		
 	}

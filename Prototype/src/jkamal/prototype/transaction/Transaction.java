@@ -30,6 +30,25 @@ public class Transaction implements Comparable<Transaction> {
 		this.setTr_dtCost(0);
 		this.setTr_psCost(0);				
 	}
+	
+	// Copy Constructor
+	public Transaction(Transaction transaction) {
+		this.tr_id = transaction.getTr_id();
+		this.tr_label = transaction.getTr_label();
+		this.tr_type = transaction.getTr_type();
+		this.tr_weight = transaction.getTr_weight();		
+		
+		Data cloneData;
+		Set<Data> cloneDataSet = new TreeSet<Data>();
+		for(Data data : transaction.getTr_dataSet()) {
+			cloneData = new Data(data);
+			cloneDataSet.add(cloneData);
+		}		
+		this.tr_dataSet = cloneDataSet;
+		
+		this.tr_dtCost = transaction.getTr_dtCost();
+		this.tr_psCost = transaction.getTr_psCost();
+	}
 
 	public int getTr_id() {
 		return tr_id;
@@ -140,12 +159,13 @@ public class Transaction implements Comparable<Transaction> {
 	// This function will print all of the contents of the representative Transaction
 	public void print() {
 		//System.out.println("===Transaction Details========================");
-		System.out.print(" "+this.getTr_label()+"[CDT("+this.getTr_dtCost()+"), PS("+this.getTr_psCost()+"), Data("+this.getTr_dataSet().size()+")]-{");
+		System.out.print("\n "+this.getTr_label()+"[CDT("+this.getTr_dtCost()+"), " +
+				"PS("+this.getTr_psCost()+"), Data("+this.getTr_dataSet().size()+")]-{");
 		
-		Iterator<Data> iterator =  this.getTr_dataSet().iterator();
-		while(iterator.hasNext()) {
-			System.out.print(iterator.next().toString());
-			if(iterator.hasNext())
+		Iterator<Data> data =  this.getTr_dataSet().iterator();
+		while(data.hasNext()) {
+			System.out.print(data.next().toString());
+			if(data.hasNext())
 				System.out.print(", ");
 		}				
 		

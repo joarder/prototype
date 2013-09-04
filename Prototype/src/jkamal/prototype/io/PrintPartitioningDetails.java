@@ -19,8 +19,7 @@ public class PrintPartitioningDetails {
 		int comma = -1;
 		
 		// Pre-Partitioning Details
-		System.out.println();
-		System.out.println("===Data Pre-partitioning Details========================");		
+		System.out.print("\n===Data Pre-partitioning Details========================\n");		
 		
 		for(Entry<Integer, ArrayList<Data>> entry : db.getDb_partition_table().getPrePartitionTable().getPrePartitionTable().entrySet()) {
 			System.out.print("P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
@@ -35,13 +34,12 @@ public class PrintPartitioningDetails {
 				--comma;						
 			} // end -- for() loop
 			
-			System.out.println("}");
+			System.out.print("}\n");
 		} // end -- for() loop
-		System.out.println();
+		System.out.print("\n");
 		
 		// Post-Partitioning Details
-		System.out.println();
-		System.out.println("===Data Post-partitioning Details========================");		
+		System.out.print("\n===Data Post-partitioning Details========================\n");		
 		
 		for(Entry<Integer, ArrayList<Data>> entry : db.getDb_partition_table().getPostPartitionTable().getPostPartitionTable().entrySet()) {
 			System.out.print("P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
@@ -56,8 +54,8 @@ public class PrintPartitioningDetails {
 				--comma;						
 			} // end -- for() loop
 			
-			System.out.println("}");
+			System.out.print("}\n");
 		} // end -- for() loop
-		System.out.println();
+		System.out.print("\n");
 	}
 }

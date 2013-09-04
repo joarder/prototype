@@ -18,7 +18,15 @@ public class TransactionDataSet {
 	
 	// Copy Constructor
 	public TransactionDataSet(TransactionDataSet dataSet) {
-		transactionDataSet = dataSet.getTransactionDataSet();
+		
+		List<Data> cloneTransactionDataSet = new ArrayList<Data>();
+		Data cloneData;
+		for(Data data : dataSet.getTransactionDataSet()) {
+			cloneData = new Data(data);
+			cloneTransactionDataSet.add(cloneData);
+		}
+		this.transactionDataSet = cloneTransactionDataSet;
+		
 	}
 
 	public List<Data> getTransactionDataSet() {

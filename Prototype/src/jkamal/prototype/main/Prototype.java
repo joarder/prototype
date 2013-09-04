@@ -9,7 +9,6 @@ package jkamal.prototype.main;
 import java.io.File;
 import java.io.IOException;
 import jkamal.prototype.alg.HGraphMinCut;
-import jkamal.prototype.alg.Idea;
 import jkamal.prototype.bootstrap.Bootstrapping;
 import jkamal.prototype.db.DataMovement;
 import jkamal.prototype.db.Database;
@@ -20,6 +19,7 @@ import jkamal.prototype.io.PrintWorkloadDetails;
 import jkamal.prototype.util.Matrix;
 import jkamal.prototype.workload.DataPostPartitionTable;
 import jkamal.prototype.workload.DataPrePartitionTable;
+import jkamal.prototype.workload.IdeaTable;
 import jkamal.prototype.workload.MovementTable;
 import jkamal.prototype.workload.Workload;
 import jkamal.prototype.workload.WorkloadGeneration;
@@ -30,7 +30,7 @@ public class Prototype {
 	private static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	private static String HMETIS = "hmetis";
 	private static String KHMETIS = "khmetis";
-	private static int TRANSACTION_NUMS = 10;
+	private static int TRANSACTION_NUMS = 5;
 	
 	public static void main(String[] args) throws IOException {
 		
@@ -39,7 +39,7 @@ public class Prototype {
 		System.out.println(">> Creating Database Server #"+dbs.getDbs_name()+"# with "+dbs.getDbs_node_numbers()+" Nodes ...");
 		
 		// Database creation for tenant id-"0" with Range partitioning model
-		Database db = new Database("testdb", 0, "Range");
+		Database db = new Database(0, "testdb", 0, "Range");
 		System.out.println(">> Creating Database #"+db.getDb_name()+"# within "+dbs.getDbs_name()+" Database Server ...");
 		
 		
@@ -52,23 +52,20 @@ public class Prototype {
 		PrintDatabaseDetails dbDetails = new PrintDatabaseDetails();
 		dbDetails.printDetails(dbs, db);
 		
-		System.out.println(">> Data loading complete !!!");
+		System.out.print("\n>> Data loading complete !!!\n");
 
 		//============================================================================================== 		
 		// Synthetic Workload Generation 				
-		System.out.println();
-		System.out.println(">> Generating a database workload with "+ TRANSACTION_NUMS +" synthetic transactions ...");
+		System.out.print("\n>> Generating a database workload with "+ TRANSACTION_NUMS +" synthetic transactions ...\n");
 		WorkloadGeneration workloadGen = new WorkloadGeneration();
 		Workload workload = workloadGen.generateWorkload(db, "AuctionMark", TRANSACTION_NUMS, DIR_LOCATION);		
-		workload.print(db);		
-		System.out.println();
-		System.out.println(">> Workload generation complete !!!");		
-		System.out.println();
+		workload.print(db);	
+		System.out.print("\n>> Workload generation complete !!!\n");		
 		
 		//==============================================================================================
 		// Perform workload analysis and use hypergraph partitioning tool (hMetis) to reduce the cost of 
 		// distributed transactions as well as maintain the load balance among the data partitions				
-		System.out.println(">> Run HyperGraph Partitioning on the Workload ... ");
+		System.out.print("\n>> Run HyperGraph Partitioning on the Workload ... \n");
 		// Sleep for 5sec to ensure the files are generated		
 		try {
 			Thread.sleep(5000);
@@ -109,36 +106,42 @@ public class Prototype {
 		
 		//==============================================================================================
 		// Generate Movement Table Matrix from Old and hMetis partitioning
-		MovementTable movementTable = new MovementTable();
+		MovementTable movementTable = new MovementTable();		
 		Matrix movementMatrix = movementTable.generateMovementTable(db, workload);
-		System.out.println();
-		System.out.println(">> Movement Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...");
-		System.out.println();
+		System.out.println("\n>> Movement Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...\n");
 		movementMatrix.print();
+		//System.out.print("\n>> Total Data Moments Required: "+Integer.toString(movementTable.getMovements())+"\n");
+		
+		//==============================================================================================
+		// Perform Data Movement with Idea implementation
+		DataMovement dataMovement = new DataMovement();
+		// Create a Copy of the Workload using the Copy Constructor
+		Workload cloneWorkload = new Workload(workload);
+		dataMovement.move(db, cloneWorkload);
+		
+		//==============================================================================================
+		// Printing out details after performing Data Movement using Idea		
 		System.out.println();
-		System.out.println(">> Total Data Moments Required: "+Integer.toString(movementTable.getMovements()));
+		cloneWorkload.print(db);
 		System.out.println();
 		
 		//==============================================================================================
 		// Run our idea !!!
-		Idea idea = new Idea();
-		Matrix ideaMatrix = idea.runIdea(movementMatrix);
-		System.out.println();
-		System.out.println(">> Idea Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...");
-		System.out.println();
+		IdeaTable ideaTable = new IdeaTable();
+		Matrix ideaMatrix = ideaTable.runIdea(movementMatrix);
+		System.out.print("\n>> Idea Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...\n");
 		ideaMatrix.print();
-		System.out.println();
-		System.out.println(">> Total Data Moments Required: "+Integer.toString(idea.getMovements()));
-		System.out.println();
+		//System.out.print("\n>> Total Data Moments Required: "+Integer.toString(ideaTable.getMovements())+"\n");
 		
 		//==============================================================================================
-		// Perform Data Movement
-		DataMovement dataMovement = new DataMovement();
-		//dataMovement.move(db, workload, movementMatrix);
-		dataMovement.move(db, workload, ideaMatrix);
+		// Perform Data Movement with Idea implementation
+		DataMovement idea_DataMovement = new DataMovement();
+		idea_DataMovement.move(db, workload, ideaTable);
 		
 		//==============================================================================================
-		// Printing out details after performing Data Movement		
+		// Printing out details after performing Data Movement using Idea		
+		System.out.println();
 		workload.print(db);
+		System.out.println();
 	}
 }

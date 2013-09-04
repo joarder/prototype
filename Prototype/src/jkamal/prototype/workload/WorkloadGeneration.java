@@ -4,7 +4,6 @@
 
 package jkamal.prototype.workload;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,7 +33,7 @@ public class WorkloadGeneration {
 	public Workload initWorkload(Database db, String workload_name) {
 		switch(workload_name) {
 		case "AuctionMark":
-			Workload workload = new Workload(db, 0, 10);	// will replace 0 by a variable later
+			Workload workload = new Workload(0, 10, db.getDb_id());
 			this.getWorkloadList().add(workload);
 			return workload;
 		}
@@ -48,11 +47,11 @@ public class WorkloadGeneration {
 		// Generating Random proportions for different Transaction types based on Workload type
 		int wrl_type = workload.getWrl_type();
 		workload.setWrl_transactionProp(generateTransactionProp(transaction_nums, wrl_type));
-		
+
 		// Retrieving corresponding GlobalDataMap and TransactionDataSet
 		GlobalDataMap dataMap = db.getDb_dataMap();
 		TransactionDataSet transactionDataSet = workload.getWrl_transactionDataSet();
-		
+
 		// Creating required reference variables
 		Transaction transaction;		
 		Set<Data> dataSet;
@@ -66,7 +65,6 @@ public class WorkloadGeneration {
 		
 		// Creating a Random Object for randomly chosen Data items
 		Random random = new Random();
-		
 		// i -- Transaction types
 		for(int i = 0; i < wrl_type; i++) {			
 			// j -- a specific Transaction type in the Transaction proportion array
@@ -88,15 +86,15 @@ public class WorkloadGeneration {
 					dataSet.add(data);										
 					transactionDataSet.getTransactionDataSet().add(data);
 				}
-							
+				
 				transaction = new Transaction(++tr_id, dataSet);
 				transaction.generateTransactionCost(db);
 				workload.getWrl_transactionList().add(transaction);
-			}						
+			}
 		}		
 
 		//==============================================================================================
-		// Generating Workload File for HyperGraph Partitioning				
+		// Generating Workload File for HyperGraph Partitioning	
 		WorkloadFile workloadFile = new WorkloadFile();
 		workloadFile.generateWorkloadFile(workload, DIR_LOCATION);
 		workload.setWrl_workload_file(workloadFile);
