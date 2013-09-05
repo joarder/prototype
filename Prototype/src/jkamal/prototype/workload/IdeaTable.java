@@ -70,8 +70,8 @@ public class IdeaTable {
 		this.setMovements(moves);
 
 		// @debug
-		//System.out.println("\n>> @debug :: Movement Matrix before PID change >>");
-		//M.print();
+		System.out.println("\n>> @debug :: Movement Matrix before PID change >>");
+		M.print();
 		
 		// Step-2 :: PID Conversion		
 		// Create the PID conversion Key Map

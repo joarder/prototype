@@ -75,9 +75,8 @@ public class Prototype {
 		
 		//==============================================================================================
 		// Create Data Pre-Partition Table
-		DataPrePartitionTable prePartitionTable = new DataPrePartitionTable();
-		prePartitionTable.generatePrePartitionTable(db, workload, DIR_LOCATION);
-		db.getDb_partition_table().setPrePartitionTable(prePartitionTable);
+		DataPrePartitionTable prePartitionTable = db.getDb_partition_table().getDataPrePartitionTable();
+		prePartitionTable.generatePrePartitionTable(db, workload, DIR_LOCATION);		
 		
 		//==============================================================================================
 		// Run hMetis HyperGraph Partitioning				
@@ -95,9 +94,8 @@ public class Prototype {
 		
 		//==============================================================================================
 		// Create Data Post-Partition Table
-		DataPostPartitionTable postPartitionTable = new DataPostPartitionTable();		
-		postPartitionTable.generatePostPartitionTable(db, workload, DIR_LOCATION);		
-		db.getDb_partition_table().setPostPartitionTable(postPartitionTable);
+		DataPostPartitionTable postPartitionTable = db.getDb_partition_table().getDataPostPartitionTable();		
+		postPartitionTable.generatePostPartitionTable(db, workload, DIR_LOCATION);				
 		
 		//==============================================================================================
 		// Print Data Partitioning Details
@@ -117,24 +115,12 @@ public class Prototype {
 		DataMovement dataMovement = new DataMovement();
 		// Create a Clone of the Database and Workload using Copy Constructor
 		Database cloneDb = new Database(db);
-		Workload cloneWorkload = new Workload(workload);
-		
-//==========================================================================================================		
-		//System.out.print("\n>> Status check after cloning");
-		//==============================================================================================
-		// Print Data Partitioning Details
-		//PrintPartitioningDetails clonePrintPartitioningDetails = new PrintPartitioningDetails();
-		//clonePrintPartitioningDetails.printDetails(cloneDb);
-		//System.out.println();
-		//cloneWorkload.print(cloneDb);
-		//System.out.println();
-//==========================================================================================================
-		
+		Workload cloneWorkload = new Workload(workload);				
 		dataMovement.move(cloneDb, cloneWorkload);
 		
 		//==============================================================================================
 		// Printing out details after performing Data Movement using hMetis		
-		System.out.println();
+		System.out.println("\n>> After data movement ...");
 		cloneWorkload.print(cloneDb);
 		System.out.println();
 		
@@ -153,7 +139,7 @@ public class Prototype {
 		
 		//==============================================================================================
 		// Printing out details after performing Data Movement using Idea		
-		System.out.println();
+		System.out.println("\n>> After data movement ...");
 		workload.print(db);
 		System.out.println();
 	}

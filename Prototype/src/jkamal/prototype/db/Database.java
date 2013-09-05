@@ -22,7 +22,8 @@ public class Database {
 		this.setDb_name(name);
 		this.setDb_tenant(tenant_id);
 		this.setDb_dataMap(new GlobalDataMap());
-		this.setDb_partitions(new TreeSet<Partition>());		
+		this.setDb_partitions(new TreeSet<Partition>());
+		this.setDb_partition_table(new PartitionTable());
 		this.setDb_routing_table(new RoutingTable());
 		
 		if(model.equals("Range"))
@@ -39,6 +40,15 @@ public class Database {
 		this.db_name = db.getDb_name();
 		this.db_tenant = db.getDb_tenant();		
 		this.db_dataMap = new GlobalDataMap(db.getDb_dataMap());
+		
+		Set<Partition> cloneDbPartitions = new TreeSet<Partition>();
+		Partition clonePartition;
+		for(Partition partition : db.getDb_partitions()) {
+			clonePartition = new Partition(partition);
+			cloneDbPartitions.add(clonePartition);
+		}		
+		this.db_partitions = cloneDbPartitions;
+		
 		this.db_partition_table = new PartitionTable(db.getDb_partition_table());
 		this.db_routing_table = new RoutingTable(db.getDb_routing_table());
 	}

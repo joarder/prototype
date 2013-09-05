@@ -12,7 +12,7 @@ public class Data implements Comparable<Data> {
 	private float data_size;
 	
 	private int data_partition_id;	
-	private int data_hmetis_partition_id;
+	private int data_hmetis_cluster_id;
 	private int data_prototype_partition_id;
 	
 	private int data_roaming_partition_id;
@@ -33,7 +33,7 @@ public class Data implements Comparable<Data> {
 		this.setData_size(1); // 1.0 = 1 MegaBytes
 		
 		this.setData_partition_id(pid); // default partition id = -1 means undefined.
-		this.setData_hmetis_partition_id(-1);
+		this.setData_hmetis_cluster_id(-1);
 		this.setData_prototype_partition_id(-1);
 		
 		this.setData_roaming_partition_id(-1);
@@ -56,7 +56,7 @@ public class Data implements Comparable<Data> {
 		this.data_size = data.getData_size();
 		
 		this.data_partition_id = data.getData_partition_id();
-		this.data_hmetis_partition_id = data.getData_hmetis_partition_id();
+		this.data_hmetis_cluster_id = data.getData_hmetis_cluster_id();
 		this.data_prototype_partition_id = data.getData_prototype_partition_id();
 		
 		this.data_roaming_partition_id = data.getData_roaming_partition_id();
@@ -102,12 +102,12 @@ public class Data implements Comparable<Data> {
 		this.data_partition_id = data_partition_id;
 	}
 
-	public int getData_hmetis_partition_id() {
-		return data_hmetis_partition_id;
+	public int getData_hmetis_cluster_id() {
+		return data_hmetis_cluster_id;
 	}
 
-	public void setData_hmetis_partition_id(int data_hmetis_partition_id) {
-		this.data_hmetis_partition_id = data_hmetis_partition_id;
+	public void setData_hmetis_cluster_id(int data_hmetis_cluster_id) {
+		this.data_hmetis_cluster_id = data_hmetis_cluster_id;
 	}
 
 	public int getData_prototype_partition_id() {

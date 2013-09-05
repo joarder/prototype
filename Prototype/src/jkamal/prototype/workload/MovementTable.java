@@ -29,7 +29,7 @@ public class MovementTable {
 	public Matrix generateMovementTable(Database db, Workload workload) {
 		TransactionDataSet transactionDataSet = workload.getWrl_transactionDataSet();
 		//int M = db.getDb_partition_table().getPrePartitionTable().getPrePartitionTable().size();
-		int N = db.getDb_partition_table().getPostPartitionTable().getPostPartitionTable().size()+1;
+		int N = db.getDb_partition_table().getDataPostPartitionTable().getDataPostPartitionTable().size()+1;
 		int M = N; // Having a NxN matrix
 		
 		// Create a 2D Matrix to represent the Data movements due to partitioning decision
@@ -63,7 +63,7 @@ public class MovementTable {
 		while(iterator.hasNext()) {
 			data = iterator.next();
 			original_id = data.getData_partition_id();
-			hmetis_id = data.getData_hmetis_partition_id();
+			hmetis_id = data.getData_hmetis_cluster_id();
 			
 			e= movement[original_id+1][hmetis_id+1]; // Need to @debug
 			e.setValue(e.getValue()+1);

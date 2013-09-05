@@ -11,36 +11,39 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
-
 import jkamal.prototype.workload.DataPostPartitionTable;
 import jkamal.prototype.workload.DataPrePartitionTable;
 
 public class PartitionTable {
 	private Map<Integer, Set<Partition>> partition_table;
-	private DataPrePartitionTable prePartitionTable;
-	private DataPostPartitionTable postPartitionTable;
+	private DataPrePartitionTable dataPrePartitionTable;
+	private DataPostPartitionTable dataPostPartitionTable;
 	
 	public PartitionTable() {
 		this.setPartition_table(new TreeMap<Integer, Set<Partition>>());
+		this.setDataPrePartitionTable(new DataPrePartitionTable());
+		this.setDataPostPartitionTable(new DataPostPartitionTable());
 	}
 	
 	// Copy Constructor
 	public PartitionTable(PartitionTable partitionTable) {
 		// Cloning Partition Table
 		Map<Integer, Set<Partition>> clonePartitionTable = new TreeMap<Integer, Set<Partition>>();
-		Set<Partition> clonePartitionSet = new TreeSet<Partition>();
+		Set<Partition> clonePartitionSet;
 		Partition clonePartition;
 		for(Entry<Integer, Set<Partition>> entry : partitionTable.getPartition_table().entrySet()) {
+			clonePartitionSet = new TreeSet<Partition>();
 			for(Partition partition : entry.getValue()) {
 				clonePartition = new Partition(partition);
 				clonePartitionSet.add(clonePartition);
 			}
 			clonePartitionTable.put(entry.getKey(), clonePartitionSet);
 		}
+		this.setPartition_table(clonePartitionTable);
 		
 		// Cloning Pre/Post-Partition Table
-		//this.prePartitionTable = new DataPrePartitionTable(partitionTable.getPrePartitionTable());
-		//this.postPartitionTable = new DataPostPartitionTable(partitionTable.getPostPartitionTable());
+		this.dataPrePartitionTable = new DataPrePartitionTable(partitionTable.getDataPrePartitionTable());
+		this.dataPostPartitionTable = new DataPostPartitionTable(partitionTable.getDataPostPartitionTable());
 	}
 
 	public Map<Integer, Set<Partition>> getPartition_table() {
@@ -51,20 +54,20 @@ public class PartitionTable {
 		this.partition_table = partition_table;
 	}
 	
-	public DataPrePartitionTable getPrePartitionTable() {
-		return prePartitionTable;
+	public DataPrePartitionTable getDataPrePartitionTable() {
+		return dataPrePartitionTable;
 	}
 
-	public void setPrePartitionTable(DataPrePartitionTable prePartitionTable) {
-		this.prePartitionTable = prePartitionTable;
+	public void setDataPrePartitionTable(DataPrePartitionTable prePartitionTable) {
+		this.dataPrePartitionTable = prePartitionTable;
 	}
 
-	public DataPostPartitionTable getPostPartitionTable() {
-		return postPartitionTable;
+	public DataPostPartitionTable getDataPostPartitionTable() {
+		return dataPostPartitionTable;
 	}
 
-	public void setPostPartitionTable(DataPostPartitionTable postPartitionTable) {
-		this.postPartitionTable = postPartitionTable;
+	public void setDataPostPartitionTable(DataPostPartitionTable postPartitionTable) {
+		this.dataPostPartitionTable = postPartitionTable;
 	}
 
 	// Returns the Partition for the looked-up Partition Id. If the Partition is Not Found then returns NULL

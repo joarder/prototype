@@ -21,43 +21,45 @@ import jkamal.prototype.db.Database;
 import jkamal.prototype.transaction.TransactionDataSet;
 
 public class DataPrePartitionTable {
-	private Map<Integer, ArrayList<Data>> prePartitionTable;
-	private String prePartitionTableFileName = null;
+	private Map<Integer, ArrayList<Data>> dataPrePartitionTable;
+	private String dataPrePartitionTableFileName = null;
 
 	public DataPrePartitionTable() {
-		this.setPrePartitionTable(new TreeMap<Integer, ArrayList<Data>>());
-		this.setPrePartitionTableFileName("prepartition.txt");
+		this.setDataPrePartitionTable(new TreeMap<Integer, ArrayList<Data>>());
+		this.setDataPrePartitionTableFileName("prepartition.txt");
 	}
 	
 	// Copy Constructor
 	public DataPrePartitionTable(DataPrePartitionTable dataPrePartitionTable) {
 		// Cloning DataPrePartitionTable
 		Map<Integer, ArrayList<Data>> clonePrePartitionTable = new TreeMap<Integer, ArrayList<Data>>();
-		ArrayList<Data> cloneDataList = new ArrayList<Data>();
+		ArrayList<Data> cloneDataList;
 		Data cloneData;
-		for(Entry<Integer, ArrayList<Data>> entry : dataPrePartitionTable.getPrePartitionTable().entrySet()) {
+		for(Entry<Integer, ArrayList<Data>> entry : dataPrePartitionTable.getDataPrePartitionTable().entrySet()) {
+			cloneDataList = new ArrayList<Data>();
 			for(Data data : entry.getValue()) {
 				cloneData = new Data(data);
-				cloneDataList.add(cloneData);
+				cloneDataList.add(cloneData);				
 			}
 			clonePrePartitionTable.put(entry.getKey(), cloneDataList);
-		}				
+		}		
+		this.setDataPrePartitionTable(clonePrePartitionTable);		
 	}
 	
-	public Map<Integer, ArrayList<Data>> getPrePartitionTable() {
-		return prePartitionTable;
+	public Map<Integer, ArrayList<Data>> getDataPrePartitionTable() {
+		return dataPrePartitionTable;
 	}
 
-	public void setPrePartitionTable(Map<Integer, ArrayList<Data>> prePartitionTable) {
-		this.prePartitionTable = prePartitionTable;
+	public void setDataPrePartitionTable(Map<Integer, ArrayList<Data>> prePartitionTable) {
+		this.dataPrePartitionTable = prePartitionTable;
 	}
 
-	public String getPrePartitionTableFileName() {
-		return prePartitionTableFileName;
+	public String getDataPrePartitionTableFileName() {
+		return dataPrePartitionTableFileName;
 	}
 
-	public void setPrePartitionTableFileName(String prePartitionTableFileName) {
-		this.prePartitionTableFileName = prePartitionTableFileName;
+	public void setDataPrePartitionTableFileName(String prePartitionTableFileName) {
+		this.dataPrePartitionTableFileName = prePartitionTableFileName;
 	}
 
 	public void generatePrePartitionTable(Database db, Workload workload, String DIR_LOCATION) {
@@ -69,12 +71,12 @@ public class DataPrePartitionTable {
 		while(iterator.hasNext()) {
 			data = iterator.next();			
 			
-			if(this.getPrePartitionTable().containsKey(data.getData_partition_id())) {
-				this.getPrePartitionTable().get(data.getData_partition_id()).add(data);
+			if(this.getDataPrePartitionTable().containsKey(data.getData_partition_id())) {
+				this.getDataPrePartitionTable().get(data.getData_partition_id()).add(data);
 			} else {
 				dataList = new ArrayList<Data>();
 				dataList.add(data);
-				this.getPrePartitionTable().put(data.getData_partition_id(), dataList);
+				this.getDataPrePartitionTable().put(data.getData_partition_id(), dataList);
 			}
 		}
 		
@@ -82,7 +84,7 @@ public class DataPrePartitionTable {
 	}
 	
 	public void generatePrePartitionTableFile(String file_dir) {
-		File prePartitionTableFile = new File(file_dir+"\\"+this.getPrePartitionTableFileName());
+		File prePartitionTableFile = new File(file_dir+"\\"+this.getDataPrePartitionTableFileName());
 		int space = -1;
 		
 		try {
@@ -91,7 +93,7 @@ public class DataPrePartitionTable {
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(prePartitionTableFile), "utf-8"));
 								
-				for(Entry<Integer, ArrayList<Data>> entry : this.getPrePartitionTable().entrySet()) {
+				for(Entry<Integer, ArrayList<Data>> entry : this.getDataPrePartitionTable().entrySet()) {
 					writer.write(Integer.toString(entry.getKey()));
 					writer.write(" ");
 					
@@ -119,5 +121,29 @@ public class DataPrePartitionTable {
 		}
 		
 		//return prePartitionTableFile;
+	}
+	
+	public void print() {
+		int comma = -1;
+		
+		// Pre-Partitioning Details
+		System.out.print("\n===Data Pre-partitioning Details========================\n");						
+		for(Entry<Integer, ArrayList<Data>> entry : this.getDataPrePartitionTable().entrySet()) {
+			System.out.print("P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
+			
+			comma = entry.getValue().size();
+			for(Data data : entry.getValue()) {
+				System.out.print(data.toString());
+				
+				if(comma != 1)
+					System.out.print(", ");
+			
+				--comma;						
+			} // end -- for() loop
+			
+			System.out.print("}\n");
+		} // end -- for() loop
+		System.out.print("\n");
+
 	}
 }

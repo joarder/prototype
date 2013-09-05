@@ -26,38 +26,40 @@ public class DataPostPartitionTable {
 	private String postPartitionTableFileName = null;
 
 	public DataPostPartitionTable() {
-		this.setPostPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
-		this.setPostPartitionTableFileName("postpartition.txt");
+		this.setDataPostPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
+		this.setDataPostPartitionTableFileName("postpartition.txt");
 	}	
 	
 	// Copy Constructor
 	public DataPostPartitionTable(DataPostPartitionTable dataPostPartitionTable) {
 		// Cloning DataPostPartitionTable
 		Map<Integer, ArrayList<Data>> clonePostPartitionTable = new TreeMap<Integer, ArrayList<Data>>();
-		ArrayList<Data> cloneDataList = new ArrayList<Data>();
+		ArrayList<Data> cloneDataList;
 		Data cloneData;
-		for(Entry<Integer, ArrayList<Data>> entry : dataPostPartitionTable.getPostPartitionTable().entrySet()) {
+		for(Entry<Integer, ArrayList<Data>> entry : dataPostPartitionTable.getDataPostPartitionTable().entrySet()) {
+			cloneDataList = new ArrayList<Data>();
 			for(Data data : entry.getValue()) {
 				cloneData = new Data(data);
-				cloneDataList.add(cloneData);
+				cloneDataList.add(cloneData);				
 			}
 			clonePostPartitionTable.put(entry.getKey(), cloneDataList);
-		}				
+		}
+		this.setDataPostPartitionTable(clonePostPartitionTable);
 	}
 	
-	public Map<Integer, ArrayList<Data>> getPostPartitionTable() {
+	public Map<Integer, ArrayList<Data>> getDataPostPartitionTable() {
 		return postPartitionTable;
 	}
 
-	public void setPostPartitionTable(Map<Integer, ArrayList<Data>> postPartitionTable) {
+	public void setDataPostPartitionTable(Map<Integer, ArrayList<Data>> postPartitionTable) {
 		this.postPartitionTable = postPartitionTable;
 	}
 
-	public String getPostPartitionTableFileName() {
+	public String getDataPostPartitionTableFileName() {
 		return postPartitionTableFileName;
 	}
 
-	public void setPostPartitionTableFileName(String postPartitionTableFileName) {
+	public void setDataPostPartitionTableFileName(String postPartitionTableFileName) {
 		this.postPartitionTableFileName = postPartitionTableFileName;
 	}
 	
@@ -70,12 +72,12 @@ public class DataPostPartitionTable {
 		while(iterator.hasNext()) {
 			data = iterator.next();			
 			
-			if(this.getPostPartitionTable().containsKey(data.getData_partition_id())) {
-				this.getPostPartitionTable().get(data.getData_partition_id()).add(data);
+			if(this.getDataPostPartitionTable().containsKey(data.getData_partition_id())) {
+				this.getDataPostPartitionTable().get(data.getData_partition_id()).add(data);
 			} else {
 				dataList = new ArrayList<Data>();
 				dataList.add(data);
-				this.getPostPartitionTable().put(data.getData_partition_id(), dataList);
+				this.getDataPostPartitionTable().put(data.getData_partition_id(), dataList);
 			}
 		}
 		
@@ -83,7 +85,7 @@ public class DataPostPartitionTable {
 	}
 	
 	public void generatePostPartitionTableFile(String file_dir) {
-		File postPartitionTableFile = new File(file_dir+"\\"+this.getPostPartitionTableFileName());
+		File postPartitionTableFile = new File(file_dir+"\\"+this.getDataPostPartitionTableFileName());
 		int space = -1;
 		
 		try {
@@ -92,7 +94,7 @@ public class DataPostPartitionTable {
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(postPartitionTableFile), "utf-8"));
 								
-				for(Entry<Integer, ArrayList<Data>> entry : this.getPostPartitionTable().entrySet()) {
+				for(Entry<Integer, ArrayList<Data>> entry : this.getDataPostPartitionTable().entrySet()) {
 					writer.write(Integer.toString(entry.getKey()));
 					writer.write(" ");
 					
@@ -140,14 +142,14 @@ public class DataPostPartitionTable {
 				partition_id = Integer.valueOf(scanner.nextLine());
 				data_id++;
 				
-				transactionDataSet.getTransactionDataSet().get(data_id).setData_hmetis_partition_id(partition_id); //* possible bug may resides in here
+				transactionDataSet.getTransactionDataSet().get(data_id).setData_hmetis_cluster_id(partition_id); //* possible bug may resides in here
 				
 				data = new Data(transactionDataSet.getTransactionDataSet().get(data_id).getData_id(), 
 						Integer.toString(transactionDataSet.getTransactionDataSet().get(data_id).getData_id()), 
 						partition_id, 
 						transactionDataSet.getTransactionDataSet().get(data_id).getData_node_id());
 				
-				data.setData_hmetis_partition_id(partition_id);
+				data.setData_hmetis_cluster_id(partition_id);
 				postTransactionDataSet.getTransactionDataSet().add(data);
 			}
 		} finally {
@@ -155,5 +157,28 @@ public class DataPostPartitionTable {
 		}
 		
 		return postTransactionDataSet;
+	}
+	
+	public void print() {
+		int comma = -1;
+		
+		// Post-Partitioning Details
+		System.out.print("\n===Data Post-partitioning Details========================\n");						
+		for(Entry<Integer, ArrayList<Data>> entry : this.getDataPostPartitionTable().entrySet()) {
+			System.out.print("P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
+			
+			comma = entry.getValue().size();
+			for(Data data : entry.getValue()) {
+				System.out.print(data.toString());
+				
+				if(comma != 1)
+					System.out.print(", ");
+			
+				--comma;						
+			} // end -- for() loop
+			
+			System.out.print("}\n");
+		} // end -- for() loop
+		System.out.print("\n");
 	}
 }

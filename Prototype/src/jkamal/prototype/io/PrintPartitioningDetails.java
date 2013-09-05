@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
+import jkamal.prototype.workload.DataPostPartitionTable;
+import jkamal.prototype.workload.DataPrePartitionTable;
 
 public class PrintPartitioningDetails {
 
@@ -21,7 +23,8 @@ public class PrintPartitioningDetails {
 		// Pre-Partitioning Details
 		System.out.print("\n===Data Pre-partitioning Details========================\n");		
 		
-		for(Entry<Integer, ArrayList<Data>> entry : db.getDb_partition_table().getPrePartitionTable().getPrePartitionTable().entrySet()) {
+		DataPrePartitionTable dataPrePartitionTable = db.getDb_partition_table().getDataPrePartitionTable();
+		for(Entry<Integer, ArrayList<Data>> entry : dataPrePartitionTable.getDataPrePartitionTable().entrySet()) {
 			System.out.print("P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
 			
 			comma = entry.getValue().size();
@@ -41,7 +44,8 @@ public class PrintPartitioningDetails {
 		// Post-Partitioning Details
 		System.out.print("\n===Data Post-partitioning Details========================\n");		
 		
-		for(Entry<Integer, ArrayList<Data>> entry : db.getDb_partition_table().getPostPartitionTable().getPostPartitionTable().entrySet()) {
+		DataPostPartitionTable dataPostPartitionTable = db.getDb_partition_table().getDataPostPartitionTable();
+		for(Entry<Integer, ArrayList<Data>> entry : dataPostPartitionTable.getDataPostPartitionTable().entrySet()) {
 			System.out.print("P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
 			
 			comma = entry.getValue().size();
