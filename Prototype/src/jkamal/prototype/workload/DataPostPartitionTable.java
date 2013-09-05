@@ -28,6 +28,21 @@ public class DataPostPartitionTable {
 	public DataPostPartitionTable() {
 		this.setPostPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
 		this.setPostPartitionTableFileName("postpartition.txt");
+	}	
+	
+	// Copy Constructor
+	public DataPostPartitionTable(DataPostPartitionTable dataPostPartitionTable) {
+		// Cloning DataPostPartitionTable
+		Map<Integer, ArrayList<Data>> clonePostPartitionTable = new TreeMap<Integer, ArrayList<Data>>();
+		ArrayList<Data> cloneDataList = new ArrayList<Data>();
+		Data cloneData;
+		for(Entry<Integer, ArrayList<Data>> entry : dataPostPartitionTable.getPostPartitionTable().entrySet()) {
+			for(Data data : entry.getValue()) {
+				cloneData = new Data(data);
+				cloneDataList.add(cloneData);
+			}
+			clonePostPartitionTable.put(entry.getKey(), cloneDataList);
+		}				
 	}
 	
 	public Map<Integer, ArrayList<Data>> getPostPartitionTable() {

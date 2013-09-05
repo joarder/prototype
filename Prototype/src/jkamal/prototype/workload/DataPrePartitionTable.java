@@ -29,6 +29,21 @@ public class DataPrePartitionTable {
 		this.setPrePartitionTableFileName("prepartition.txt");
 	}
 	
+	// Copy Constructor
+	public DataPrePartitionTable(DataPrePartitionTable dataPrePartitionTable) {
+		// Cloning DataPrePartitionTable
+		Map<Integer, ArrayList<Data>> clonePrePartitionTable = new TreeMap<Integer, ArrayList<Data>>();
+		ArrayList<Data> cloneDataList = new ArrayList<Data>();
+		Data cloneData;
+		for(Entry<Integer, ArrayList<Data>> entry : dataPrePartitionTable.getPrePartitionTable().entrySet()) {
+			for(Data data : entry.getValue()) {
+				cloneData = new Data(data);
+				cloneDataList.add(cloneData);
+			}
+			clonePrePartitionTable.put(entry.getKey(), cloneDataList);
+		}				
+	}
+	
 	public Map<Integer, ArrayList<Data>> getPrePartitionTable() {
 		return prePartitionTable;
 	}

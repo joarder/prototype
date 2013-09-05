@@ -122,7 +122,7 @@ public class Transaction implements Comparable<Transaction> {
 			else 
 				pid = data.getData_partition_id();
 				
-			partition = db.getDb_partition_table().getPartition(db, pid);
+			partition = db.getDb_partition_table().getPartition(pid);
 			nsCost.add(partition.getPartition_node_id());
 		}
 		

@@ -24,6 +24,24 @@ public class Partition  implements Comparable<Partition> {
 		Partition.setMAX_DATA_ITEMS(1000); // 1GB Data (in Size) Or, equivalently 1000 Data Items can be stored in a single partition.
 	}	
 
+	// Copy Constructor
+	public Partition(Partition partition) {
+		this.partition_id = partition.getPartition_id();
+		this.partition_label = partition.getPartition_label();
+		this.partition_capacity = partition.getPartition_capacity();
+		this.partition_node_id = partition.getPartition_node_id();
+		
+		List<Data> clonePartitionDataItems = new ArrayList<Data>();
+		Data cloneData;
+		for(Data data : partition.getPartition_data_items()) {
+			cloneData = new Data(data);
+			clonePartitionDataItems.add(cloneData);
+		}
+		this.partition_data_items = clonePartitionDataItems;
+		
+		Partition.MAX_DATA_ITEMS = Partition.getMAX_DATA_ITEMS();
+	}
+	
 	public int getPartition_id() {
 		return partition_id;
 	}

@@ -37,17 +37,17 @@ public class DataMovement {
 				
 				roaming_data = new Data(data); // Calling Copy Constructor
 				
-				partition = db.getDb_partition_table().getPartition(db, hmetis_id);
-				partition.getPartition_data_items().add(roaming_data);
+				//partition = db.getDb_partition_table().getPartition(hmetis_id);
+				//partition.getPartition_data_items().add(roaming_data);
 				moves++;
 			}
-		}
+		}		
 		
-		System.out.print("\n>> Total Data Moments Required using hMetis: "+moves);
+		//System.out.print("\n>> Total Data Moments Required using hMetis: "+moves);
 		
 		// Recalculate the Costs of Distributed Transactions (CDT)
-		for(Transaction transaction : workload.getWrl_transactionList())
-			transaction.generateTransactionCost(db);				
+		//for(Transaction transaction : workload.getWrl_transactionList())
+			//transaction.generateTransactionCost(db);				
 	}
 
 	// This move() will utilize the Idea Matrix to perform Data movements
@@ -78,13 +78,13 @@ public class DataMovement {
 			
 				roaming_data = new Data(data); // Calling Copy Constructor
 			
-				partition = db.getDb_partition_table().getPartition(db, idea_id);
+				partition = db.getDb_partition_table().getPartition(idea_id);
 				partition.getPartition_data_items().add(roaming_data);
 				++moves;								
 			}
 		}
 		
-		System.out.print("\n>> Total Data Moments Required using Idea: "+moves);
+		//System.out.print("\n>> Total Data Moments Required using Idea: "+moves);
 		
 		// Recalculate the Costs of Distributed Transactions (CDT)
 		for(Transaction transaction : workload.getWrl_transactionList())

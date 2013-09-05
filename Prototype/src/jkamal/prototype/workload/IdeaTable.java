@@ -8,8 +8,6 @@ package jkamal.prototype.workload;
 
 import java.util.Map;
 import java.util.TreeMap;
-
-import jkamal.prototype.db.Database;
 import jkamal.prototype.util.Matrix;
 import jkamal.prototype.util.MatrixElement;
 

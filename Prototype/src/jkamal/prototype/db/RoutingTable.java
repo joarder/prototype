@@ -17,6 +17,21 @@ public class RoutingTable {
 	public RoutingTable() {
 		setData_items(new HashMap<Integer, ArrayList<Data>>());
 	}
+	
+	// Copy Constructor
+	public RoutingTable(RoutingTable routingTable) {
+		// Cloning Routing Table
+		Map<Integer, ArrayList<Data>> cloneDataItems = new HashMap<Integer, ArrayList<Data>>();
+		ArrayList<Data> cloneDataList = new ArrayList<Data>();
+		Data cloneData;
+		for(Entry<Integer, ArrayList<Data>> entry : routingTable.getData_items().entrySet()) {
+			for(Data data : entry.getValue()) {
+				cloneData = new Data(data);
+				cloneDataList.add(cloneData);
+			}
+			cloneDataItems.put(entry.getKey(), cloneDataList);
+		}
+	}
 		
 	public Map<Integer, ArrayList<Data>> getData_items() {
 		return data_items;

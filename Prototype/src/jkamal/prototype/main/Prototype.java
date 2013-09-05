@@ -110,19 +110,32 @@ public class Prototype {
 		Matrix movementMatrix = movementTable.generateMovementTable(db, workload);
 		System.out.println("\n>> Movement Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...\n");
 		movementMatrix.print();
-		//System.out.print("\n>> Total Data Moments Required: "+Integer.toString(movementTable.getMovements())+"\n");
+		System.out.print("\n>> Total Data Movements Required (using hMetis Movement Matrix): "+Integer.toString(movementTable.getMovements())+"\n");
 		
 		//==============================================================================================
 		// Perform Data Movement with Idea implementation
 		DataMovement dataMovement = new DataMovement();
-		// Create a Copy of the Workload using the Copy Constructor
+		// Create a Clone of the Database and Workload using Copy Constructor
+		Database cloneDb = new Database(db);
 		Workload cloneWorkload = new Workload(workload);
-		dataMovement.move(db, cloneWorkload);
+		
+//==========================================================================================================		
+		//System.out.print("\n>> Status check after cloning");
+		//==============================================================================================
+		// Print Data Partitioning Details
+		//PrintPartitioningDetails clonePrintPartitioningDetails = new PrintPartitioningDetails();
+		//clonePrintPartitioningDetails.printDetails(cloneDb);
+		//System.out.println();
+		//cloneWorkload.print(cloneDb);
+		//System.out.println();
+//==========================================================================================================
+		
+		dataMovement.move(cloneDb, cloneWorkload);
 		
 		//==============================================================================================
-		// Printing out details after performing Data Movement using Idea		
+		// Printing out details after performing Data Movement using hMetis		
 		System.out.println();
-		cloneWorkload.print(db);
+		cloneWorkload.print(cloneDb);
 		System.out.println();
 		
 		//==============================================================================================
@@ -131,7 +144,7 @@ public class Prototype {
 		Matrix ideaMatrix = ideaTable.runIdea(movementMatrix);
 		System.out.print("\n>> Idea Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...\n");
 		ideaMatrix.print();
-		//System.out.print("\n>> Total Data Moments Required: "+Integer.toString(ideaTable.getMovements())+"\n");
+		System.out.print("\n>> Total Data Movements Required (using Idea Matrix): "+Integer.toString(ideaTable.getMovements())+"\n");
 		
 		//==============================================================================================
 		// Perform Data Movement with Idea implementation
