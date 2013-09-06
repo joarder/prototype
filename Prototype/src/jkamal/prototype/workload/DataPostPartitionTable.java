@@ -64,7 +64,8 @@ public class DataPostPartitionTable {
 	}
 	
 	public void generatePostPartitionTable(Database db, Workload workload, String DIR_LOCATION) throws IOException {
-		TransactionDataSet transactionDataSet = readPartFile(db, workload, DIR_LOCATION);		
+		//TransactionDataSet transactionDataSet = readPartFile(db, workload, DIR_LOCATION);
+		TransactionDataSet transactionDataSet = workload.getWrl_transactionDataSet();
 		Data data;
 		ArrayList<Data> dataList;
 		
@@ -123,42 +124,7 @@ public class DataPostPartitionTable {
 		
 		//return postPartitionTableFile;
 	}
-	
-	public TransactionDataSet readPartFile(Database db, Workload workload, String part_dir) throws IOException {		
-		TransactionDataSet transactionDataSet = workload.getWrl_transactionDataSet();
-		String workload_file = workload.getWrl_workload_file().getWorkload_file();
 		
-		String hgraph_part_file = workload_file+".part."+db.getDb_partitions().size();						
-		File hgraph_data_input = new File(part_dir+"\\"+hgraph_part_file);
-		int data_id = -1;
-		int partition_id = -1;
-		
-		TransactionDataSet postTransactionDataSet = new TransactionDataSet();
-		Data data;
-		
-		Scanner scanner = new Scanner(hgraph_data_input);
-		try {
-			while(scanner.hasNextLine()) {
-				partition_id = Integer.valueOf(scanner.nextLine());
-				data_id++;
-				
-				transactionDataSet.getTransactionDataSet().get(data_id).setData_hmetis_cluster_id(partition_id); //* possible bug may resides in here
-				
-				data = new Data(transactionDataSet.getTransactionDataSet().get(data_id).getData_id(), 
-						Integer.toString(transactionDataSet.getTransactionDataSet().get(data_id).getData_id()), 
-						partition_id, 
-						transactionDataSet.getTransactionDataSet().get(data_id).getData_node_id());
-				
-				data.setData_hmetis_cluster_id(partition_id);
-				postTransactionDataSet.getTransactionDataSet().add(data);
-			}
-		} finally {
-			scanner.close();
-		}
-		
-		return postTransactionDataSet;
-	}
-	
 	public void print() {
 		int comma = -1;
 		

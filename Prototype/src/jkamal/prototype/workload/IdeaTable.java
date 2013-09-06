@@ -56,13 +56,13 @@ public class IdeaTable {
 			max = M.findMax(diagonal_pos);			
 			
 			// Row/Col swap with diagonal Row/Col
-			if(max.getValue() != 0) {
+			if(max.getCounts() != 0) {
 				M.swap_row(max.getRow_pos(), diagonal_pos);
 				M.swap_col(max.getCol_pos(), diagonal_pos);				
 			}			
 			
-			if(max.getValue() != 0)
-				moves += max.getValue();
+			if(max.getCounts() != 0)
+				moves += max.getCounts();
 			
 			++diagonal_pos;
 		}
@@ -76,11 +76,11 @@ public class IdeaTable {
 		// Step-2 :: PID Conversion		
 		// Create the PID conversion Key Map
 		for(int i = 1; i < M.getM(); i++)
-			this.getKeyMap().put((int)M.getItem()[i][0].getValue(), (int)M.getItem()[0][i].getValue());				
+			this.getKeyMap().put((int)M.getMatrix()[i][0].getCounts(), (int)M.getMatrix()[0][i].getCounts());				
 		
 		// Assignment of proposed PID into the Matrix
 		for(int col = 1, key = 0; col < M.getM(); col++, key++)			
-			M.getItem()[0][col].setValue(this.getKeyMap().get(key));				
+			M.getMatrix()[0][col].setCounts(this.getKeyMap().get(key));				
 		
 		System.out.print("\n>> Total Data Moments Required (IdeaTable): "+moves+"\n");
 		

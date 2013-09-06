@@ -21,6 +21,11 @@ public class FixFile {
 	public FixFile() {
 		this.setFix_file("fixfile.txt");
 	}
+	
+	// Copy Constructor
+	public FixFile(FixFile fixFile) {
+		this.fix_file = fixFile.getFix_file();
+	}
 		
 	public String getFix_file() {
 		return fix_file;

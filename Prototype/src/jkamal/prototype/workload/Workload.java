@@ -52,6 +52,9 @@ public class Workload implements Comparable<Workload> {
 				
 		this.wrl_transactionDataSet = new TransactionDataSet(workload.getWrl_transactionDataSet());		
 		this.wrl_database_id = workload.getWrl_database_id(); 
+		
+		this.wrl_workload_file = new WorkloadFile(workload.getWrl_workload_file());
+		this.wrl_fixfile = new FixFile(workload.getWrl_fixfile());
 	}
 
 	public int getWrl_id() {
@@ -141,18 +144,14 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void print(Database db) {
-		//System.out.println();
 		System.out.print("\n===Workload Details========================");
 		System.out.print("\n "+this.toString()+" having a distribution of ");				
 		this.printWrl_transactionProp();
-		//System.out.println();
 		
 		for(Transaction transaction : this.getWrl_transactionList()) {
-			//transaction.generateTransactionCost(db);
-			transaction.print();
-			//System.out.println();
-		}
-		
+			transaction.generateTransactionCost(db);
+			transaction.print();			
+		}		
 	}
 	
 	@Override

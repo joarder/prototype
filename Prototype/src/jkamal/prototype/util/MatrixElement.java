@@ -4,15 +4,21 @@
 
 package jkamal.prototype.util;
 
+import java.util.ArrayList;
+
+import jkamal.prototype.db.Data;
+
 public class MatrixElement {
 	private int row_pos;
 	private int col_pos;
-	private double value;
+	private double counts;
+	private ArrayList<Data> dataList;
 	
 	public MatrixElement(int r, int c, double val) {
 		this.setRow_pos(r);
 		this.setCol_pos(c);
-		this.setValue(val);
+		this.setCounts(val);
+		this.setDataList(new ArrayList<Data>());
 	}
 
 	public int getRow_pos() {
@@ -31,11 +37,23 @@ public class MatrixElement {
 		this.col_pos = col_pos;
 	}
 
-	public double getValue() {
-		return value;
+	public double getCounts() {
+		return counts;
 	}
 
-	public void setValue(double value) {
-		this.value = value;
-	}    	    	
+	public void setCounts(double value) {
+		this.counts = value;
+	}
+
+	public ArrayList<Data> getDataList() {
+		return dataList;
+	}
+
+	public void setDataList(ArrayList<Data> dataList) {
+		this.dataList = dataList;
+	}
+	
+	public void addData(Data data) {
+		this.getDataList().add(data);
+	}
 }

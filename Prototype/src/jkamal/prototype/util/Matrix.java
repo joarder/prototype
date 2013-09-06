@@ -16,13 +16,13 @@ import java.util.List;
 final public class Matrix {
     private final int M;             // number of rows
     private final int N;             // number of columns
-    private final MatrixElement[][] item;   // M-by-N array
+    private final MatrixElement[][] matrix;   // M-by-N array
     
     // create M-by-N matrix of 0's
     public Matrix(int M, int N) {
         this.M = M;
         this.N = N;
-        item = new MatrixElement[M][N];
+        this.matrix = new MatrixElement[M][N];
     }
 
     public int getM() {
@@ -33,29 +33,29 @@ final public class Matrix {
 		return N;
 	}
 
-	public MatrixElement[][] getItem() {
-		return item;
+	public MatrixElement[][] getMatrix() {
+		return matrix;
 	}
 
 	// create matrix based on 2d array
     public Matrix(MatrixElement[][] data) {
         M = data.length;
         N = data[0].length;
-        this.item = new MatrixElement[M][N];
+        this.matrix = new MatrixElement[M][N];
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                    this.item[i][j] = data[i][j];
+                    this.matrix[i][j] = data[i][j];
     }
 
     // copy constructor
-    private Matrix(Matrix A) { this(A.item); }
+    private Matrix(Matrix A) { this(A.matrix); }
 
     // create and return a random M-by-N matrix with values between 0 and 1
     public static Matrix random(int M, int N) {
         Matrix A = new Matrix(M, N);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                A.item[i][j].setValue(Math.random());
+                A.matrix[i][j].setCounts(Math.random());
         return A;
     }
 
@@ -63,7 +63,7 @@ final public class Matrix {
     public static Matrix identity(int N) {
         Matrix I = new Matrix(N, N);
         for (int i = 0; i < N; i++)
-            I.item[i][i].setValue(1);
+            I.matrix[i][i].setCounts(1);
         return I;
     }
 
@@ -75,15 +75,15 @@ final public class Matrix {
         
     	List<Double> temp = new ArrayList<Double>();
     	for(int col = 0; col < N; col++) {
-    		temp.add(item[i][col].getValue());
+    		temp.add(matrix[i][col].getCounts());
     	}
     	
     	for(int col = 0; col < M; col++) {
-    		item[i][col].setValue(item[j][col].getValue());
+    		matrix[i][col].setCounts(matrix[j][col].getCounts());
     	}
 
     	for(int col = 0; col < M; col++) {
-    		item[j][col].setValue(temp.get(col));
+    		matrix[j][col].setCounts(temp.get(col));
     	}
     }
 
@@ -93,16 +93,16 @@ final public class Matrix {
     	List<Double> temp = new ArrayList<Double>();
     	//System.out.println("-$-i|j("+i+", "+j+")");
     	for(int row = 0; row < M; row++) {
-    		temp.add(item[row][i].getValue());
+    		temp.add(matrix[row][i].getCounts());
     		//System.out.println("-@-["+item[row][i]+"]");
     	}
     	
     	for(int row = 0; row < M; row++) {
-    		item[row][i].setValue(item[row][j].getValue());
+    		matrix[row][i].setCounts(matrix[row][j].getCounts());
     	}
     	
     	for(int row = 0; row < M; row++) {
-    		item[row][j].setValue(temp.get(row));
+    		matrix[row][j].setCounts(temp.get(row));
     	}
     }
     
@@ -111,7 +111,7 @@ final public class Matrix {
         Matrix A = new Matrix(N, M);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                A.item[j][i].setValue(this.item[i][j].getValue());
+                A.matrix[j][i].setCounts(this.matrix[i][j].getCounts());
         return A;
     }
 
@@ -122,7 +122,7 @@ final public class Matrix {
         Matrix C = new Matrix(M, N);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                C.item[i][j].setValue(A.item[i][j].getValue() + B.item[i][j].getValue());
+                C.matrix[i][j].setCounts(A.matrix[i][j].getCounts() + B.matrix[i][j].getCounts());
         return C;
     }
 
@@ -134,7 +134,7 @@ final public class Matrix {
         Matrix C = new Matrix(M, N);
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                C.item[i][j].setValue(A.item[i][j].getValue() - B.item[i][j].getValue());
+                C.matrix[i][j].setCounts(A.matrix[i][j].getCounts() - B.matrix[i][j].getCounts());
         return C;
     }
 
@@ -144,7 +144,7 @@ final public class Matrix {
         if (B.M != A.M || B.N != A.N) throw new RuntimeException("Illegal matrix dimensions.");
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++)
-                if (A.item[i][j].getValue() != B.item[i][j].getValue()) return false;
+                if (A.matrix[i][j].getCounts() != B.matrix[i][j].getCounts()) return false;
         return true;
     }
 
@@ -156,7 +156,7 @@ final public class Matrix {
         for (int i = 0; i < C.M; i++)
             for (int j = 0; j < C.N; j++)
                 for (int k = 0; k < A.N; k++)
-                    C.item[i][j].setValue(+(A.item[i][k].getValue() * B.item[k][j].getValue())); // Need to verify this line
+                    C.matrix[i][j].setCounts(+(A.matrix[i][k].getCounts() * B.matrix[k][j].getCounts())); // Need to verify this line
         return C;
     }
 
@@ -176,25 +176,25 @@ final public class Matrix {
             // find pivot row and swap
             int max = i;
             for (int j = i + 1; j < N; j++)
-                if (Math.abs(A.item[j][i].getValue()) > Math.abs(A.item[max][i].getValue()))
+                if (Math.abs(A.matrix[j][i].getCounts()) > Math.abs(A.matrix[max][i].getCounts()))
                     max = j;
             A.swap_row(i, max);
             b.swap_row(i, max);
 
             // singular
-            if (A.item[i][i].getValue() == 0.0) throw new RuntimeException("Matrix is singular.");
+            if (A.matrix[i][i].getCounts() == 0.0) throw new RuntimeException("Matrix is singular.");
 
             // pivot within b
             for (int j = i + 1; j < N; j++)
-                b.item[j][0].setValue(-(b.item[i][0].getValue() * A.item[j][i].getValue() / A.item[i][i].getValue()));
+                b.matrix[j][0].setCounts(-(b.matrix[i][0].getCounts() * A.matrix[j][i].getCounts() / A.matrix[i][i].getCounts()));
 
             // pivot within A
             for (int j = i + 1; j < N; j++) {
-                double m = A.item[j][i].getValue() / A.item[i][i].getValue();
+                double m = A.matrix[j][i].getCounts() / A.matrix[i][i].getCounts();
                 for (int k = i+1; k < N; k++) {
-                    A.item[j][k].setValue(-(A.item[i][k].getValue() * m));
+                    A.matrix[j][k].setCounts(-(A.matrix[i][k].getCounts() * m));
                 }
-                A.item[j][i].setValue(0.0);
+                A.matrix[j][i].setCounts(0.0);
             }
         }
 
@@ -203,8 +203,8 @@ final public class Matrix {
         for (int j = N - 1; j >= 0; j--) {
             double t = 0.0;
             for (int k = j + 1; k < N; k++)
-                t += A.item[j][k].getValue() * x.item[k][0].getValue();
-            x.item[j][0].setValue((b.item[j][0].getValue() - t) / A.item[j][j].getValue());
+                t += A.matrix[j][k].getCounts() * x.matrix[k][0].getCounts();
+            x.matrix[j][0].setCounts((b.matrix[j][0].getCounts() - t) / A.matrix[j][j].getCounts());
         }
         return x;
    
@@ -214,8 +214,8 @@ final public class Matrix {
     public void print() {
         for (int i = 0; i < M; i++) {
             for (int j = 0; j < N; j++) {
-            	if(item[i][j].getValue() != -1)
-            		System.out.print(Math.round(item[i][j].getValue())+" ");
+            	if(matrix[i][j].getCounts() != -1)
+            		System.out.print(Math.round(matrix[i][j].getCounts())+" ");
             	else            	
             		System.out.print("X ");
             }
@@ -223,22 +223,51 @@ final public class Matrix {
         }
     }
     
-    // 
+    // Find the Max element from the posXpos sub Matrix
     public MatrixElement findMax(int pos) {
-    	double max = 0;
-    	MatrixElement e = new MatrixElement(0, 0 , 0);
+    	double max_counts = 0;
+    	MatrixElement e = null;
     	
-        for (int i = pos; i < M; i++) {
-            for (int j = pos; j < N; j++) {
-            	if(max < item[i][j].getValue()) {
-            		max = item[i][j].getValue();
-            		e.setRow_pos(i);
-            		e.setCol_pos(j);
-            		e.setValue(max);
+        for (int row = pos; row < this.getM(); row++) {
+            for (int col = pos; col < this.getN(); col++) {
+            	if(max_counts < matrix[row][col].getCounts()) {
+            		max_counts = matrix[row][col].getCounts();
+            		e = matrix[row][col];
             	}
             }            	            	            
         }
                     	
+    	return e;
+    }
+    
+    // Find Max counts in a specific column of the Matrix
+    public MatrixElement findColMax(int col) {
+    	double max_counts = 0;
+    	MatrixElement e = null;
+    	
+    	for(int row = 1; row < this.getM(); row++) {
+    		//System.out.println("-#-r"+row+"c"+col);
+    		if(max_counts <= matrix[row][col].getCounts()) {
+    			max_counts = matrix[row][col].getCounts();
+    			e = matrix[row][col];
+    		}
+    	}
+    	
+    	return e;
+    }
+    
+    // Find Max counts in a specific row of the Matrix
+    public MatrixElement findRowMax(int row) {
+    	double max_counts = 0;
+    	MatrixElement e = null;
+    	
+    	for(int col = 1; col < this.getN(); col++) {
+    		if(max_counts < matrix[row][col].getCounts()) {
+    			max_counts = matrix[row][col].getCounts();
+    			e = matrix[row][col];
+    		}
+    	}
+    	
     	return e;
     }
 }

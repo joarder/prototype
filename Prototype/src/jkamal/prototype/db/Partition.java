@@ -92,7 +92,7 @@ public class Partition  implements Comparable<Partition> {
 
 	@Override
 	public String toString() {
-		return (this.partition_label);
+		return (this.partition_label+"["+this.partition_data_items.size()+"]");
 	}
 
 	@Override

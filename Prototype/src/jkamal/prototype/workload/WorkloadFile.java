@@ -22,6 +22,11 @@ public class WorkloadFile {
 	public WorkloadFile() {
 		this.setWorkload_file("workload.txt");		
 	}
+	
+	// Copy Constructor
+	public WorkloadFile(WorkloadFile workloadFile) {
+		this.workload_file = workloadFile.getWorkload_file();
+	}
 		
 	public String getWorkload_file() {
 		return workload_file;

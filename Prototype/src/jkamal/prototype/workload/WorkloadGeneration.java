@@ -119,7 +119,7 @@ public class WorkloadGeneration {
 		double array[] = new double[type];
         double sum = 0.0d;
         double rounding_result = 0.0d;
-        //double rounding_correction = 0.0d;
+        double rounding_correction = 0.0d;
         Random random = new Random();
         
         for (int i = 0; i < type; i++) {
@@ -133,16 +133,16 @@ public class WorkloadGeneration {
         	rounding_result += array[i];
         }       
                         
-        //System.out.println("Rounding Result = "+rounding_result);
+        //System.out.println("Rounding Result = "+rounding_result);        
         
         if(rounding_result > roundings) {
         	array[type-1] -= (rounding_result - roundings);
-        	//rounding_correction -= rounding_result - roundings;
+        	rounding_correction -= rounding_result - roundings;
         }
         
         if(rounding_result < roundings) {
         	array[type-1] += (roundings - rounding_result);
-        	//rounding_correction += roundings - rounding_result;
+        	rounding_correction += roundings - rounding_result;
         }
         
         //System.out.println("Rounding Correction = "+rounding_correction);

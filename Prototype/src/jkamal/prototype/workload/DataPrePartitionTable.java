@@ -124,12 +124,12 @@ public class DataPrePartitionTable {
 	}
 	
 	public void print() {
-		int comma = -1;
-		
-		// Pre-Partitioning Details
-		System.out.print("\n===Data Pre-partitioning Details========================\n");						
+		int comma = -1;		
+		// Workload's Data Partitioning Details
+		System.out.println();
+		System.out.print("\n===Workload's Data Partitioning Details========================\n");						
 		for(Entry<Integer, ArrayList<Data>> entry : this.getDataPrePartitionTable().entrySet()) {
-			System.out.print("P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
+			System.out.print(" P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
 			
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
@@ -142,8 +142,6 @@ public class DataPrePartitionTable {
 			} // end -- for() loop
 			
 			System.out.print("}\n");
-		} // end -- for() loop
-		System.out.print("\n");
-
+		} // end -- for() loop		
 	}
 }

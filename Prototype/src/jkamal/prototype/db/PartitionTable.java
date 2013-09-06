@@ -92,4 +92,24 @@ public class PartitionTable {
 		
 		return node_id;
 	}
+	
+	public void print() {
+		System.out.print("\n===Partition Table Details========================\n");
+		int comma = -1;
+		for(Entry<Integer, Set<Partition>> entry : this.getPartition_table().entrySet()) {
+			System.out.print(" N"+entry.getKey()+"{");
+			
+			comma = entry.getValue().size();
+			for(Partition partition : entry.getValue()) {
+				System.out.print(partition.toString());
+				
+				if(comma != 1)
+					System.out.print(", ");
+			
+				--comma;
+			}
+			
+			System.out.print("}\n");			
+		}
+	}
 }
