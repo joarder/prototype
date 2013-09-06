@@ -12,7 +12,6 @@ import java.util.TreeSet;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.GlobalDataMap;
-import jkamal.prototype.transaction.TransactionDataSet;
 import jkamal.prototype.transaction.Transaction;
 
 public class WorkloadGeneration {	
@@ -50,7 +49,7 @@ public class WorkloadGeneration {
 
 		// Retrieving corresponding GlobalDataMap and TransactionDataSet
 		GlobalDataMap dataMap = db.getDb_dataMap();
-		TransactionDataSet transactionDataSet = workload.getWrl_transactionDataSet();
+		List<Data> trDataSet = workload.getWrl_transactionDataSet();
 
 		// Creating required reference variables
 		Transaction transaction;		
@@ -84,7 +83,7 @@ public class WorkloadGeneration {
 					}
 					
 					dataSet.add(data);										
-					transactionDataSet.getTransactionDataSet().add(data);
+					trDataSet.add(data);
 				}
 				
 				transaction = new Transaction(++tr_id, dataSet);
@@ -93,17 +92,9 @@ public class WorkloadGeneration {
 			}
 		}		
 
-		//==============================================================================================
-		// Generating Workload File for HyperGraph Partitioning	
-		WorkloadFile workloadFile = new WorkloadFile();
-		workloadFile.generateWorkloadFile(workload, DIR_LOCATION);
-		workload.setWrl_workload_file(workloadFile);
-				
-		//==============================================================================================
-		// Generating FixFile File for HyperGraph Partitioning
-		FixFile fixFile = new FixFile();
-		fixFile.generateFixFile(workload, DIR_LOCATION);
-		workload.setWrl_fixfile(fixFile);
+		// Generating Workload and FixFile for HyperGraph Partitioning			
+		workload.generateWorkloadFile(DIR_LOCATION);
+		workload.generateFixFile(DIR_LOCATION);
 		
 		return workload;
 	}
@@ -119,7 +110,7 @@ public class WorkloadGeneration {
 		double array[] = new double[type];
         double sum = 0.0d;
         double rounding_result = 0.0d;
-        double rounding_correction = 0.0d;
+        //double rounding_correction = 0.0d;
         Random random = new Random();
         
         for (int i = 0; i < type; i++) {
@@ -137,12 +128,12 @@ public class WorkloadGeneration {
         
         if(rounding_result > roundings) {
         	array[type-1] -= (rounding_result - roundings);
-        	rounding_correction -= rounding_result - roundings;
+        	//rounding_correction -= rounding_result - roundings;
         }
         
         if(rounding_result < roundings) {
         	array[type-1] += (roundings - rounding_result);
-        	rounding_correction += roundings - rounding_result;
+        	//rounding_correction += roundings - rounding_result;
         }
         
         //System.out.println("Rounding Correction = "+rounding_correction);

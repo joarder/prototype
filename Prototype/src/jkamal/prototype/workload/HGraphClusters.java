@@ -6,31 +6,34 @@ package jkamal.prototype.workload;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
+
+import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
-import jkamal.prototype.transaction.TransactionDataSet;
 
 public class HGraphClusters {
 	private String part_dir = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";
 	
 	public HGraphClusters() { }
 	
-	public TransactionDataSet readPartFile(Database db, Workload workload) throws IOException {		
-		TransactionDataSet transactionDataSet = workload.getWrl_transactionDataSet();
-		String workload_file = workload.getWrl_workload_file().getWorkload_file();
+	public void readPartFile(Database db, Workload workload) throws IOException {
+		List<Data> trDataSet = workload.getWrl_transactionDataSet();
+		Data data;
 		
-		String hgraph_part_file = workload_file+".part."+db.getDb_partitions().size();						
-		File hgraph_data_input = new File(this.part_dir+"\\"+hgraph_part_file);
+		String wrl_fileName = workload.getWrl_workload_file();		
+		String part_file = wrl_fileName+".part."+db.getDb_partitions().size();						
+		File part = new File(this.part_dir+"\\"+part_file);
 		int data_id = -1;
 		int cluster_id = -1;
 		
-		Scanner scanner = new Scanner(hgraph_data_input);
+		Scanner scanner = new Scanner(part);
 		try {
 			while(scanner.hasNextLine()) {
 				cluster_id = Integer.valueOf(scanner.nextLine());
 				data_id++;
-				
-				transactionDataSet.getTransactionDataSet().get(data_id).setData_hmetis_cluster_id(cluster_id); //* possible bug may resides in here
+				data = trDataSet.get(data_id);
+				data.setData_hmetis_cluster_id(cluster_id); //* possible bug may resides in here
 				
 				/*data = new Data(transactionDataSet.getTransactionDataSet().get(data_id).getData_id(), 
 						Integer.toString(transactionDataSet.getTransactionDataSet().get(data_id).getData_id()), 
@@ -38,12 +41,10 @@ public class HGraphClusters {
 						transactionDataSet.getTransactionDataSet().get(data_id).getData_node_id());
 				
 				data.setData_hmetis_cluster_id(cluster_id);
-				postTransactionDataSet.getTransactionDataSet().add(data);*/
+				postTransactionDataSet.getTransactionDataSet().add(data);*/				
 			}
 		} finally {
 			scanner.close();
-		}
-		
-		return transactionDataSet;
+		}		
 	}
 }

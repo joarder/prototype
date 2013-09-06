@@ -19,6 +19,7 @@
 ===Database Server Details========================
  Database Server: testdbs
  Number of Nodes: 4
+
 ===Node Details========================
  N0 with 3 Partitions. Current Load 30.0%
  N1 with 3 Partitions. Current Load 30.0%
@@ -28,6 +29,7 @@
 ===Database Details========================
  Database: testdb
  Number of Partitions: 10
+
 ===Partition Table Details======================== N0{P0[1000], P4[1000], P8[1000]}
  N1{P1[1000], P5[1000], P9[1000]}
  N2{P2[1000], P6[1000]}
@@ -40,93 +42,89 @@
 >> Generating a database workload with 5 synthetic transactions ...
 
 ===Workload Details========================
- WL-0[5 Transactions of 10 types having a distribution of {1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0}
- TR-0[CDT(1), PS(1), Data(2)]-{d4611[P4|N0], d7706[P7|N3]}
- TR-1[CDT(2), PS(2), Data(3)]-{d2948[P2|N2], d4680[P4|N0], d5872[P5|N1]}
- TR-2[CDT(3), PS(4), Data(6)]-{d3622[P3|N3], d5102[P5|N1], d6067[P6|N2], d8418[P8|N0], d8561[P8|N0], d9946[P9|N1]}
- TR-3[CDT(3), PS(5), Data(9)]-{d4306[P4|N0], d5067[P5|N1], d5559[P5|N1], d5908[P5|N1], d6422[P6|N2], d7757[P7|N3], d8612[P8|N0], d9582[P9|N1], d9837[P9|N1]}
- TR-4[CDT(4), PS(7), Data(11)]-{d631[P0|N0], d1123[P1|N1], d2405[P2|N2], d3748[P3|N3], d4301[P4|N0], d6537[P6|N2], d6577[P6|N2], d6591[P6|N2], d8593[P8|N0], d8794[P8|N0], d9128[P9|N1]}
+ WL-0[5 Transactions of 10 types having a distribution of {1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0}
+ TR-0[CDT(1), PS(1), Data(2)]-{d200[P0|N0], d2645[P2|N2]}
+ TR-1[CDT(2), PS(3), Data(6)]-{d2984[P2|N2], d5420[P5|N1], d5554[P5|N1], d6582[P6|N2], d6883[P6|N2], d8743[P8|N0]}
+ TR-2[CDT(3), PS(4), Data(7)]-{d96[P0|N0], d915[P0|N0], d2108[P2|N2], d2930[P2|N2], d4546[P4|N0], d6914[P6|N2], d9337[P9|N1]}
+ TR-3[CDT(4), PS(6), Data(9)]-{d648[P0|N0], d1532[P1|N1], d1753[P1|N1], d2001[P2|N2], d3954[P3|N3], d4314[P4|N0], d6587[P6|N2], d6821[P6|N2], d7751[P7|N3]}
+ TR-4[CDT(4), PS(5), Data(10)]-{d323[P0|N0], d852[P0|N0], d2283[P2|N2], d4246[P4|N0], d5071[P5|N1], d7351[P7|N3], d7447[P7|N3], d8111[P8|N0], d8150[P8|N0], d8233[P8|N0]}
 
 ===Workload's Data Partitioning Details========================
- P0[1]: {d631[P0|N0]}
- P1[1]: {d1123[P1|N1]}
- P2[2]: {d2948[P2|N2], d2405[P2|N2]}
- P3[2]: {d3622[P3|N3], d3748[P3|N3]}
- P4[4]: {d4611[P4|N0], d4680[P4|N0], d4306[P4|N0], d4301[P4|N0]}
- P5[5]: {d5872[P5|N1], d5102[P5|N1], d5559[P5|N1], d5067[P5|N1], d5908[P5|N1]}
- P6[5]: {d6067[P6|N2], d6422[P6|N2], d6591[P6|N2], d6537[P6|N2], d6577[P6|N2]}
- P7[2]: {d7706[P7|N3], d7757[P7|N3]}
- P8[5]: {d8561[P8|N0], d8418[P8|N0], d8612[P8|N0], d8593[P8|N0], d8794[P8|N0]}
- P9[4]: {d9946[P9|N1], d9582[P9|N1], d9837[P9|N1], d9128[P9|N1]}
-
+ P0[6]: {d200[P0|N0], d96[P0|N0], d915[P0|N0], d648[P0|N0], d852[P0|N0], d323[P0|N0]}
+ P1[2]: {d1753[P1|N1], d1532[P1|N1]}
+ P2[6]: {d2645[P2|N2], d2984[P2|N2], d2930[P2|N2], d2108[P2|N2], d2001[P2|N2], d2283[P2|N2]}
+ P3[1]: {d3954[P3|N3]}
+ P4[3]: {d4546[P4|N0], d4314[P4|N0], d4246[P4|N0]}
+ P5[3]: {d5420[P5|N1], d5554[P5|N1], d5071[P5|N1]}
+ P6[5]: {d6582[P6|N2], d6883[P6|N2], d6914[P6|N2], d6587[P6|N2], d6821[P6|N2]}
+ P7[3]: {d7751[P7|N3], d7351[P7|N3], d7447[P7|N3]}
+ P8[4]: {d8743[P8|N0], d8150[P8|N0], d8111[P8|N0], d8233[P8|N0]}
+ P9[1]: {d9337[P9|N1]}
 
 >> Workload generation complete !!!
-
->> Run HyperGraph Partitioning on the Workload ... 
-
->> Movement Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...
+>> Run HyperGraph Partitioning on the Workload ...
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
 
 X 0 1 2 3 4 5 6 7 8 9 
-0 0 1 0 0 0 0 0 0 0 0 
-1 0 0 1 0 0 0 0 0 0 0 
-2 0 0 0 0 0 1 0 0 1 0 
-3 1 0 0 0 0 1 0 0 0 0 
-4 0 1 0 0 0 1 0 0 1 1 
-5 0 1 0 1 1 0 0 2 0 0 
-6 1 1 1 1 0 0 1 0 0 0 
-7 0 0 0 1 0 0 0 0 0 1 
-8 0 0 1 0 0 0 3 1 0 0 
-9 1 0 0 0 2 0 0 0 1 0 
--#-Col(1) >> C0|P9
--#-Col(2) >> C1|P6
--#-Col(3) >> C2|P8
--#-Col(4) >> C3|P7
--#-Col(5) >> C4|P9
--#-Col(6) >> C5|P4
--#-Col(7) >> C6|P8
--#-Col(8) >> C7|P5
--#-Col(9) >> C8|P9
--#-Col(10) >> C9|P7
+0 0 0 1 0 0 1 1 1 1 1 
+1 0 0 0 2 0 0 0 0 0 0 
+2 1 1 0 0 1 0 1 0 0 2 
+3 0 0 0 0 1 0 0 0 0 0 
+4 0 0 1 0 0 1 0 0 0 1 
+5 2 0 0 0 0 0 0 1 0 0 
+6 0 1 2 0 0 0 0 0 2 0 
+7 0 0 0 0 1 0 0 2 0 0 
+8 1 1 0 0 0 2 0 0 0 0 
+9 0 0 0 0 0 0 0 0 1 0 
 
--#-d631[P0|N0]-@R-d631[P0(P6)|N0]
--#-d1123[P1|N1]-@R-d1123[P1(P8)|N1]
--#-d2405[P2|N2]-@R-d2405[P2(P4)|N2]
--#-d2948[P2|N2]-@R-d2948[P2(P9)|N2]
--#-d3748[P3|N3]-@R-d3748[P3(P9)|N3]
--#-d3622[P3|N3]-@R-d3622[P3(P4)|N3]
--#-d4306[P4|N0]-@R-d4306[P4(P6)|N0]
--#-d4301[P4|N0]
--#-d4680[P4|N0]-@R-d4680[P4(P9)|N0]
--#-d4611[P4|N0]-@R-d4611[P4(P7)|N0]
--#-d5908[P5|N1]-@R-d5908[P5(P6)|N1]
--#-d5872[P5|N1]-@R-d5872[P5(P7)|N1]
--#-d5067[P5|N1]-@R-d5067[P5(P9)|N1]
--#-d5102[P5|N1]
--#-d5559[P5|N1]
--#-d6577[P6|N2]-@R-d6577[P6(P9)|N2]
--#-d6537[P6|N2]
--#-d6591[P6|N2]-@R-d6591[P6(P8)|N2]
--#-d6422[P6|N2]-@R-d6422[P6(P7)|N2]
--#-d6067[P6|N2]-@R-d6067[P6(P8)|N2]
--#-d7757[P7|N3]
--#-d7706[P7|N3]
--#-d8593[P8|N0]
--#-d8561[P8|N0]
--#-d8418[P8|N0]
--#-d8612[P8|N0]
--#-d8794[P8|N0]-@R-d8794[P8(P5)|N0]
--#-d9128[P9|N1]
--#-d9582[P9|N1]
--#-d9837[P9|N1]
--#-d9946[P9|N1]
- Total Data movements required using One-to-One mapping strategy 17
-
+-#-d2645[P2|N2]
+-#-d200[P0|N0]-@R-d200[P0(P2)|N0]
+-#-d6582[P6|N2]
+-#-d8743[P8|N0]-@R-d8743[P8(P5)|N0]
+-#-d6883[P6|N2]-@R-d6883[P6(P8)|N2]
+-#-d2984[P2|N2]-@R-d2984[P2(P5)|N2]
+-#-d5420[P5|N1]
+-#-d5554[P5|N1]
+-#-d6914[P6|N2]
+-#-d2930[P2|N2]
+-#-d9337[P9|N1]-@R-d9337[P9(P6)|N1]
+-#-d96[P0|N0]-@R-d96[P0(P6)|N0]
+-#-d2108[P2|N2]
+-#-d915[P0|N0]-@R-d915[P0(P2)|N0]
+-#-d4546[P4|N0]-@R-d4546[P4(P2)|N0]
+-#-d1753[P1|N1]
+-#-d4314[P4|N0]-@R-d4314[P4(P6)|N0]
+-#-d1532[P1|N1]
+-#-d648[P0|N0]-@R-d648[P0(P6)|N0]
+-#-d7751[P7|N3]
+-#-d2001[P2|N2]-@R-d2001[P2(P7)|N2]
+-#-d3954[P3|N3]-@R-d3954[P3(P7)|N3]
+-#-d6587[P6|N2]
+-#-d6821[P6|N2]
+-#-d7351[P7|N3]
+-#-d4246[P4|N0]-@R-d4246[P4(P8)|N0]
+-#-d5071[P5|N1]-@R-d5071[P5(P7)|N1]
+-#-d7447[P7|N3]
+-#-d8150[P8|N0]
+-#-d8111[P8|N0]
+-#-d8233[P8|N0]
+-#-d852[P0|N0]-@R-d852[P0(P7)|N0]
+-#-d2283[P2|N2]-@R-d2283[P2(P8)|N2]
+-#-d323[P0|N0]-@R-d323[P0(P8)|N0]
+===Workload Details========================
+ TR-0[CDT(1), PS(1), Data(2)]-{d200[P0|N0], d2645[P2|N2]}
+ TR-1[CDT(2), PS(3), Data(6)]-{d2984[P2|N2], d5420[P5|N1], d5554[P5|N1], d6582[P6|N2], d6883[P6|N2], d8743[P8|N0]}
+ TR-2[CDT(3), PS(4), Data(7)]-{d96[P0|N0], d915[P0|N0], d2108[P2|N2], d2930[P2|N2], d4546[P4|N0], d6914[P6|N2], d9337[P9|N1]}
+ TR-3[CDT(4), PS(6), Data(9)]-{d648[P0|N0], d1532[P1|N1], d1753[P1|N1], d2001[P2|N2], d3954[P3|N3], d4314[P4|N0], d6587[P6|N2], d6821[P6|N2], d7751[P7|N3]}
+ TR-4[CDT(4), PS(5), Data(10)]-{d323[P0|N0], d852[P0|N0], d2283[P2|N2], d4246[P4|N0], d5071[P5|N1], d7351[P7|N3], d7447[P7|N3], d8111[P8|N0], d8150[P8|N0], d8233[P8|N0]}
+>> Total 17 Data movements are required using One-to-One mapping strategy.
 >> After data movement using One-to-One strategy ...
 
 ===Workload Details========================
- WL-0[5 Transactions of 10 types having a distribution of {1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0}
- TR-0[CDT(1), PS(1), Data(2)]-{d4611[P4|N0], d7706[P7|N3]}
- TR-1[CDT(2), PS(2), Data(3)]-{d2948[P2|N2], d4680[P4|N0], d5872[P5|N1]}
- TR-2[CDT(3), PS(4), Data(6)]-{d3622[P3|N3], d5102[P5|N1], d6067[P6|N2], d8418[P8|N0], d8561[P8|N0], d9946[P9|N1]}
- TR-3[CDT(3), PS(5), Data(9)]-{d4306[P4|N0], d5067[P5|N1], d5559[P5|N1], d5908[P5|N1], d6422[P6|N2], d7757[P7|N3], d8612[P8|N0], d9582[P9|N1], d9837[P9|N1]}
- TR-4[CDT(4), PS(7), Data(11)]-{d631[P0|N0], d1123[P1|N1], d2405[P2|N2], d3748[P3|N3], d4301[P4|N0], d6537[P6|N2], d6577[P6|N2], d6591[P6|N2], d8593[P8|N0], d8794[P8|N0], d9128[P9|N1]}
+ WL-0[5 Transactions of 10 types having a distribution of {1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0}
+ TR-0[CDT(1), PS(1), Data(2)]-{d200[P0|N0], d2645[P2|N2]}
+ TR-1[CDT(2), PS(3), Data(6)]-{d2984[P2|N2], d5420[P5|N1], d5554[P5|N1], d6582[P6|N2], d6883[P6|N2], d8743[P8|N0]}
+ TR-2[CDT(3), PS(4), Data(7)]-{d96[P0|N0], d915[P0|N0], d2108[P2|N2], d2930[P2|N2], d4546[P4|N0], d6914[P6|N2], d9337[P9|N1]}
+ TR-3[CDT(4), PS(6), Data(9)]-{d648[P0|N0], d1532[P1|N1], d1753[P1|N1], d2001[P2|N2], d3954[P3|N3], d4314[P4|N0], d6587[P6|N2], d6821[P6|N2], d7751[P7|N3]}
+ TR-4[CDT(4), PS(5), Data(10)]-{d323[P0|N0], d852[P0|N0], d2283[P2|N2], d4246[P4|N0], d5071[P5|N1], d7351[P7|N3], d7447[P7|N3], d8111[P8|N0], d8150[P8|N0], d8233[P8|N0]}

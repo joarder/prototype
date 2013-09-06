@@ -12,14 +12,12 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.Map.Entry;
-
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
-import jkamal.prototype.transaction.TransactionDataSet;
 
 public class DataPostPartitionTable {
 	private Map<Integer, ArrayList<Data>> postPartitionTable;
@@ -65,11 +63,11 @@ public class DataPostPartitionTable {
 	
 	public void generatePostPartitionTable(Database db, Workload workload, String DIR_LOCATION) throws IOException {
 		//TransactionDataSet transactionDataSet = readPartFile(db, workload, DIR_LOCATION);
-		TransactionDataSet transactionDataSet = workload.getWrl_transactionDataSet();
+		List<Data> trDataSet = workload.getWrl_transactionDataSet();
 		Data data;
 		ArrayList<Data> dataList;
 		
-		Iterator<Data> iterator = transactionDataSet.getTransactionDataSet().iterator();
+		Iterator<Data> iterator = trDataSet.iterator();
 		while(iterator.hasNext()) {
 			data = iterator.next();			
 			

@@ -4,21 +4,18 @@
 
 package jkamal.prototype.workload;
 
-import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
+
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
-import jkamal.prototype.transaction.TransactionDataSet;
 import jkamal.prototype.util.Matrix;
 import jkamal.prototype.util.MatrixElement;
 
 public class MappingTable {
 	public MappingTable() {}
 	
-	public Matrix generateMappingTable(Database db, Workload workload) throws IOException {
-		HGraphClusters hGraphClusters = new HGraphClusters();
-		TransactionDataSet transactionDataSet = hGraphClusters.readPartFile(db, workload);
-				
+	public Matrix generateMappingTable(Database db, Workload workload) {
 		int M = db.getDb_partitions().size()+1;
 		int N = M; // Having a NxN matrix
 		
@@ -45,18 +42,18 @@ public class MappingTable {
 		
 		int partition_id = -1;
 		int cluster_id = -1;
+		List<Data> trDataSet = workload.getWrl_transactionDataSet();
 		Data data;
 		MatrixElement e;
 		
-		Iterator<Data> iterator = transactionDataSet.getTransactionDataSet().iterator();
+		Iterator<Data> iterator = trDataSet.iterator();
 		while(iterator.hasNext()) {
-			data = iterator.next();						
+			data = iterator.next();
 			partition_id = data.getData_partition_id();
-			cluster_id = data.getData_hmetis_cluster_id();
+			cluster_id = data.getData_hmetis_cluster_id();			
 			
 			e = mapping[partition_id+1][cluster_id+1]; // Need to @debug
 			e.setCounts(e.getCounts()+1);
-			e.addData(data);
 		}		
 		
 		// Create the Movement Matrix

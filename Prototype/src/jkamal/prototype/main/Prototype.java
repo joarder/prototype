@@ -14,11 +14,8 @@ import jkamal.prototype.db.DataMovement;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.io.PrintDatabaseDetails;
-import jkamal.prototype.util.Matrix;
-import jkamal.prototype.workload.DataPostPartitionTable;
 import jkamal.prototype.workload.DataPrePartitionTable;
-import jkamal.prototype.workload.IdeaTable;
-import jkamal.prototype.workload.MappingTable;
+import jkamal.prototype.workload.HGraphClusters;
 import jkamal.prototype.workload.Workload;
 import jkamal.prototype.workload.WorkloadGeneration;
 
@@ -66,7 +63,7 @@ public class Prototype {
 		System.out.print("\n>> Workload generation complete !!!");		
 		
 		//==============================================================================================
-		// Perform workload analysis and use hypergraph partitioning tool (hMetis) to reduce the cost of 
+		// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
 		// distributed transactions as well as maintain the load balance among the data partitions				
 		System.out.print("\n>> Run HyperGraph Partitioning on the Workload ...");
 		// Sleep for 5sec to ensure the files are generated		
@@ -87,51 +84,18 @@ public class Prototype {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}		 
-		
-	//Start Baseline Approach==============================================================================================
-		// Generate Movement Mapping Table Matrix from Original Partition IDs and hMetis Cluster IDs
-		
-		//System.out.print("\n>> Total Data Movements Required (using hMetis Movement Matrix): "+Integer.toString(mappingTable.getMovements())+"\n");
+		}		
 		
 		//==============================================================================================
-		// Perform Data Movement with Idea implementation
+		// Read Part file and assign corresponding Data cluster Id
+		HGraphClusters hGraphClusters = new HGraphClusters();
+		hGraphClusters.readPartFile(db, workload);
+				
+		//==============================================================================================
+		// Perform Data Movement following One(Partition)-to-One(Cluster) and One(Partition)-to-Many(Cluster)
 		DataMovement dataMovement = new DataMovement();
 		dataMovement.OneToOne(db, workload);
-		dataMovement.OneToMany(db, workload);		
-						
-		//dataMovement.move(cloneDb, cloneWorkload);
-		
-		//==============================================================================================
-		// Printing out details after performing Data Movement using hMetis		
-		//System.out.println("\n>> After data movement ...");
-		//cloneWorkload.print(cloneDb);
-		//System.out.println();
+		dataMovement.OneToMany(db, workload);										
 
-		//==============================================================================================
-		// Create Data Post-Partition Table
-		//DataPostPartitionTable postPartitionTable = db.getDb_partition_table().getDataPostPartitionTable();		
-		//postPartitionTable.generatePostPartitionTable(db, workload, DIR_LOCATION);
-		//postPartitionTable.print();
-	//End Baseline Approach==============================================================================================
-		
-		//==============================================================================================
-		// Run our idea !!!
-		/*IdeaTable ideaTable = new IdeaTable();
-		Matrix ideaMatrix = ideaTable.runIdea(mappingMatrix);
-		System.out.print("\n>> Idea Matrix [First Row: Pre-Partition Id, First Col: Post-Partition Id, Elements: Data Occurance Counts] ...\n");
-		ideaMatrix.print();
-		System.out.print("\n>> Total Data Movements Required (using Idea Matrix): "+Integer.toString(ideaTable.getMovements())+"\n");
-		
-		//==============================================================================================
-		// Perform Data Movement with Idea implementation
-		DataMovement idea_DataMovement = new DataMovement();
-		idea_DataMovement.move(db, workload, ideaTable);
-		
-		//==============================================================================================
-		// Printing out details after performing Data Movement using Idea		
-		System.out.println("\n>> After data movement ...");
-		workload.print(db);
-		System.out.println();*/
 	}
 }
