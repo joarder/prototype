@@ -45,7 +45,7 @@ public class PrintDatabaseDetails {
 		System.out.print("\n===Partition Table Details========================");
 		int comma = -1;
 		for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {
-			System.out.print(" N"+entry.getKey()+"{");
+			System.out.print("\n N"+entry.getKey()+"{");
 			
 			comma = entry.getValue().size();
 			for(Partition partition : entry.getValue()) {
@@ -57,7 +57,7 @@ public class PrintDatabaseDetails {
 				--comma;
 			}
 			
-			System.out.print("}\n");			
+			System.out.print("}");			
 		}
 		
 		// Partition Details

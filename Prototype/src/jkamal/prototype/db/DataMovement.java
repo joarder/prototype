@@ -11,10 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import jkamal.prototype.transaction.Transaction;
 import jkamal.prototype.util.Matrix;
 import jkamal.prototype.util.MatrixElement;
 import jkamal.prototype.workload.MappingTable;
+import jkamal.prototype.workload.Transaction;
 import jkamal.prototype.workload.Workload;
 
 public class DataMovement {
@@ -41,40 +41,57 @@ public class DataMovement {
 		}
 		
 		// Perform Actual Data Movement
-		List<Data> trDataSet = cloneWorkload.getWrl_transactionDataSet();	
-		Data trData;				
+		// Stage-1: Within the Workload Data List
+		List<Data> trDataSet = cloneWorkload.getWrl_dataList();	
+		Data wrlData;				
 		Data roaming_data;
 		Partition partition;
 		int dst_partition_id = -1;
 		int movements = 0;		
 		
-		Iterator<Data> iterator = trDataSet.iterator();
-		while(iterator.hasNext()) {
-			trData = iterator.next();
-			dst_partition_id = keyMap.get(trData.getData_hmetis_cluster_id());
-			System.out.print("\n-#-"+trData.toString());			
+		Iterator<Data> data_iterator = trDataSet.iterator();
+		while(data_iterator.hasNext()) {
+			wrlData = data_iterator.next();
+			dst_partition_id = keyMap.get(wrlData.getData_hmetis_cluster_id());
+			//System.out.print("\n-#-"+trData.toString());			
 			
-			if(trData.getData_partition_id() != dst_partition_id) {
-				trData.setData_roaming_partition_id(dst_partition_id);
-				trData.setData_isRoaming(true);												
+			if(wrlData.getData_partition_id() != dst_partition_id && !wrlData.isData_isRoaming()) {
+				wrlData.setData_roaming_partition_id(dst_partition_id);
+				wrlData.setData_isRoaming(true);												
 			
-				roaming_data = new Data(trData); // Cloning the Data
-				System.out.print("-@R-"+trData.toString());
+				roaming_data = new Data(wrlData); // Cloning the Data
+				//System.out.print("-@R-"+trData.toString());
+				
+				// Only perform once for both Stage-1 and 2
 				partition = cloneDb.getDb_partition_table().getPartition(dst_partition_id);
 				partition.getPartition_data_items().add(roaming_data);
 				++movements;
 			}
-		}	
-		
-		System.out.print("\n===Workload Details========================");						
-		for(Transaction transaction : cloneWorkload.getWrl_transactionList()) {
-			//transaction.generateTransactionCost(db);
-			transaction.print();			
 		}
 		
-		// Recalculate the Costs of Distributed Transactions (CDT)
-		for(Transaction transaction : cloneWorkload.getWrl_transactionList())
+		// Stage-2: Within the individual Transaction Data Set (Only due to cloned Workload, otherwise NOT required)
+		List<Transaction> transactionList = cloneWorkload.getWrl_transactionList();
+		Transaction transaction;
+		Data trData;
+		
+		Iterator<Transaction> tr_iterator = transactionList.iterator();
+		while(tr_iterator.hasNext()) {
+			transaction = tr_iterator.next();
+			Iterator<Data> tr_data_iterator = transaction.getTr_dataSet().iterator();
+			while(tr_data_iterator.hasNext()) {
+				trData = tr_data_iterator.next();
+				dst_partition_id = keyMap.get(trData.getData_hmetis_cluster_id());
+				
+				if(trData.getData_partition_id() != dst_partition_id && !trData.isData_isRoaming()) {
+					trData.setData_roaming_partition_id(dst_partition_id);
+					trData.setData_isRoaming(true);
+				}
+			}
 			transaction.generateTransactionCost(cloneDb);
+		}
+		
+		cloneWorkload.generateDataPartitionTable();
+		cloneWorkload.generateDataNodeTable();
 		
 		System.out.print("\n>> Total "+movements+" Data movements are required using One-to-One mapping strategy.");
 		

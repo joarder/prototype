@@ -4,7 +4,7 @@
 
 package jkamal.prototype.io;
 
-import jkamal.prototype.transaction.Transaction;
+import jkamal.prototype.workload.Transaction;
 import jkamal.prototype.workload.Workload;
 
 public class PrintWorkloadDetails {
@@ -29,7 +29,7 @@ public class PrintWorkloadDetails {
 						
 			for(int j = 0; j < workload.getWrl_transactionProp()[i]; j++) {
 				Transaction tr = workload.getWrl_transactionList().get(j);
-				//tr.print();				
+				tr.print();				
 			}			
 			
 			System.out.println();

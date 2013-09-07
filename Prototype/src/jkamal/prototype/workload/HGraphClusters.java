@@ -18,7 +18,7 @@ public class HGraphClusters {
 	public HGraphClusters() { }
 	
 	public void readPartFile(Database db, Workload workload) throws IOException {
-		List<Data> trDataSet = workload.getWrl_transactionDataSet();
+		List<Data> trDataSet = workload.getWrl_dataList();
 		Data data;
 		
 		String wrl_fileName = workload.getWrl_workload_file();		

@@ -12,7 +12,6 @@ import java.util.TreeSet;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.GlobalDataMap;
-import jkamal.prototype.transaction.Transaction;
 
 public class WorkloadGeneration {	
 	private List<Workload> workloadList;
@@ -49,11 +48,9 @@ public class WorkloadGeneration {
 
 		// Retrieving corresponding GlobalDataMap and TransactionDataSet
 		GlobalDataMap dataMap = db.getDb_dataMap();
-		List<Data> trDataSet = workload.getWrl_transactionDataSet();
-
-		// Creating required reference variables
+		List<Data> wrlDataList = workload.getWrl_dataList();
 		Transaction transaction;		
-		Set<Data> dataSet;
+		Set<Data> trDataSet;
 		Data data;
 		
 		// Creating required local variables
@@ -68,7 +65,7 @@ public class WorkloadGeneration {
 		for(int i = 0; i < wrl_type; i++) {			
 			// j -- a specific Transaction type in the Transaction proportion array
 			for(int j = 0; j < (int)workload.getWrl_transactionProp()[i]; j++) {				
-				dataSet = new TreeSet<Data>();
+				trDataSet = new TreeSet<Data>();
 				// k -- required numbers of Data items based on Transaction type
 				for(int k = 0; k < i+2; k++) {
 					data_id = random.nextInt(dataMap.getData_items().size());								
@@ -82,11 +79,11 @@ public class WorkloadGeneration {
 						data.setData_hasShadowHMetisId(true);
 					}
 					
-					dataSet.add(data);										
 					trDataSet.add(data);
+					wrlDataList.add(data);
 				}
 				
-				transaction = new Transaction(++tr_id, dataSet);
+				transaction = new Transaction(++tr_id, trDataSet);
 				transaction.generateTransactionCost(db);
 				workload.getWrl_transactionList().add(transaction);
 			}
@@ -95,6 +92,10 @@ public class WorkloadGeneration {
 		// Generating Workload and FixFile for HyperGraph Partitioning			
 		workload.generateWorkloadFile(DIR_LOCATION);
 		workload.generateFixFile(DIR_LOCATION);
+		
+		//
+		workload.generateDataPartitionTable();
+		workload.generateDataNodeTable();
 		
 		return workload;
 	}

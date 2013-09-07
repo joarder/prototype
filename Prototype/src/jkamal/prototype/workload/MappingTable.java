@@ -42,7 +42,7 @@ public class MappingTable {
 		
 		int partition_id = -1;
 		int cluster_id = -1;
-		List<Data> trDataSet = workload.getWrl_transactionDataSet();
+		List<Data> trDataSet = workload.getWrl_dataList();
 		Data data;
 		MatrixElement e;
 		

@@ -20,7 +20,6 @@ public class Data implements Comparable<Data> {
 	
 	private int data_node_id;
 	private int data_weight;
-	private String data_current_trId;
 	
 	private int data_shadow_hmetis_id;
 	private boolean data_hasShadowHMetisId;
@@ -40,8 +39,7 @@ public class Data implements Comparable<Data> {
 		this.setData_isRoaming(false);
 		
 		this.setData_node_id(nid);
-		this.setData_weight(0);
-		this.setData_current_trId("");
+		this.setData_weight(0);		
 		
 		this.setData_shadow_hmetis_id(-1);
 		this.setData_hasShadowHMetisId(false);
@@ -64,7 +62,6 @@ public class Data implements Comparable<Data> {
 		
 		this.data_node_id = data.getData_node_id();
 		this.data_weight = data.getData_weight();
-		this.data_current_trId = data.getData_current_trId();
 		
 		this.data_shadow_hmetis_id = data.getData_shadow_hmetis_id();
 		this.data_hasShadowHMetisId = data.isData_hasShadowHMetisId();		
@@ -148,14 +145,6 @@ public class Data implements Comparable<Data> {
 
 	public void setData_weight(int data_weight) {
 		this.data_weight = data_weight;
-	}
-
-	public String getData_current_trId() {
-		return data_current_trId;
-	}
-
-	public void setData_current_trId(String data_current_trId) {
-		this.data_current_trId = data_current_trId;
 	}
 
 	public int getData_shadow_hmetis_id() {

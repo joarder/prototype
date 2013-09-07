@@ -11,18 +11,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
-import jkamal.prototype.workload.DataPostPartitionTable;
-import jkamal.prototype.workload.DataPrePartitionTable;
 
 public class PartitionTable {
 	private Map<Integer, Set<Partition>> partition_table;
-	private DataPrePartitionTable dataPrePartitionTable;
-	private DataPostPartitionTable dataPostPartitionTable;
 	
 	public PartitionTable() {
 		this.setPartition_table(new TreeMap<Integer, Set<Partition>>());
-		this.setDataPrePartitionTable(new DataPrePartitionTable());
-		this.setDataPostPartitionTable(new DataPostPartitionTable());
 	}
 	
 	// Copy Constructor
@@ -40,10 +34,6 @@ public class PartitionTable {
 			clonePartitionTable.put(entry.getKey(), clonePartitionSet);
 		}
 		this.setPartition_table(clonePartitionTable);
-		
-		// Cloning Pre/Post-Partition Table
-		this.dataPrePartitionTable = new DataPrePartitionTable(partitionTable.getDataPrePartitionTable());
-		this.dataPostPartitionTable = new DataPostPartitionTable(partitionTable.getDataPostPartitionTable());
 	}
 
 	public Map<Integer, Set<Partition>> getPartition_table() {
@@ -52,22 +42,6 @@ public class PartitionTable {
 
 	public void setPartition_table(Map<Integer, Set<Partition>> partition_table) {
 		this.partition_table = partition_table;
-	}
-	
-	public DataPrePartitionTable getDataPrePartitionTable() {
-		return dataPrePartitionTable;
-	}
-
-	public void setDataPrePartitionTable(DataPrePartitionTable prePartitionTable) {
-		this.dataPrePartitionTable = prePartitionTable;
-	}
-
-	public DataPostPartitionTable getDataPostPartitionTable() {
-		return dataPostPartitionTable;
-	}
-
-	public void setDataPostPartitionTable(DataPostPartitionTable postPartitionTable) {
-		this.dataPostPartitionTable = postPartitionTable;
 	}
 
 	// Returns the Partition for the looked-up Partition Id. If the Partition is Not Found then returns NULL

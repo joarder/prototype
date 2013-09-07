@@ -14,7 +14,6 @@ import jkamal.prototype.db.DataMovement;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.io.PrintDatabaseDetails;
-import jkamal.prototype.workload.DataPrePartitionTable;
 import jkamal.prototype.workload.HGraphClusters;
 import jkamal.prototype.workload.Workload;
 import jkamal.prototype.workload.WorkloadGeneration;
@@ -52,14 +51,7 @@ public class Prototype {
 		System.out.print("\n>> Generating a database workload with "+ TRANSACTION_NUMS +" synthetic transactions ...\n");
 		WorkloadGeneration workloadGen = new WorkloadGeneration();
 		Workload workload = workloadGen.generateWorkload(db, "AuctionMark", TRANSACTION_NUMS, DIR_LOCATION);		
-		workload.print(db);
-		
-		//==============================================================================================
-		// Create Data Pre-Partition Table for the Workload
-		DataPrePartitionTable prePartitionTable = db.getDb_partition_table().getDataPrePartitionTable();
-		prePartitionTable.generatePrePartitionTable(db, workload, DIR_LOCATION);
-		prePartitionTable.print();
-		
+		workload.print(db);		
 		System.out.print("\n>> Workload generation complete !!!");		
 		
 		//==============================================================================================

@@ -2,7 +2,7 @@
  * @author Joarder Kamal
  */
 
-package jkamal.prototype.transaction;
+package jkamal.prototype.workload;
 
 import java.util.Iterator;
 import java.util.Set;
