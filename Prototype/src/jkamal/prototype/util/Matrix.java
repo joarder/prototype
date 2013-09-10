@@ -213,6 +213,7 @@ final public class Matrix {
     // print matrix to standard output
     public void print() {
         for (int i = 0; i < M; i++) {
+        	System.out.print("\t");
             for (int j = 0; j < N; j++) {
             	if(matrix[i][j].getCounts() != -1)
             		System.out.print(Math.round(matrix[i][j].getCounts())+" ");
@@ -230,7 +231,8 @@ final public class Matrix {
     	
         for (int row = pos; row < this.getM(); row++) {
             for (int col = pos; col < this.getN(); col++) {
-            	if(max_counts < matrix[row][col].getCounts()) {
+            	//System.out.println("-#-r"+row+"c"+col);
+            	if(max_counts <= matrix[row][col].getCounts()) {
             		max_counts = matrix[row][col].getCounts();
             		e = matrix[row][col];
             	}

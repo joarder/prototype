@@ -43,8 +43,8 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_dataList(new ArrayList<Data>());
 		this.setWrl_workload_file("workload.txt");
 		this.setWrl_fixfile("fixfile.txt");
-		this.setWrl_dataPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
-		this.setWrl_dataNodeTable(new TreeMap<Integer, ArrayList<Data>>());
+		//this.setWrl_dataPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
+		//this.setWrl_dataNodeTable(new TreeMap<Integer, ArrayList<Data>>());
 	}
 	
 	// Copy Constructor (Need to handle the Custom Type variables !!)
@@ -77,8 +77,8 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_workload_file = workload.getWrl_workload_file();
 		this.wrl_fixfile = workload.getWrl_fixfile();
 		
-		this.setWrl_dataPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
-		this.setWrl_dataNodeTable(new TreeMap<Integer, ArrayList<Data>>());
+		//this.setWrl_dataPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
+		//this.setWrl_dataNodeTable(new TreeMap<Integer, ArrayList<Data>>());
 	}
 
 	public int getWrl_id() {
@@ -256,6 +256,7 @@ public class Workload implements Comparable<Workload> {
 
 	// Generates Workload Data Partition Table
 	public void generateDataPartitionTable() {
+		this.setWrl_dataPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
 		List<Data> trDataList = this.getWrl_dataList();
 		Data data;
 		ArrayList<Data> dataList;
@@ -264,18 +265,29 @@ public class Workload implements Comparable<Workload> {
 		while(iterator.hasNext()) {
 			data = iterator.next();			
 			
-			if(this.getDataPartitionTable().containsKey(data.getData_partition_id())) {
-				this.getDataPartitionTable().get(data.getData_partition_id()).add(data);
+			if(!data.isData_isPartitionRoaming()) {			
+				if(this.getDataPartitionTable().containsKey(data.getData_partition_id())) {
+					this.getDataPartitionTable().get(data.getData_partition_id()).add(data);
+				} else {
+					dataList = new ArrayList<Data>();
+					dataList.add(data);
+					this.getDataPartitionTable().put(data.getData_partition_id(), dataList);
+				}
 			} else {
-				dataList = new ArrayList<Data>();
-				dataList.add(data);
-				this.getDataPartitionTable().put(data.getData_partition_id(), dataList);
+				if(this.getDataPartitionTable().containsKey(data.getData_roaming_partition_id())) {
+					this.getDataPartitionTable().get(data.getData_roaming_partition_id()).add(data);
+				} else {
+					dataList = new ArrayList<Data>();
+					dataList.add(data);
+					this.getDataPartitionTable().put(data.getData_roaming_partition_id(), dataList);
+				}
 			}
 		}			
 	}
 	
 	// Generates Workload Data Partition Table
 	public void generateDataNodeTable() {
+		this.setWrl_dataNodeTable(new TreeMap<Integer, ArrayList<Data>>());
 		List<Data> trDataList = this.getWrl_dataList();
 		Data data;
 		ArrayList<Data> dataList;
@@ -284,12 +296,22 @@ public class Workload implements Comparable<Workload> {
 		while(iterator.hasNext()) {
 			data = iterator.next();			
 			
-			if(this.getDataNodeTable().containsKey(data.getData_node_id())) {
-				this.getDataNodeTable().get(data.getData_node_id()).add(data);
+			if(!data.isData_isNodeRoaming()) {
+				if(this.getDataNodeTable().containsKey(data.getData_node_id())) {
+					this.getDataNodeTable().get(data.getData_node_id()).add(data);
+				} else {
+					dataList = new ArrayList<Data>();
+					dataList.add(data);
+					this.getDataNodeTable().put(data.getData_node_id(), dataList);
+				}
 			} else {
-				dataList = new ArrayList<Data>();
-				dataList.add(data);
-				this.getDataNodeTable().put(data.getData_node_id(), dataList);
+				if(this.getDataNodeTable().containsKey(data.getData_roaming_node_id())) {
+					this.getDataNodeTable().get(data.getData_roaming_node_id()).add(data);
+				} else {
+					dataList = new ArrayList<Data>();
+					dataList.add(data);
+					this.getDataNodeTable().put(data.getData_roaming_node_id(), dataList);
+				}
 			}
 		}			
 	}
@@ -322,7 +344,7 @@ public class Workload implements Comparable<Workload> {
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
 				System.out.print(data.toString());
-				if(data.isData_isRoaming())
+				if(data.isData_isPartitionRoaming())
 					++roaming_data;
 				
 				if(comma != 1)
@@ -349,7 +371,7 @@ public class Workload implements Comparable<Workload> {
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
 				System.out.print(data.toString());
-				if(data.isData_isRoaming())
+				if(data.isData_isPartitionRoaming())
 					++roaming_data;
 				
 				if(comma != 1)
@@ -367,8 +389,10 @@ public class Workload implements Comparable<Workload> {
 		System.out.print("\n "+this.toString()+" having a distribution of ");				
 		this.printWrl_transactionProp();
 		
-		for(Transaction transaction : this.getWrl_transactionList())
-			transaction.print();			
+		for(Transaction transaction : this.getWrl_transactionList()) {
+			transaction.generateTransactionCost(db);
+			transaction.print();
+		}						
 		
 		this.printDataPartitionTable();
 		this.printDataNodeTable();

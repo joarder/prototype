@@ -93,7 +93,7 @@ public class WorkloadGeneration {
 		workload.generateWorkloadFile(DIR_LOCATION);
 		workload.generateFixFile(DIR_LOCATION);
 		
-		//
+		// Generating Workload's Data Partition and Node Distribution Details
 		workload.generateDataPartitionTable();
 		workload.generateDataNodeTable();
 		

@@ -12,7 +12,8 @@ public class Partition  implements Comparable<Partition> {
 	private String partition_label;
 	private int partition_capacity;
 	private int partition_node_id;	
-	private List<Data> partition_data_items;	
+	private List<Data> partition_data_items;
+	private List<Data> roaming_data_items;
 	private static int MAX_DATA_ITEMS;
 	
 	public Partition(int pid, String label, int nid) {
@@ -21,6 +22,7 @@ public class Partition  implements Comparable<Partition> {
 		this.setPartition_capacity(0); // Initially no data items present in a partition. Current partition capacity will be determined by the number of data items it is holding.
 		this.setPartition_node_id(nid);
 		this.setPartition_data_items(new ArrayList<Data>());
+		this.setRoaming_data_items(new ArrayList<Data>());
 		Partition.setMAX_DATA_ITEMS(1000); // 1GB Data (in Size) Or, equivalently 1000 Data Items can be stored in a single partition.
 	}	
 
@@ -38,6 +40,14 @@ public class Partition  implements Comparable<Partition> {
 			clonePartitionDataItems.add(cloneData);
 		}
 		this.partition_data_items = clonePartitionDataItems;
+		
+		List<Data> cloneRoamingDataItems = new ArrayList<Data>();
+		Data cloneRoamingData;
+		for(Data data : partition.getRoaming_data_items()) {
+			cloneRoamingData = new Data(data);
+			cloneRoamingDataItems.add(cloneRoamingData);
+		}
+		this.roaming_data_items = cloneRoamingDataItems;
 		
 		Partition.MAX_DATA_ITEMS = Partition.getMAX_DATA_ITEMS();
 	}
@@ -82,6 +92,14 @@ public class Partition  implements Comparable<Partition> {
 		this.partition_data_items = partition_data_items;
 	}
 
+	public List<Data> getRoaming_data_items() {
+		return roaming_data_items;
+	}
+
+	public void setRoaming_data_items(List<Data> roaming_data_items) {
+		this.roaming_data_items = roaming_data_items;
+	}
+
 	public static int getMAX_DATA_ITEMS() {
 		return MAX_DATA_ITEMS;
 	}
@@ -92,7 +110,7 @@ public class Partition  implements Comparable<Partition> {
 
 	@Override
 	public String toString() {
-		return (this.partition_label+"["+this.partition_data_items.size()+"]");
+		return (this.partition_label+"["+this.partition_data_items.size()+"|R*"+this.roaming_data_items.size()+"]");
 	}
 
 	@Override

@@ -23,7 +23,7 @@ public class Prototype {
 	private static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
 	private static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	private static String HMETIS = "hmetis";
-	private static int TRANSACTION_NUMS = 5;
+	private static int TRANSACTION_NUMS = 30;
 	
 	public static void main(String[] args) throws IOException {
 		
@@ -51,13 +51,14 @@ public class Prototype {
 		System.out.print("\n>> Generating a database workload with "+ TRANSACTION_NUMS +" synthetic transactions ...\n");
 		WorkloadGeneration workloadGen = new WorkloadGeneration();
 		Workload workload = workloadGen.generateWorkload(db, "AuctionMark", TRANSACTION_NUMS, DIR_LOCATION);		
-		workload.print(db);		
-		System.out.print("\n>> Workload generation complete !!!");		
+		workload.print(db);
+		System.out.println();
+		System.out.println(">> Workload generation complete !!!");		
 		
 		//==============================================================================================
 		// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
 		// distributed transactions as well as maintain the load balance among the data partitions				
-		System.out.print("\n>> Run HyperGraph Partitioning on the Workload ...");
+		System.out.println(">> Run HyperGraph Partitioning on the Workload ...");
 		// Sleep for 5sec to ensure the files are generated		
 		try {
 			Thread.sleep(5000);
@@ -84,10 +85,13 @@ public class Prototype {
 		hGraphClusters.readPartFile(db, workload);
 				
 		//==============================================================================================
-		// Perform Data Movement following One(Partition)-to-One(Cluster) and One(Partition)-to-Many(Cluster)
+		// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
 		DataMovement dataMovement = new DataMovement();
-		dataMovement.OneToOne(db, workload);
-		dataMovement.OneToMany(db, workload);										
+		System.out.println(">> Strategy-1 :: One(Cluster)-to-One(Partition)");
+		dataMovement.strategy1(db, workload);
+		System.out.println();
+		System.out.println(">> Strategy-2 :: One(Cluster)-to-One(Unique Partition)");
+		dataMovement.strategy2(db, workload);										
 
 	}
 }

@@ -117,7 +117,7 @@ public class Transaction implements Comparable<Transaction> {
 		Iterator<Data> ns = dataSet.iterator();
 		while(ns.hasNext()) {
 			data = ns.next();
-			if(data.isData_isRoaming())
+			if(data.isData_isPartitionRoaming())
 				pid = data.getData_roaming_partition_id();				
 			else 
 				pid = data.getData_partition_id();
@@ -135,7 +135,7 @@ public class Transaction implements Comparable<Transaction> {
 		Iterator<Data> ps = dataSet.iterator();
 		while(ps.hasNext()) {
 			data = ps.next();
-			if(data.isData_isRoaming())
+			if(data.isData_isPartitionRoaming())
 				pid = data.getData_roaming_partition_id();
 			else 
 				pid = data.getData_partition_id();				
