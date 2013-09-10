@@ -23,7 +23,7 @@ public class Prototype {
 	private static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
 	private static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	private static String HMETIS = "hmetis";
-	private static int TRANSACTION_NUMS = 30;
+	private static int TRANSACTION_NUMS = 20;
 	
 	public static void main(String[] args) throws IOException {
 		

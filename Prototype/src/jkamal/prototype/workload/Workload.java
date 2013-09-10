@@ -189,7 +189,7 @@ public class Workload implements Comparable<Workload> {
 				Iterator<Transaction> itr_tr = this.getWrl_transactionList().iterator();
 				while(itr_tr.hasNext()) {
 					transaction = itr_tr.next();
-					writer.write(transaction.getTr_weight()+" "+String.valueOf(transaction.getTr_id()+1)+" ");
+					writer.write(transaction.getTr_weight()+" ");
 						
 						Iterator<Data> itr_data =  transaction.getTr_dataSet().iterator();
 						while(itr_data.hasNext()) {
@@ -197,10 +197,22 @@ public class Workload implements Comparable<Workload> {
 							
 							if(itr_data.hasNext())
 								writer.write(" "); 
-						} // end -- while() loop
-						
+						} // end -- while() loop						
 						writer.write("\n");
 				} // end -- while() loop
+				
+				// Adding a single HyperEdge for each Node containing Data items within the Workload
+				for(Entry<Integer, ArrayList<Data>> entry : this.getDataNodeTable().entrySet()) {
+					writer.write("1"+" "+String.valueOf(entry.getKey())+" "); // 1 = Node HyperEdge Weight will be always equals to 1
+					Iterator<Data> itr_node = entry.getValue().iterator();
+					while(itr_node.hasNext()) {
+						writer.write(Integer.toString(itr_node.next().getData_shadow_hmetis_id()));
+						
+						if(itr_node.hasNext())
+							writer.write(" ");
+					} // end -- while() loop
+					writer.write("\n");
+				} // end -- for() loop
 				
 				// Writing Data weight.
 				Iterator<Data> iterator = dataSet.iterator();
@@ -285,7 +297,7 @@ public class Workload implements Comparable<Workload> {
 		}			
 	}
 	
-	// Generates Workload Data Partition Table
+	// Generates Workload Data Node Table
 	public void generateDataNodeTable() {
 		this.setWrl_dataNodeTable(new TreeMap<Integer, ArrayList<Data>>());
 		List<Data> trDataList = this.getWrl_dataList();
@@ -353,7 +365,7 @@ public class Workload implements Comparable<Workload> {
 				--comma;						
 			} // end -- for() loop
 			
-			System.out.print("} >> Roaming["+roaming_data+"]\n");
+			System.out.print("} || Roaming["+roaming_data+"]\n");
 		} // end -- for() loop		
 	}
 	
@@ -371,7 +383,7 @@ public class Workload implements Comparable<Workload> {
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
 				System.out.print(data.toString());
-				if(data.isData_isPartitionRoaming())
+				if(data.isData_isNodeRoaming())
 					++roaming_data;
 				
 				if(comma != 1)
@@ -380,7 +392,7 @@ public class Workload implements Comparable<Workload> {
 				--comma;						
 			} // end -- for() loop
 			
-			System.out.print("} >> Roaming["+roaming_data+"]\n");
+			System.out.print("} || Roaming["+roaming_data+"]\n");
 		} // end -- for() loop		
 	}
 	

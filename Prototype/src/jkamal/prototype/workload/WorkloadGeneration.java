@@ -89,13 +89,13 @@ public class WorkloadGeneration {
 			}
 		}		
 
-		// Generating Workload and FixFile for HyperGraph Partitioning			
-		workload.generateWorkloadFile(DIR_LOCATION);
-		workload.generateFixFile(DIR_LOCATION);
-		
 		// Generating Workload's Data Partition and Node Distribution Details
 		workload.generateDataPartitionTable();
 		workload.generateDataNodeTable();
+		
+		// Generating Workload and FixFile for HyperGraph Partitioning			
+		workload.generateWorkloadFile(DIR_LOCATION);
+		workload.generateFixFile(DIR_LOCATION);		
 		
 		return workload;
 	}
