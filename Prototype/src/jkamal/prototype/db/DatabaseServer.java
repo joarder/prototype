@@ -6,30 +6,24 @@
 
 package jkamal.prototype.db;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class DatabaseServer {
 	private int dbs_id;
 	private String dbs_name;
-	private int dbs_node_numbers;
-	private List<Node> dbs_nodes;
+	private Set<Node> dbs_nodes;
 	private Set<Database> dbs_tenants;
-	Node db_node;
 	
 	public DatabaseServer(int id, String name, int nodes) {
 		this.setDbs_id(id);
-		this.setDbs_name(name);
-		this.setDbs_node_numbers(nodes);				
-		this.setDbs_nodes(new ArrayList<Node>());		
+		this.setDbs_name(name);				
+		this.setDbs_nodes(new TreeSet<Node>());		
 		this.setDbs_tenants(new TreeSet<Database>());
 		
-		for(int i=0; i<nodes; i++) {
-			db_node = new Node(i, i);
-			this.getDbs_nodes().add(db_node);			
-		}
+		for(int i = 0; i < nodes; i++)			
+			this.getDbs_nodes().add(new Node(i, i));
 	}
 
 	public int getDbs_id() {
@@ -48,20 +42,24 @@ public class DatabaseServer {
 		this.dbs_name = dbs_name;
 	}
 
-	public int getDbs_node_numbers() {
-		return dbs_node_numbers;
-	}
-
-	public void setDbs_node_numbers(int dbs_node_numbers) {
-		this.dbs_node_numbers = dbs_node_numbers;
-	}
-
-	public List<Node> getDbs_nodes() {
+	public Set<Node> getDbs_nodes() {
 		return dbs_nodes;
 	}
 
-	public void setDbs_nodes(List<Node> dbs_nodes) {
+	public void setDbs_nodes(Set<Node> dbs_nodes) {
 		this.dbs_nodes = dbs_nodes;
+	}
+	
+	public Node getDbs_node(int id) {
+		Node node;
+		Iterator<Node> iterator = this.getDbs_nodes().iterator();
+		while(iterator.hasNext()) {
+			node = iterator.next();
+			if(node.getNode_id() == id)
+				return node;
+		}
+		
+		return null;
 	}
 
 	public Set<Database> getDbs_tenants() {

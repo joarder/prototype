@@ -9,19 +9,17 @@ package jkamal.prototype.db;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Node {		
+public class Node implements Comparable<Node> {		
 	private int node_id;
-	private String node_label;
-	private int node_capacity;			
-	private static int NODE_MAX_CAPACITY;
+	private String node_label;				
 	private Set<Partition> node_partitions;
+	private static int NODE_MAX_CAPACITY;
 	
 	public Node(int id, int label) {
 		this.setNode_id(id);
-		this.setNode_label("N"+label);
-		this.setNode_capacity(0); // Initially no partitions present in a node. Current node capacity will be determined by the number of partitions it is holding.		
-		Node.setNODE_MAX_CAPACITY(10); // 10GB -- // 1TB Data (in Size) Or, equivalently 1000 Partitions can be stored in a single node.
+		this.setNode_label("N"+label);		
 		this.setNode_partitions(new TreeSet<Partition>());
+		Node.setNODE_MAX_CAPACITY(10); // 10GB -- 10 Partitions // 1TB Data (in Size) Or, equivalently 1000 Partitions can be stored in a single node.		
 	}
 
 	public int getNode_id() {
@@ -40,14 +38,6 @@ public class Node {
 		this.node_label = node_label;
 	}
 
-	public int getNode_capacity() {
-		return node_capacity;
-	}
-
-	public void setNode_capacity(int node_capacity) {
-		this.node_capacity = node_capacity;
-	}
-
 	public static long getNODE_MAX_CAPACITY() {
 		return NODE_MAX_CAPACITY;
 	}
@@ -62,5 +52,11 @@ public class Node {
 
 	public void setNode_partitions(Set<Partition> node_partitions) {
 		this.node_partitions = node_partitions;
-	}	
+	}
+	
+	@Override
+	public int compareTo(Node node) {		
+		int compare = ((int)this.node_id < (int)node.node_id) ? -1: ((int)this.node_id > (int)node.node_id) ? 1:0;
+		return compare;
+	}
 }

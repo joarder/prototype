@@ -21,7 +21,7 @@ public class PrintDatabaseDetails {
 		// DBS Details
 		System.out.print("\n===Database Server Details========================");
 		System.out.print("\n Database Server: "+dbs.getDbs_name());
-		System.out.print("\n Number of Nodes: "+dbs.getDbs_node_numbers());
+		System.out.print("\n Number of Nodes: "+dbs.getDbs_nodes().size());
 		
 		// Node Details
 		System.out.println();
@@ -29,9 +29,9 @@ public class PrintDatabaseDetails {
 		for(Node node : dbs.getDbs_nodes()) {						
 			System.out.print("\n "+node.getNode_label()
 			+" with "
-			+node.getNode_capacity()+" Partitions."
+			+node.getNode_partitions().size()+" Partitions."
 			+" Current Load "
-			+((double)node.getNode_capacity()/(double)Node.getNODE_MAX_CAPACITY())*100+"%");			
+			+((double)node.getNode_partitions().size()/(double)Node.getNODE_MAX_CAPACITY())*100+"%");			
 		}
 		System.out.print("\n");
 		

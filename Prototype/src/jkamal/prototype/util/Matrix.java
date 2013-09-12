@@ -216,9 +216,9 @@ final public class Matrix {
         	System.out.print("\t");
             for (int j = 0; j < N; j++) {
             	if(matrix[i][j].getCounts() != -1)
-            		System.out.print(Math.round(matrix[i][j].getCounts())+" ");
+            		System.out.print(Math.round(matrix[i][j].getCounts())+"\t");
             	else            	
-            		System.out.print("X ");
+            		System.out.print("X\t");
             }
             System.out.println();
         }

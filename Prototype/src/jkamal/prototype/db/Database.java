@@ -126,8 +126,12 @@ public class Database {
 		
 	}
 	
-	public void search() {
+	// Returns the Node Id where the actual Data item resides. -1 means data NOT Found.
+	public int search(Data data) {
+		int node_id = -1;
 		
+		
+		return node_id;
 	}
 	
 	public void delete() {

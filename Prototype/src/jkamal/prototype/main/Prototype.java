@@ -19,24 +19,26 @@ import jkamal.prototype.workload.Workload;
 import jkamal.prototype.workload.WorkloadGeneration;
 
 public class Prototype {	
-	private static int DB_SERVERS = 4;
-	private static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
-	private static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
-	private static String HMETIS = "hmetis";
-	private static int TRANSACTION_NUMS = 20;
+	public final static int DB_SERVERS = 4;
+	public final static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
+	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
+	public final static String HMETIS = "hmetis";
+	public final static int TRANSACTION_NUMS = 20;
 	
 	public static void main(String[] args) throws IOException {
 		
 		// Database Server and Tenant Database Creation
 		DatabaseServer dbs = new DatabaseServer(0, "testdbs", DB_SERVERS);
-		System.out.println(">> Creating Database Server #"+dbs.getDbs_name()+"# with "+dbs.getDbs_node_numbers()+" Nodes ...");
+		System.out.println(">> Creating Database Server #"+dbs.getDbs_name()+"# with "+dbs.getDbs_nodes().size()+" Nodes ...");
 		
 		// Database creation for tenant id-"0" with Range partitioning model
 		Database db = new Database(0, "testdb", 0, "Range");
 		System.out.println(">> Creating Database #"+db.getDb_name()+"# within "+dbs.getDbs_name()+" Database Server ...");		
 		
 		// Perform Bootstrapping through synthetic Data generation and placing it into appropriate Partition
-		// following partitioning schemes like Range, Salting, Hashing and Consistent Hashing partitioning		
+		// following partitioning schemes like Range, Salting, Hashing and Consistent Hashing partitioning
+		System.out.println(">> Started Bootstrapping Process ...");
+		System.out.println(">> Generating "+ DATA_OBJECTS +" synthetic data items ...");
 		Bootstrapping bootstrapping = new Bootstrapping();
 		bootstrapping.bootstrapping(dbs, db, DATA_OBJECTS);
 		
@@ -93,5 +95,6 @@ public class Prototype {
 		System.out.println(">> Strategy-2 :: One(Cluster)-to-One(Unique Partition)");
 		dataMovement.strategy2(db, workload);										
 
+		dbDetails.printDetails(dbs, db);
 	}
 }

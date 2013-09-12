@@ -9,68 +9,68 @@ package jkamal.prototype.db;
 public class Data implements Comparable<Data> {
 	private int data_id;
 	private String data_label;
+	private String data_value;
 	private float data_size;
-	
-	private int data_partition_id;	
-	private int data_hmetis_cluster_id;
-	private int data_prototype_partition_id;
-	
-	private int data_roaming_partition_id;
-	private int data_roaming_node_id;
-	private boolean data_isPartitionRoaming;
-	private boolean data_isNodeRoaming;
-	
-	private int data_node_id;
 	private int data_weight;
-	
+	private boolean data_isMoveable;
+	private boolean data_isRoaming;
+	// HyperGraph Partitioning Attributes
+	private int data_hmetis_cluster_id;
 	private int data_shadow_hmetis_id;
 	private boolean data_hasShadowHMetisId;
+	// Partition Attributes	
+	private int data_partition_id;
+	private int data_roaming_partition_id;
+	private boolean data_isPartitionRoaming;
+	// Node Attributes
+	private int data_node_id;
+	private int data_roaming_node_id;	
+	private boolean data_isNodeRoaming;						
 	
-	private boolean data_isMoveable;
-	
+	// Default Constructor
 	public Data(int id, String label, int pid, int nid) {
 		this.setData_id(id); // default data id = -1 means undefined.
 		this.setData_label("d"+label);
+		this.setData_value("Value:"+this.getData_label());
 		this.setData_size(1); // 1.0 = 1 MegaBytes
-		
-		this.setData_partition_id(pid); // default partition id = -1 means undefined.
+		this.setData_weight(0);
+		this.setData_isMoveable(false);
+		this.setData_isRoaming(false);
+				
 		this.setData_hmetis_cluster_id(-1);
-		this.setData_prototype_partition_id(-1);
-		
+		this.setData_shadow_hmetis_id(-1);
+		this.setData_hasShadowHMetisId(false);				
+
+		this.setData_partition_id(pid); // default partition id = -1 means undefined.						
 		this.setData_roaming_partition_id(-1);
-		this.setData_roaming_node_id(-1);
 		this.setData_isPartitionRoaming(false);
-		this.setData_isNodeRoaming(false);
 		
 		this.setData_node_id(nid);
-		this.setData_weight(0);		
-		
-		this.setData_shadow_hmetis_id(-1);
-		this.setData_hasShadowHMetisId(false);
-		
-		this.setData_isMoveable(false);
+		this.setData_roaming_node_id(-1);
+		this.setData_isNodeRoaming(false);				
 	}
 	
 	// Copy Constructor
 	public Data(Data data) {
-		this.data_id = data.getData_id();
-		this.data_label = data.getData_label();
-		this.data_size = data.getData_size();
+		this.setData_id(data.getData_id());
+		this.setData_label(data.getData_label());
+		this.setData_value(data.getData_value());
+		this.setData_size(data.getData_size());
+		this.setData_weight(data.getData_weight());
+		this.setData_isMoveable(data.isData_isMoveable());
+		this.setData_isRoaming(data.isData_isRoaming());
+				
+		this.setData_hmetis_cluster_id(data.getData_hmetis_cluster_id());
+		this.setData_shadow_hmetis_id(data.getData_shadow_hmetis_id());
+		this.setData_hasShadowHMetisId(data.isData_hasShadowHMetisId());
 		
-		this.data_partition_id = data.getData_partition_id();
-		this.data_hmetis_cluster_id = data.getData_hmetis_cluster_id();
-		this.data_prototype_partition_id = data.getData_prototype_partition_id();
+		this.setData_partition_id(data.getData_partition_id());
+		this.setData_roaming_partition_id(data.getData_roaming_partition_id());		
+		this.setData_isPartitionRoaming(data.isData_isPartitionRoaming());		
 		
-		this.data_roaming_partition_id = data.getData_roaming_partition_id();
-		this.data_roaming_node_id = data.getData_roaming_node_id();
-		this.data_isPartitionRoaming = data.isData_isPartitionRoaming();
-		this.data_isNodeRoaming = data.isData_isNodeRoaming();
-		
-		this.data_node_id = data.getData_node_id();
-		this.data_weight = data.getData_weight();
-		
-		this.data_shadow_hmetis_id = data.getData_shadow_hmetis_id();
-		this.data_hasShadowHMetisId = data.isData_hasShadowHMetisId();		
+		this.setData_node_id(data.getData_node_id());
+		this.setData_roaming_node_id(data.getData_roaming_node_id());
+		this.setData_isNodeRoaming(data.isData_isNodeRoaming());				
 	}
 
 	public int getData_id() {
@@ -89,12 +89,28 @@ public class Data implements Comparable<Data> {
 		this.data_label = data_label;
 	}
 
+	public String getData_value() {
+		return data_value;
+	}
+
+	public void setData_value(String data_value) {
+		this.data_value = data_value;
+	}
+
 	public float getData_size() {
 		return data_size;
 	}
 
 	public void setData_size(float data_size) {
 		this.data_size = data_size;
+	}
+
+	public boolean isData_isRoaming() {
+		return data_isRoaming;
+	}
+
+	public void setData_isRoaming(boolean data_isRoaming) {
+		this.data_isRoaming = data_isRoaming;
 	}
 
 	public int getData_partition_id() {
@@ -111,14 +127,6 @@ public class Data implements Comparable<Data> {
 
 	public void setData_hmetis_cluster_id(int data_hmetis_cluster_id) {
 		this.data_hmetis_cluster_id = data_hmetis_cluster_id;
-	}
-
-	public int getData_prototype_partition_id() {
-		return data_prototype_partition_id;
-	}
-
-	public void setData_prototype_partition_id(int data_prototype_partition_id) {
-		this.data_prototype_partition_id = data_prototype_partition_id;
 	}
 
 	public int getData_roaming_partition_id() {

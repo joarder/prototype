@@ -28,10 +28,10 @@ public class WorkloadGeneration {
 		this.workloadList = workloadList;
 	}
 	
-	public Workload initWorkload(Database db, String workload_name) {
+	public Workload initWorkload(Database db, String workload_name, int workload_id) {
 		switch(workload_name) {
 		case "AuctionMark":
-			Workload workload = new Workload(0, 10, db.getDb_id());
+			Workload workload = new Workload(workload_id, 10, db.getDb_id());
 			this.getWorkloadList().add(workload);
 			return workload;
 		}
@@ -40,7 +40,7 @@ public class WorkloadGeneration {
 	}
 
 	public Workload generateWorkload(Database db, String workload_name, int transaction_nums, String DIR_LOCATION) {		
-		Workload workload = initWorkload(db, workload_name);
+		Workload workload = initWorkload(db, workload_name, 0);		
 
 		// Generating Random proportions for different Transaction types based on Workload type
 		int wrl_type = workload.getWrl_type();
@@ -97,9 +97,18 @@ public class WorkloadGeneration {
 		workload.generateWorkloadFile(DIR_LOCATION);
 		workload.generateFixFile(DIR_LOCATION);		
 		
+		this.getWorkloadList().add(workload);
 		return workload;
 	}
 
+	public Workload generateRepeatedWorkload(Database db, String workload_name, int transaction_nums, String DIR_LOCATION) {
+		Workload workload = initWorkload(db, workload_name, 1);
+		
+		
+		this.getWorkloadList().add(workload);
+		return workload;
+	}
+	
 	public static int randInt(int min, int max) {
 	    Random random = new Random();
 	    int randomNum = random.nextInt((max - min) + 1) + min;
@@ -140,5 +149,5 @@ public class WorkloadGeneration {
         //System.out.println("Rounding Correction = "+rounding_correction);
         
         return array;
-	}
+	}	
 }

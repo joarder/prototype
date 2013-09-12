@@ -155,33 +155,36 @@ public class DataMovement {
 			//System.out.print("\n-#"+d+"-"+wrlData.toString()+"--C"+wrlData.getData_hmetis_cluster_id()+"--P"+dst_partition_id);			
 			
 			if(old_partition_id != dst_partition_id) {
-				if(!wrlData.isData_isPartitionRoaming()) {
+				wrlData.setData_hasShadowHMetisId(false);
+				if(wrlData.isData_isRoaming()) { // Data is already Roaming
+					System.out.print("\n >> @debug :: *R"+d+"-"+wrlData.toString());
+				} else { // Data will be Roaming for the first time
+					wrlData.setData_isRoaming(true);
+					wrlData.setData_isPartitionRoaming(true);
 					wrlData.setData_roaming_partition_id(dst_partition_id);
 					if(old_node_id != dst_node_id) {
 						wrlData.setData_roaming_node_id(dst_node_id);					
 						wrlData.setData_isNodeRoaming(true);
-					}
-					wrlData.setData_isPartitionRoaming(true);
+					}										
 				
-					roaming_data = new Data(wrlData); // Cloning the Data
-					roaming_data.setData_partition_id(dst_partition_id);
-					roaming_data.setData_id(dst_node_id);
+					roaming_data = new Data(wrlData); // Cloning the workload Data item
+					roaming_data.setData_partition_id(dst_partition_id);					
 					roaming_data.setData_roaming_partition_id(-1);
-					roaming_data.setData_roaming_node_id(-1);
-					roaming_data.setData_isPartitionRoaming(false);
+					roaming_data.setData_node_id(dst_node_id);
+					roaming_data.setData_roaming_node_id(-1);						
 					//System.out.print("-@R"+d+"-"+wrlData.toString());
 					
-					// Only perform once for both Stage-1 and 2
-					dst_partition.getPartition_data_items().add(roaming_data);
-					old_partition.getRoaming_data_items().add(wrlData);
+					// Add the Roaming Data into the destination Partition's Foreign Data Item List
+					dst_partition.getForeign_data_items().add(roaming_data);
+					// Add an entry in the Old Partition Table's Roaming Data Item Table
+					old_partition.getRoaming_data_items().put(wrlData.getData_id(), dst_partition_id);
+					// Remove the Data item from Old Partition's Data Item List
 					old_partition.getPartition_data_items().remove(wrlData);
 
-					++movements;
-				} else { // else it is a already Roaming Data | @debug: with high probability this case will occur with NO side-effects
-					System.out.print("\n >> @debug :: *R"+d+"-"+wrlData.toString());
-				}				
-			}
-		}
+					++movements;						
+				} // end -- if-else()			
+			} // end -- if()
+		} // end -- while()
 		
 		return movements;
 	}

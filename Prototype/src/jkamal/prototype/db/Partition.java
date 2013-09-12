@@ -6,15 +6,22 @@ package jkamal.prototype.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
-public class Partition  implements Comparable<Partition> {
+public class Partition implements Comparable<Partition> {
 	private int partition_id;
 	private String partition_label;
 	private int partition_capacity;
 	private int partition_node_id;	
 	private List<Data> partition_data_items;
-	private List<Data> roaming_data_items;
-	private static int MAX_DATA_ITEMS;
+	private Map<Integer, Integer> roaming_data_items;
+	private List<Data> foreign_data_items;
+	public final static int MAX_DATA_ITEMS = 1000; // 1GB Data (in Size) Or, equivalently 1000 Data Items can be stored in a single partition.
+	public final static int MAX_ALLOWED_DATA_ITEMS = (int)(1000*0.7); // 70% of the Partition is allowed to be filled up.
+	public final static int MAX_FOREIGN_DATA_ITEMS = (int)(1000*0.2); // 20% of the Partition is allowed to be filled up with Foreign Data Items.
+	public final static int MAX_THRESHOLD_DATA_ITEMS = 900;
 	
 	public Partition(int pid, String label, int nid) {
 		this.setPartition_id(pid);
@@ -22,8 +29,8 @@ public class Partition  implements Comparable<Partition> {
 		this.setPartition_capacity(0); // Initially no data items present in a partition. Current partition capacity will be determined by the number of data items it is holding.
 		this.setPartition_node_id(nid);
 		this.setPartition_data_items(new ArrayList<Data>());
-		this.setRoaming_data_items(new ArrayList<Data>());
-		Partition.setMAX_DATA_ITEMS(1000); // 1GB Data (in Size) Or, equivalently 1000 Data Items can be stored in a single partition.
+		this.setRoaming_data_items(new TreeMap<Integer, Integer>());
+		this.setForeign_data_items(new ArrayList<Data>());
 	}	
 
 	// Copy Constructor
@@ -41,15 +48,19 @@ public class Partition  implements Comparable<Partition> {
 		}
 		this.partition_data_items = clonePartitionDataItems;
 		
-		List<Data> cloneRoamingDataItems = new ArrayList<Data>();
-		Data cloneRoamingData;
-		for(Data data : partition.getRoaming_data_items()) {
-			cloneRoamingData = new Data(data);
-			cloneRoamingDataItems.add(cloneRoamingData);
+		Map<Integer, Integer> cloneRoamingDataItems = new TreeMap<Integer, Integer>();
+		for(Entry<Integer, Integer> entry : partition.getRoaming_data_items().entrySet()) {
+			cloneRoamingDataItems.put(entry.getKey(), entry.getValue());
 		}
 		this.roaming_data_items = cloneRoamingDataItems;
 		
-		Partition.MAX_DATA_ITEMS = Partition.getMAX_DATA_ITEMS();
+		List<Data> cloneForeignDataItems = new ArrayList<Data>();
+		Data cloneForeignData;
+		for(Data data : partition.getForeign_data_items()) {
+			cloneForeignData = new Data(data);
+			cloneForeignDataItems.add(cloneForeignData);
+		}
+		this.foreign_data_items = cloneForeignDataItems;
 	}
 	
 	public int getPartition_id() {
@@ -92,25 +103,31 @@ public class Partition  implements Comparable<Partition> {
 		this.partition_data_items = partition_data_items;
 	}
 
-	public List<Data> getRoaming_data_items() {
+	public Map<Integer, Integer> getRoaming_data_items() {
 		return roaming_data_items;
 	}
 
-	public void setRoaming_data_items(List<Data> roaming_data_items) {
+	public void setRoaming_data_items(Map<Integer, Integer> roaming_data_items) {
 		this.roaming_data_items = roaming_data_items;
 	}
 
-	public static int getMAX_DATA_ITEMS() {
-		return MAX_DATA_ITEMS;
+	public List<Data> getForeign_data_items() {
+		return foreign_data_items;
 	}
 
-	public static void setMAX_DATA_ITEMS(int max) {
-		MAX_DATA_ITEMS = max;
+	public void setForeign_data_items(List<Data> foreign_data_items) {
+		this.foreign_data_items = foreign_data_items;
 	}
 
 	@Override
 	public String toString() {
-		return (this.partition_label+"["+this.partition_data_items.size()+"|R*"+this.roaming_data_items.size()+"]");
+		if(this.getRoaming_data_items().size() != 0 || this.getForeign_data_items().size() !=0)
+			return (this.partition_label+"["+this.getPartition_data_items().size()
+					+"|R*"+this.getRoaming_data_items().size()
+					+"|F*"+this.getForeign_data_items().size()
+					+"]");
+		else	
+			return (this.partition_label+"["+this.partition_data_items.size()+"]");
 	}
 
 	@Override
