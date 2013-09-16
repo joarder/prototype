@@ -4,109 +4,81 @@
 
 package jkamal.prototype.workload;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
-import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
-import jkamal.prototype.db.GlobalDataMap;
+import jkamal.prototype.db.DatabaseServer;
 
 public class WorkloadGeneration {	
-	private List<Workload> workloadList;
+	public WorkloadGeneration() {}	
 	
-	public WorkloadGeneration() {
-		this.setWorkloadList(new ArrayList<Workload>());		
-	}	
-
-	public List<Workload> getWorkloadList() {
-		return workloadList;
-	}
-
-	public void setWorkloadList(List<Workload> workloadList) {
-		this.workloadList = workloadList;
-	}
-	
-	public Workload initWorkload(Database db, String workload_name, int workload_id) {
+	public Workload init(Database db, String workload_name, int workload_id) {
+		// Workload Details : http://oltpbenchmark.com/wiki/index.php?title=Workloads
 		switch(workload_name) {
-		case "AuctionMark":
-			Workload workload = new Workload(workload_id, 10, db.getDb_id());
-			this.getWorkloadList().add(workload);
-			return workload;
-		}
+			case "AuctionMark":
+				return(new Workload(workload_id, 10, db.getDb_id()));			
+			case "Epinions":
+				return(new Workload(workload_id, 9, db.getDb_id()));
+			case "SEATS":
+				return(new Workload(workload_id, 6, db.getDb_id()));
+			case "TPC-C":
+				return(new Workload(workload_id, 5, db.getDb_id()));	
+			}		
 		
 		return null;
 	}
 
-	public Workload generateWorkload(Database db, String workload_name, int transaction_nums, String DIR_LOCATION) {		
-		Workload workload = initWorkload(db, workload_name, 0);		
-
+	public Workload generate(DatabaseServer dbs, Database db, Workload workload, int transaction_nums, String DIR_LOCATION) {
 		// Generating Random proportions for different Transaction types based on Workload type
-		int wrl_type = workload.getWrl_type();
-		workload.setWrl_transactionProp(generateTransactionProp(transaction_nums, wrl_type));
+		workload.setWrl_transactionProp(generateTransactionProp(workload, transaction_nums));
 
-		// Retrieving corresponding GlobalDataMap and TransactionDataSet
-		GlobalDataMap dataMap = db.getDb_dataMap();
-		List<Data> wrlDataList = workload.getWrl_dataList();
-		Transaction transaction;		
-		Set<Data> trDataSet;
-		Data data;
-		
-		// Creating required local variables
-		int data_id = 0;
-		int data_weight = 0;
-		int hmetis_shadow_data_id = 0;
-		int tr_id = -1;
-		
-		// Creating a Random Object for randomly chosen Data items
-		Random random = new Random();
-		// i -- Transaction types
-		for(int i = 0; i < wrl_type; i++) {			
-			// j -- a specific Transaction type in the Transaction proportion array
-			for(int j = 0; j < (int)workload.getWrl_transactionProp()[i]; j++) {				
-				trDataSet = new TreeSet<Data>();
-				// k -- required numbers of Data items based on Transaction type
-				for(int k = 0; k < i+2; k++) {
-					data_id = random.nextInt(dataMap.getData_items().size());								
-					data = dataMap.getData_items().get(data_id);
-					data_weight = data.getData_weight();
-					data.setData_weight(++data_weight);					
-					
-					// Set shadow id to use in the hMetis HyperGraph partitioning tool
-					if(!data.isData_hasShadowHMetisId()) {
-						data.setData_shadow_hmetis_id(++hmetis_shadow_data_id);
-						data.setData_hasShadowHMetisId(true);
-					}
-					
-					trDataSet.add(data);
-					wrlDataList.add(data);
-				}
-				
-				transaction = new Transaction(++tr_id, trDataSet);
-				transaction.generateTransactionCost(db);
-				workload.getWrl_transactionList().add(transaction);
-			}
-		}		
+		TransactionGeneration trGen = new TransactionGeneration();
+		trGen.generateTransaction(db, workload);		
 
 		// Generating Workload's Data Partition and Node Distribution Details
 		workload.generateDataPartitionTable();
 		workload.generateDataNodeTable();
 		
 		// Generating Workload and FixFile for HyperGraph Partitioning			
-		workload.generateWorkloadFile(DIR_LOCATION);
+		workload.generateWorkloadFile(dbs, DIR_LOCATION);
 		workload.generateFixFile(DIR_LOCATION);		
 		
-		this.getWorkloadList().add(workload);
+		// Calculate the percentage of DT
+		workload.calculateDTPercentage();
+
 		return workload;
 	}
+	
+	public Workload generateRepeatedWorkload(DatabaseServer dbs, Database db, String workload_name, int workload_transaction_nums, String DIR_LOCATION, 
+			Workload workload, int workload_round, boolean workload_mode) {
+		TransactionGeneration trGen = new TransactionGeneration();
+		WorkloadSampling workloadSampling = new WorkloadSampling();
+		Workload sampledWorkload = null;
+		
+		if(workload_round != 0) {
+			workload.setWrl_transactionProp(generateRepeatedTransactionProp(workload, workload_mode));
+			workload.setWrl_round(workload_round);
+		} else {
+			workload.setWrl_transactionProp(generateTransactionProp(workload, workload_transaction_nums));
+			workload.setWrl_round(workload_round);
+		}
+				
+		trGen.generateTransaction(db, workload);
 
-	public Workload generateRepeatedWorkload(Database db, String workload_name, int transaction_nums, String DIR_LOCATION) {
-		Workload workload = initWorkload(db, workload_name, 1);
+		System.out.println("\n>> Performing workload sampling ...");		
+		sampledWorkload = workloadSampling.performSampling(workload);				
 		
+		// Generating Workload's Data Partition and Node Distribution Details
+		sampledWorkload.generateDataPartitionTable();
+		sampledWorkload.generateDataNodeTable();		
 		
-		this.getWorkloadList().add(workload);
-		return workload;
+		// Generating Workload and FixFile for HyperGraph Partitioning			
+		sampledWorkload.generateWorkloadFile(dbs, DIR_LOCATION);
+		sampledWorkload.generateFixFile(DIR_LOCATION);				
+		
+		// Calculate the percentage of DT
+		workload.calculateDTPercentage();
+		
+		return sampledWorkload;
 	}
 	
 	public static int randInt(int min, int max) {
@@ -116,7 +88,8 @@ public class WorkloadGeneration {
 	    return randomNum;
 	}	
 	
-	public double[] generateTransactionProp(int nums, int type) {
+	public double[] generateTransactionProp(Workload workload, int nums) {
+		int type = workload.getWrl_type();		
 		double array[] = new double[type];
         double sum = 0.0d;
         double rounding_result = 0.0d;
@@ -149,5 +122,61 @@ public class WorkloadGeneration {
         //System.out.println("Rounding Correction = "+rounding_correction);
         
         return array;
-	}	
+	}
+	
+	public double[] generateRepeatedTransactionProp(Workload workload, boolean workload_mode) {
+		// Generating Random proportions for different Transaction types based on Workload type
+		Random random = new Random();
+		double randomProp = 0.0;
+		double newProp = 0.0;
+		//double sumProp = 0.0;
+		double[] oldProp = new double[workload.getWrl_transactionProp().length];
+		System.arraycopy(workload.getWrl_transactionProp(), 0, oldProp, 0, workload.getWrl_transactionProp().length);
+		
+		System.out.print("@debug >> OldProp: ");
+		workload.printWrl_transactionProp();
+		
+		for(int i = 0; i < oldProp.length; i++) {
+			double prop = oldProp[i];
+			if(prop > 1) {
+				randomProp = Math.round(random.nextDouble()*100.0)/100.0;
+				newProp = Math.round(prop*randomProp);
+				
+				if(workload_mode)
+					workload.getWrl_transactionProp()[i] += newProp;
+				else
+					workload.getWrl_transactionProp()[i] -= newProp;
+				
+				//sumProp += newProp;
+				//System.out.println("newProp: "+newProp+"| prop: "+prop+"| randomProp: "+randomProp);
+			} else {
+				// 
+			}
+		}				
+				
+		System.out.print("\n@debug >> NewProp:");
+		workload.printWrl_transactionProp();
+				
+		double[] difference = new double[workload.getWrl_type()];
+		
+		if(workload_mode) {
+			for(int i = 0; i < difference.length; i++) {
+				difference[i] = workload.getWrl_transactionProp()[i] - oldProp[i];
+				//System.out.println("* difference[i]: "+difference[i]+"| NewProp: "+workload.getWrl_transactionProp()[i]+"| oldProp: "+oldProp[i]);
+			}
+		} else {
+			for(int i = 0; i < difference.length; i++) {
+				difference[i] = oldProp[i] - workload.getWrl_transactionProp()[i];
+				//System.out.println("^ difference[i]: "+difference[i]+"| oldProp: "+oldProp[i]+"NewProp: "+workload.getWrl_transactionProp()[i]);
+			}
+		}
+			
+		System.out.print("\n@debug >> Difference: {");
+		for(int i = 0; i < difference.length; i++)
+			System.out.print(difference[i]+", ");
+		System.out.print("}");
+
+		
+		return difference;
+	}
 }

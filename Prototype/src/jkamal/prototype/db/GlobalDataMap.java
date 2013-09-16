@@ -14,7 +14,7 @@ public class GlobalDataMap {
 	private Map<Integer, Data> data_items;
 	
 	public GlobalDataMap() {
-		setData_items(new HashMap<Integer, Data>());
+		this.setData_items(new HashMap<Integer, Data>());
 	}
 	
 	// Copy Constructor
@@ -26,7 +26,7 @@ public class GlobalDataMap {
 			cloneData = new Data(entry.getValue());
 			cloneDataItems.put(entry.getKey(), cloneData);
 		}
-		this.data_items = cloneDataItems;
+		this.setData_items(cloneDataItems);
 	}
 
 	public Map<Integer, Data> getData_items() {

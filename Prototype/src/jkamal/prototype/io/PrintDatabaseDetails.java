@@ -71,6 +71,7 @@ public class PrintDatabaseDetails {
 		System.out.println();*/
 		
 		// Routing Table Details
+		System.out.println();
 		System.out.print("\n===Routing Table Details========================\n");		
 	}
 }

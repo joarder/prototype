@@ -31,17 +31,11 @@ public class HGraphClusters {
 		try {
 			while(scanner.hasNextLine()) {
 				cluster_id = Integer.valueOf(scanner.nextLine());
-				data_id++;
+				++data_id;
 				data = trDataSet.get(data_id);
-				data.setData_hmetis_cluster_id(cluster_id); //* possible bug may resides in here
-				
-				/*data = new Data(transactionDataSet.getTransactionDataSet().get(data_id).getData_id(), 
-						Integer.toString(transactionDataSet.getTransactionDataSet().get(data_id).getData_id()), 
-						cluster_id, 
-						transactionDataSet.getTransactionDataSet().get(data_id).getData_node_id());
-				
 				data.setData_hmetis_cluster_id(cluster_id);
-				postTransactionDataSet.getTransactionDataSet().add(data);*/				
+				data.setData_shadow_hmetis_id(-1);
+				data.setData_hasShadowHMetisId(false);								
 			}
 		} finally {
 			scanner.close();

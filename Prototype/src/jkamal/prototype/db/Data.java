@@ -19,6 +19,7 @@ public class Data implements Comparable<Data> {
 	private int data_shadow_hmetis_id;
 	private boolean data_hasShadowHMetisId;
 	// Partition Attributes	
+	private int data_home_partition_id;
 	private int data_partition_id;
 	private int data_roaming_partition_id;
 	private boolean data_isPartitionRoaming;
@@ -41,6 +42,7 @@ public class Data implements Comparable<Data> {
 		this.setData_shadow_hmetis_id(-1);
 		this.setData_hasShadowHMetisId(false);				
 
+		this.setData_home_partition_id(pid);
 		this.setData_partition_id(pid); // default partition id = -1 means undefined.						
 		this.setData_roaming_partition_id(-1);
 		this.setData_isPartitionRoaming(false);
@@ -64,6 +66,7 @@ public class Data implements Comparable<Data> {
 		this.setData_shadow_hmetis_id(data.getData_shadow_hmetis_id());
 		this.setData_hasShadowHMetisId(data.isData_hasShadowHMetisId());
 		
+		this.setData_home_partition_id(data.getData_home_partition_id());
 		this.setData_partition_id(data.getData_partition_id());
 		this.setData_roaming_partition_id(data.getData_roaming_partition_id());		
 		this.setData_isPartitionRoaming(data.isData_isPartitionRoaming());		
@@ -111,6 +114,14 @@ public class Data implements Comparable<Data> {
 
 	public void setData_isRoaming(boolean data_isRoaming) {
 		this.data_isRoaming = data_isRoaming;
+	}
+
+	public int getData_home_partition_id() {
+		return data_home_partition_id;
+	}
+
+	public void setData_home_partition_id(int data_home_partition_id) {
+		this.data_home_partition_id = data_home_partition_id;
 	}
 
 	public int getData_partition_id() {
@@ -206,11 +217,11 @@ public class Data implements Comparable<Data> {
 		//return (this.data_label+"("+this.data_id+")");
 		//return (this.data_label+"[N"+this.data_node_id+"]");
 		if(this.isData_isPartitionRoaming())
-			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"]");
+			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"]");//-C"+this.data_hmetis_cluster_id);
 		else if(this.isData_isPartitionRoaming() && this.isData_isNodeRoaming())
-			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"(*N"+this.data_roaming_node_id+")]");
+			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"(*N"+this.data_roaming_node_id+")]");//-C"+this.data_hmetis_cluster_id);
 		else
-			return (this.data_label+"[P"+this.data_partition_id+"|N"+this.data_node_id+"]");
+			return (this.data_label+"[P"+this.data_partition_id+"|N"+this.data_node_id+"]");//-C"+this.data_hmetis_cluster_id);
 		//return (this.data_label+"["+this.data_current_trId+"]");
 	}
 
