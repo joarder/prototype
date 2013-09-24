@@ -1,7 +1,8 @@
 >> Creating Database Server #testdbs# with 4 Nodes ...
 >> Creating Database #testdb# within testdbs Database Server ...
 >> Started Bootstrapping Process ...
->> Generating 10000 synthetic data items ...
+>> Generating 5000 synthetic data items ...
+
  Creating Partition P0 and placing it into N0
  Creating Partition P1 and placing it into N1
  Creating Partition P2 and placing it into N2
@@ -10,324 +11,1608 @@
  Creating Partition P5 and placing it into N1
  Creating Partition P6 and placing it into N2
  Creating Partition P7 and placing it into N3
- Creating Partition P8 and placing it into N0
- Creating Partition P9 and placing it into N1
- Creating Partition P10 and placing it into N2
- Creating Partition P11 and placing it into N3
- Creating Partition P12 and placing it into N0
- Creating Partition P13 and placing it into N1
- Creating Partition P14 and placing it into N2
 
->> Total Data Items: 10000
->> Total Partitions: 15
+>> Total Data Items: 5000
+>> Total Partitions: 8
 
-===Database Server Details========================
+===Database Server Details===
  Database Server: testdbs
  Number of Nodes: 4
 
-===Node Details========================
- N0 with 4 Partitions. Current Load 40.0%
- N1 with 4 Partitions. Current Load 40.0%
- N2 with 4 Partitions. Current Load 40.0%
- N3 with 3 Partitions. Current Load 30.0%
+===Node Details===
+ N0 with 2 Partitions. Current Load 20.0%
+ N1 with 2 Partitions. Current Load 20.0%
+ N2 with 2 Partitions. Current Load 20.0%
+ N3 with 2 Partitions. Current Load 20.0%
 
-===Database Details========================
+===Database Details====
  Database: testdb
- Number of Partitions: 15
+ Number of Partitions: 8
 
-===Partition Table Details========================
- N0{P0[700], P4[700], P8[700], P12[700]}
- N1{P1[700], P5[700], P9[700], P13[700]}
- N2{P2[700], P6[700], P10[700], P14[200]}
- N3{P3[700], P7[700], P11[700]}
-
-===Routing Table Details========================
+===Partition Table Details====
+ N0 {P0[700], P4[700]}
+ N1 {P1[700], P5[700]}
+ N2 {P2[700], P6[700]}
+ N3 {P3[700], P7[100]}
 
 >> Data loading complete !!!
-
->> Generating a database workload with 20 synthetic transactions ...
-
-===Round-0 (Initial Stage)  Workload Details========================
-
- WL-0[20 Transactions of 10 types having a distribution of {2.0, 0.0, 2.0, 3.0, 1.0, 2.0, 3.0, 3.0, 1.0, 3.0}
-
- TR-1[CDT(1), PS(1), Data(2)]
- TR-2[CDT(1), PS(1), Data(2)]
- TR-3[CDT(1), PS(2), Data(4)]
- TR-4[CDT(2), PS(3), Data(4)]
- TR-5[CDT(2), PS(3), Data(5)]
- TR-6[CDT(3), PS(4), Data(5)]
- TR-7[CDT(2), PS(4), Data(5)]
- TR-8[CDT(2), PS(4), Data(6)]
- TR-9[CDT(2), PS(4), Data(7)]
- TR-10[CDT(3), PS(6), Data(7)]
- TR-11[CDT(3), PS(6), Data(8)]
- TR-12[CDT(2), PS(4), Data(8)]
- TR-13[CDT(2), PS(7), Data(8)]
- TR-14[CDT(3), PS(5), Data(9)]
- TR-15[CDT(2), PS(4), Data(9)]
- TR-16[CDT(2), PS(6), Data(9)]
- TR-17[CDT(3), PS(5), Data(10)]
- TR-18[CDT(3), PS(6), Data(11)]
- TR-19[CDT(3), PS(7), Data(11)]
- TR-20[CDT(3), PS(8), Data(11)]
- # Distributed Transactions: 100.0% | Total Transactions: 20
+>> Round-0 :: Generating a transactional workload with 1000 synthetic transactions ...
 
 
->> Workload generation complete !!!
+***********************************************************************************************************************
+===Round-0 (Initial)  Workload Details===
+ WL-0[1000 Transactions (containing 3877 Data) of 10 types having a distribution of {23.0, 151.0, 43.0, 43.0, 41.0, 153.0, 161.0, 103.0, 120.0, 162.0}
+
+ # Distributed Transactions: 97.5% | Total Transactions: 1000 | DT Impact: 2.25
+
+***********************************************************************************************************************
+
+>> Round-0 :: Workload generation completed !!!
 >> Run HyperGraph Partitioning on the Workload ...
 >> Strategy-1 :: One(Cluster)-to-One(Partition)
 >> Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	
-	0	3	0	0	1	1	0	3	1	1	0	2	1	1	0	2	
-	1	1	0	0	0	2	0	0	1	1	0	1	1	2	1	0	
-	2	2	2	1	2	0	0	0	0	0	0	0	1	0	1	0	
-	3	1	1	1	1	0	1	0	1	0	2	0	0	0	0	1	
-	4	0	0	1	0	1	1	0	1	0	0	1	0	0	1	0	
-	5	0	0	0	1	0	1	1	0	2	1	0	1	0	0	1	
-	6	0	0	0	0	1	1	0	1	0	2	0	0	2	1	1	
-	7	0	2	2	0	1	2	1	1	2	0	0	0	1	0	0	
-	8	0	1	1	0	0	0	1	1	1	1	2	3	0	0	0	
-	9	0	3	1	1	2	1	1	0	0	2	1	0	1	1	2	
-	10	0	0	1	0	0	1	0	1	1	0	1	0	0	1	0	
-	11	1	0	0	0	0	0	0	1	1	1	0	0	1	0	0	
-	12	0	0	0	2	1	0	1	0	0	1	0	0	0	0	0	
-	13	1	0	1	2	1	0	2	0	1	0	0	2	0	1	2	
-	14	2	0	1	0	0	0	0	1	0	0	1	0	0	1	0	
+	X	0	1	2	3	4	5	6	7	
+	0	102	131	121	117	195	139	105	104	
+	1	137	118	154	109	97	128	142	124	
+	2	171	141	130	109	82	124	129	178	
+	3	107	98	123	172	110	136	149	111	
+	4	92	154	124	168	190	154	103	84	
+	5	145	125	149	97	118	120	158	134	
+	6	152	127	128	136	122	107	110	186	
+	7	12	14	9	14	10	28	17	13	
 
->> Total 109 Data movements are required using Strategy-1.
+>> Total 6049 Data movements are required using Strategy-1.
 >> After data movement using Strategy-1 ...
 
-===Round-0 (Strategy-1)  Workload Details========================
+***********************************************************************************************************************
+===Round-0 (Strategy-1)  Workload Details===
+ WL-0[1000 Transactions (containing 3877 Data) of 10 types having a distribution of {23.0, 151.0, 43.0, 43.0, 41.0, 153.0, 161.0, 103.0, 120.0, 162.0}
 
- WL-0[20 Transactions of 10 types having a distribution of {2.0, 0.0, 2.0, 3.0, 1.0, 2.0, 3.0, 3.0, 1.0, 3.0}
+ # Distributed Transactions: 47.7% | Total Transactions: 1000 | DT Impact: 0.99
+ # Percentage of Data Movements: 156.02% | Total Data: 3877
 
- TR-1[CDT(0), PS(0), Data(2)]
- TR-2[CDT(0), PS(0), Data(2)]
- TR-3[CDT(0), PS(0), Data(4)]
- TR-4[CDT(0), PS(0), Data(4)]
- TR-5[CDT(0), PS(0), Data(5)]
- TR-6[CDT(0), PS(0), Data(5)]
- TR-7[CDT(0), PS(0), Data(5)]
- TR-8[CDT(0), PS(0), Data(6)]
- TR-9[CDT(1), PS(1), Data(7)]
- TR-10[CDT(0), PS(0), Data(7)]
- TR-11[CDT(0), PS(0), Data(8)]
- TR-12[CDT(0), PS(0), Data(8)]
- TR-13[CDT(0), PS(0), Data(8)]
- TR-14[CDT(0), PS(0), Data(9)]
- TR-15[CDT(1), PS(1), Data(9)]
- TR-16[CDT(0), PS(0), Data(9)]
- TR-17[CDT(2), PS(2), Data(10)]
- TR-18[CDT(0), PS(0), Data(11)]
- TR-19[CDT(1), PS(2), Data(11)]
- TR-20[CDT(2), PS(2), Data(11)]
- # Distributed Transactions: 25.0% | Total Transactions: 20
- # Percentage of Data Movements: 77.3% | Total Data: 141
-
+***********************************************************************************************************************
 
 >> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
 >> Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	1	6	11	0	9	14	8	12	5	3	4	10	7	2	13	
-	9	3	1	0	0	2	2	0	1	1	1	2	1	0	1	1	
-	0	0	3	1	3	0	2	1	1	0	1	1	2	1	0	0	
-	8	1	1	3	0	1	0	1	0	0	0	0	2	1	1	0	
-	14	0	0	0	2	0	0	0	0	0	0	0	1	1	1	1	
-	3	1	0	0	1	2	1	0	0	1	1	0	0	1	1	0	
-	13	0	2	2	1	0	2	1	0	0	2	1	0	0	1	1	
-	5	0	1	1	0	1	1	2	0	1	1	0	0	0	0	0	
-	6	0	0	0	0	2	1	0	2	1	0	1	0	1	0	1	
-	7	2	1	0	0	0	0	2	1	2	0	1	0	1	2	0	
-	2	2	0	1	2	0	0	0	0	0	2	0	0	0	1	1	
-	1	0	0	1	1	0	0	1	2	0	0	2	1	1	0	1	
-	4	0	0	0	0	0	0	0	0	1	0	1	1	1	1	1	
-	11	0	0	0	1	1	0	1	1	0	0	0	0	1	0	0	
-	10	0	0	0	0	0	0	1	0	1	0	0	1	1	1	1	
-	12	0	1	0	0	1	0	0	0	0	2	1	0	0	0	0	
+	X	4	7	3	0	6	2	1	5	
+	0	195	104	117	102	105	121	131	139	
+	6	122	186	136	152	110	128	127	107	
+	3	110	111	172	107	149	123	98	136	
+	2	82	178	109	171	129	130	141	124	
+	5	118	134	97	145	158	149	125	120	
+	1	97	124	109	137	142	154	118	128	
+	4	190	84	168	92	103	124	154	154	
+	7	10	13	14	12	17	9	14	28	
 
->> Total 113 Data movements are required using Strategy-2.
+>> Total 3231 Data movements are required using Strategy-2.
 >> After data movement using Strategy-2 ...
 
-===Round-0 (Strategy-2)  Workload Details========================
+***********************************************************************************************************************
+===Round-0 (Strategy-2)  Workload Details===
+ WL-0[1000 Transactions (containing 3877 Data) of 10 types having a distribution of {23.0, 151.0, 43.0, 43.0, 41.0, 153.0, 161.0, 103.0, 120.0, 162.0}
 
- WL-0[20 Transactions of 10 types having a distribution of {2.0, 0.0, 2.0, 3.0, 1.0, 2.0, 3.0, 3.0, 1.0, 3.0}
+ # Distributed Transactions: 48.7% | Total Transactions: 1000 | DT Impact: 1.08
+ # Percentage of Data Movements: 83.34% | Total Data: 3877
 
- TR-1[CDT(0), PS(0), Data(2)]
- TR-2[CDT(0), PS(0), Data(2)]
- TR-3[CDT(0), PS(0), Data(4)]
- TR-4[CDT(0), PS(0), Data(4)]
- TR-5[CDT(0), PS(0), Data(5)]
- TR-6[CDT(0), PS(0), Data(5)]
- TR-7[CDT(0), PS(0), Data(5)]
- TR-8[CDT(0), PS(0), Data(6)]
- TR-9[CDT(1), PS(1), Data(7)]
- TR-10[CDT(0), PS(0), Data(7)]
- TR-11[CDT(0), PS(0), Data(8)]
- TR-12[CDT(0), PS(0), Data(8)]
- TR-13[CDT(0), PS(0), Data(8)]
- TR-14[CDT(0), PS(0), Data(9)]
- TR-15[CDT(0), PS(1), Data(9)]
- TR-16[CDT(0), PS(0), Data(9)]
- TR-17[CDT(2), PS(2), Data(10)]
- TR-18[CDT(0), PS(0), Data(11)]
- TR-19[CDT(1), PS(2), Data(11)]
- TR-20[CDT(2), PS(2), Data(11)]
- # Distributed Transactions: 20.0% | Total Transactions: 20
- # Percentage of Data Movements: 80.14% | Total Data: 141
+***********************************************************************************************************************
 
 
-@debug >> Workload Variant: 0.2916808322632547| Workload_mode: false| Transactions: 15
-
->> Generating a database workload with 15 synthetic transactions ...
-
-@debug >> OldProp: {2.0, 0.0, 2.0, 3.0, 1.0, 2.0, 3.0, 3.0, 1.0, 3.0}
-@debug >> NewProp:{1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 2.0, 1.0, 1.0, 1.0}
-@debug >> Difference: {1.0, 0.0, 2.0, 2.0, 0.0, 2.0, 1.0, 2.0, 0.0, 2.0, }@debug >> *** 75|d4035[P5(*P13)|N1]
-@debug >> *** 60|d6074[P8|N0]
-
->> Performing workload sampling ...
-
-===Round-1 (Initial)  Workload Details========================
-
- WL-0[16 Transactions of 10 types having a distribution of {1.0, 0.0, 2.0, 2.0, 0.0, 2.0, 1.0, 2.0, 0.0, 2.0}
-
- TR-9[CDT(1), PS(1), Data(7)]
- TR-17[CDT(2), PS(2), Data(10)]
- TR-19[CDT(1), PS(2), Data(11)]
- TR-20[CDT(2), PS(2), Data(11)]
- TR-21[CDT(1), PS(1), Data(2)]
- TR-22[CDT(2), PS(3), Data(4)]
- TR-23[CDT(3), PS(3), Data(4)]
- TR-24[CDT(1), PS(4), Data(5)]
- TR-25[CDT(2), PS(3), Data(5)]
- TR-26[CDT(2), PS(4), Data(7)]
- TR-27[CDT(3), PS(6), Data(7)]
- TR-28[CDT(2), PS(4), Data(8)]
- TR-29[CDT(3), PS(7), Data(9)]
- TR-30[CDT(3), PS(6), Data(9)]
- TR-31[CDT(3), PS(5), Data(11)]
- TR-32[CDT(3), PS(8), Data(11)]
- # Distributed Transactions: 100.0% | Total Transactions: 16
- # Percentage of Data Movements: 80.14% | Total Data: 223
+@debug >> Workload Variant: 0.07| Workload_mode: true| Transactions: 1070
+>> Round-1 :: Generating a transactional workload with 1070 synthetic transactions ...
 
 
->> Workload generation complete !!!
+***********************************************************************************************************************
+===Round-1 (Initial)  Workload Details===
+ WL-0[1625 Transactions (containing 4552 Data) of 10 types having a distribution of {7.0, 63.0, 22.0, 29.0, 34.0, 98.0, 143.0, 98.0, 82.0, 49.0}
+
+ # Distributed Transactions: 68.0% | Total Transactions: 1625 | DT Impact: 2.25
+ # Percentage of Data Movements: 83.34% | Total Data: 4552
+
+***********************************************************************************************************************
+
+>> Round-1 :: Workload generation completed !!!
 >> Run HyperGraph Partitioning on the Workload ...
-
 >> Strategy-1 :: One(Cluster)-to-One(Partition)
 >> Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	
-	0	1	1	1	0	1	1	0	1	0	2	3	0	2	3	3	
-	1	0	0	0	0	0	0	1	1	0	2	3	1	1	1	4	
-	2	3	2	0	1	0	1	0	0	2	0	5	2	2	0	0	
-	3	1	0	4	0	5	0	2	0	0	2	1	2	0	1	0	
-	4	0	0	0	1	2	0	1	3	1	1	1	0	0	2	0	
-	5	1	0	0	2	1	1	1	1	0	2	1	1	1	1	1	
-	6	0	0	3	1	1	0	3	2	1	1	1	0	2	0	1	
-	7	3	1	2	2	3	1	1	2	2	1	1	0	0	0	1	
-	8	0	1	0	1	3	1	1	1	2	2	1	1	2	2	0	
-	9	2	1	2	0	1	2	1	0	2	3	1	2	2	1	0	
-	10	0	1	0	0	0	1	2	0	2	1	0	0	1	1	0	
-	11	1	0	0	0	1	0	2	1	1	0	0	1	2	1	1	
-	12	1	1	0	1	0	1	0	1	1	0	0	1	2	0	0	
-	13	5	2	0	1	1	2	0	0	0	2	1	1	2	1	0	
-	14	1	1	2	1	0	0	1	1	0	0	0	0	0	0	0	
+	X	0	1	2	3	4	5	6	7	
+	0	233	199	222	226	227	182	200	179	
+	1	221	188	214	248	206	191	164	219	
+	2	162	206	220	211	179	209	244	278	
+	3	191	212	220	205	180	235	186	213	
+	4	188	202	266	243	219	250	197	178	
+	5	223	208	233	257	196	222	199	202	
+	6	227	237	215	186	217	188	227	209	
+	7	20	36	21	31	46	35	32	19	
 
->> Total 176 Data movements are required using Strategy-1.
+>> Total 10107 Data movements are required using Strategy-1.
 >> After data movement using Strategy-1 ...
 
-===Round-1 (Strategy-1)  Workload Details========================
+***********************************************************************************************************************
+===Round-1 (Strategy-1)  Workload Details===
+ WL-0[1625 Transactions (containing 4552 Data) of 10 types having a distribution of {7.0, 63.0, 22.0, 29.0, 34.0, 98.0, 143.0, 98.0, 82.0, 49.0}
 
- WL-0[16 Transactions of 10 types having a distribution of {1.0, 0.0, 2.0, 2.0, 0.0, 2.0, 1.0, 2.0, 0.0, 2.0}
+ # Distributed Transactions: 80.92% | Total Transactions: 1625 | DT Impact: 2.54
+ # Percentage of Data Movements: 222.03% | Total Data: 4552
 
- TR-9[CDT(1), PS(1), Data(7)]
- TR-17[CDT(2), PS(2), Data(10)]
- TR-19[CDT(1), PS(3), Data(11)]
- TR-20[CDT(3), PS(3), Data(11)]
- TR-21[CDT(0), PS(1), Data(2)]
- TR-22[CDT(1), PS(1), Data(4)]
- TR-23[CDT(1), PS(1), Data(4)]
- TR-24[CDT(1), PS(1), Data(5)]
- TR-25[CDT(0), PS(1), Data(5)]
- TR-26[CDT(1), PS(1), Data(7)]
- TR-27[CDT(1), PS(1), Data(7)]
- TR-28[CDT(1), PS(1), Data(8)]
- TR-29[CDT(1), PS(1), Data(9)]
- TR-30[CDT(1), PS(1), Data(9)]
- TR-31[CDT(1), PS(1), Data(11)]
- TR-32[CDT(0), PS(1), Data(11)]
- # Distributed Transactions: 81.25% | Total Transactions: 16
- # Percentage of Data Movements: 78.92% | Total Data: 223
-
+***********************************************************************************************************************
 
 >> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
 >> Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	0	4	10	14	13	7	9	2	3	8	12	6	1	11	5	
-	13	5	1	1	0	1	0	2	0	1	0	2	0	2	1	2	
-	3	1	5	1	0	1	0	2	4	0	0	0	2	0	2	0	
-	2	3	0	5	0	0	0	0	0	1	2	2	0	2	2	1	
-	1	0	0	3	4	1	1	2	0	0	0	1	1	0	1	0	
-	0	1	1	3	3	3	1	2	1	0	0	2	0	1	0	1	
-	4	0	2	1	0	2	3	1	0	1	1	0	1	0	0	0	
-	9	2	1	1	0	1	0	3	2	0	2	2	1	1	2	2	
-	6	0	1	1	1	0	2	1	3	1	1	2	3	0	0	0	
-	5	1	1	1	1	1	1	2	0	2	0	1	1	0	1	1	
-	8	0	3	1	0	2	1	2	0	1	2	2	1	1	1	1	
-	12	1	0	0	0	0	1	0	0	1	1	2	0	1	1	1	
-	10	0	0	0	0	1	0	1	0	0	2	1	2	1	0	1	
-	14	1	0	0	0	0	1	0	2	1	0	0	1	1	0	0	
-	11	1	1	0	1	1	1	0	0	0	1	2	2	0	1	0	
-	7	3	3	1	1	0	2	1	2	2	2	0	1	1	0	1	
+	X	7	2	3	1	5	0	4	6	
+	2	278	220	211	206	209	162	179	244	
+	4	178	266	243	202	250	188	219	197	
+	5	202	233	257	208	222	223	196	199	
+	6	209	215	186	237	188	227	217	227	
+	3	213	220	205	212	235	191	180	186	
+	0	179	222	226	199	182	233	227	200	
+	1	219	214	248	188	191	221	206	164	
+	7	19	21	31	36	35	20	46	32	
 
->> Total 180 Data movements are required using Strategy-2.
+>> Total 3931 Data movements are required using Strategy-2.
 >> After data movement using Strategy-2 ...
 
-===Round-1 (Strategy-2)  Workload Details========================
+***********************************************************************************************************************
+===Round-1 (Strategy-2)  Workload Details===
+ WL-0[1625 Transactions (containing 4552 Data) of 10 types having a distribution of {7.0, 63.0, 22.0, 29.0, 34.0, 98.0, 143.0, 98.0, 82.0, 49.0}
 
- WL-0[16 Transactions of 10 types having a distribution of {1.0, 0.0, 2.0, 2.0, 0.0, 2.0, 1.0, 2.0, 0.0, 2.0}
+ # Distributed Transactions: 97.6% | Total Transactions: 1625 | DT Impact: 3.64
+ # Percentage of Data Movements: 86.36% | Total Data: 4552
 
- TR-9[CDT(1), PS(3), Data(7)]
- TR-17[CDT(3), PS(5), Data(10)]
- TR-19[CDT(3), PS(8), Data(11)]
- TR-20[CDT(3), PS(6), Data(11)]
- TR-21[CDT(0), PS(1), Data(2)]
- TR-22[CDT(1), PS(1), Data(4)]
- TR-23[CDT(1), PS(1), Data(4)]
- TR-24[CDT(1), PS(1), Data(5)]
- TR-25[CDT(1), PS(1), Data(5)]
- TR-26[CDT(1), PS(1), Data(7)]
- TR-27[CDT(0), PS(1), Data(7)]
- TR-28[CDT(1), PS(1), Data(8)]
- TR-29[CDT(0), PS(1), Data(9)]
- TR-30[CDT(1), PS(1), Data(9)]
- TR-31[CDT(1), PS(1), Data(11)]
- TR-32[CDT(1), PS(1), Data(11)]
- # Distributed Transactions: 81.25% | Total Transactions: 16
- # Percentage of Data Movements: 80.72% | Total Data: 223
+***********************************************************************************************************************
 
 
-===Database Server Details========================
- Database Server: testdbs
- Number of Nodes: 4
+@debug >> Workload Variant: 0.63| Workload_mode: true| Transactions: 1744
+>> Round-2 :: Generating a transactional workload with 1744 synthetic transactions ...
 
-===Node Details========================
- N0 with 4 Partitions. Current Load 40.0%
- N1 with 4 Partitions. Current Load 40.0%
- N2 with 4 Partitions. Current Load 40.0%
- N3 with 3 Partitions. Current Load 30.0%
 
-===Database Details========================
- Database: testdb
- Number of Partitions: 15
+***********************************************************************************************************************
+===Round-2 (Initial)  Workload Details===
+ WL-0[1938 Transactions (containing 4721 Data) of 10 types having a distribution of {4.0, 4.0, 20.0, 10.0, 21.0, 88.0, 69.0, 54.0, 27.0, 16.0}
 
-===Partition Table Details========================
- N0{P0[693|R*7|F*12], P4[696|R*4|F*15], P8[689|R*11|F*9], P12[696|R*4|F*18]}
- N1{P1[694|R*6|F*9], P5[692|R*8|F*15], P9[690|R*10|F*13], P13[690|R*10|F*10]}
- N2{P2[692|R*8|F*16], P6[694|R*6|F*12], P10[696|R*4|F*15], P14[196|R*4|F*16]}
- N3{P3[690|R*10|F*12], P7[691|R*9|F*8], P11[694|R*6|F*20]}
+ # Distributed Transactions: 97.88% | Total Transactions: 1938 | DT Impact: 5.35
+ # Percentage of Data Movements: 86.36% | Total Data: 4721
 
-===Routing Table Details========================
+***********************************************************************************************************************
+
+>> Round-2 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	199	192	229	229	291	324	258	278	
+	1	217	195	209	250	299	293	276	251	
+	2	211	237	172	218	311	289	316	285	
+	3	209	182	248	178	302	318	256	288	
+	4	242	201	263	207	292	277	270	331	
+	5	207	240	168	231	308	357	329	246	
+	6	214	196	202	229	214	288	352	319	
+	7	25	30	37	41	34	34	43	38	
+
+>> Total 12129 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-2 (Strategy-1)  Workload Details===
+ WL-0[1938 Transactions (containing 4721 Data) of 10 types having a distribution of {4.0, 4.0, 20.0, 10.0, 21.0, 88.0, 69.0, 54.0, 27.0, 16.0}
+
+ # Distributed Transactions: 86.12% | Total Transactions: 1938 | DT Impact: 3.89
+ # Percentage of Data Movements: 256.92% | Total Data: 4721
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	5	6	7	4	3	2	0	1	
+	5	357	329	246	308	231	168	207	240	
+	6	288	352	319	214	229	202	214	196	
+	4	277	270	331	292	207	263	242	201	
+	2	289	316	285	311	218	172	211	237	
+	1	293	276	251	299	250	209	217	195	
+	3	318	256	288	302	178	248	209	182	
+	0	324	258	278	291	229	229	199	192	
+	7	34	43	38	34	41	37	25	30	
+
+>> Total 4062 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-2 (Strategy-2)  Workload Details===
+ WL-0[1938 Transactions (containing 4721 Data) of 10 types having a distribution of {4.0, 4.0, 20.0, 10.0, 21.0, 88.0, 69.0, 54.0, 27.0, 16.0}
+
+ # Distributed Transactions: 89.27% | Total Transactions: 1938 | DT Impact: 4.36
+ # Percentage of Data Movements: 86.04% | Total Data: 4721
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.46| Workload_mode: true| Transactions: 2546
+>> Round-3 :: Generating a transactional workload with 2546 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-3 (Initial)  Workload Details===
+ WL-0[2093 Transactions (containing 4782 Data) of 10 types having a distribution of {3.0, 3.0, 8.0, 4.0, 2.0, 54.0, 2.0, 53.0, 22.0, 4.0}
+
+ # Distributed Transactions: 90.01% | Total Transactions: 2093 | DT Impact: 6.02
+ # Percentage of Data Movements: 86.04% | Total Data: 4782
+
+***********************************************************************************************************************
+
+>> Round-3 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	230	202	282	251	360	277	302	272	
+	1	219	218	225	233	282	369	339	269	
+	2	228	237	261	213	342	307	338	296	
+	3	247	242	273	189	284	337	258	334	
+	4	229	237	209	186	375	261	353	403	
+	5	216	266	216	233	316	330	349	316	
+	6	260	189	192	278	289	319	262	376	
+	7	31	41	45	40	46	33	39	36	
+
+>> Total 13101 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-3 (Strategy-1)  Workload Details===
+ WL-0[2093 Transactions (containing 4782 Data) of 10 types having a distribution of {3.0, 3.0, 8.0, 4.0, 2.0, 54.0, 2.0, 53.0, 22.0, 4.0}
+
+ # Distributed Transactions: 88.29% | Total Transactions: 2093 | DT Impact: 5.62
+ # Percentage of Data Movements: 273.96% | Total Data: 4782
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	7	5	4	6	3	2	1	0	
+	4	403	261	375	353	186	209	237	229	
+	1	269	369	282	339	233	225	218	219	
+	0	272	277	360	302	251	282	202	230	
+	5	316	330	316	349	233	216	266	216	
+	6	376	319	289	262	278	192	189	260	
+	3	334	337	284	258	189	273	242	247	
+	2	296	307	342	338	213	261	237	228	
+	7	36	33	46	39	40	45	41	31	
+
+>> Total 4109 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-3 (Strategy-2)  Workload Details===
+ WL-0[2093 Transactions (containing 4782 Data) of 10 types having a distribution of {3.0, 3.0, 8.0, 4.0, 2.0, 54.0, 2.0, 53.0, 22.0, 4.0}
+
+ # Distributed Transactions: 97.18% | Total Transactions: 2093 | DT Impact: 7.07
+ # Percentage of Data Movements: 85.93% | Total Data: 4782
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.4| Workload_mode: true| Transactions: 3564
+>> Round-4 :: Generating a transactional workload with 3564 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-4 (Initial)  Workload Details===
+ WL-0[2168 Transactions (containing 4808 Data) of 10 types having a distribution of {2.0, 0.0, 2.0, 4.0, 2.0, 44.0, 1.0, 1.0, 16.0, 3.0}
+
+ # Distributed Transactions: 97.23% | Total Transactions: 2168 | DT Impact: 9.09
+ # Percentage of Data Movements: 85.93% | Total Data: 4808
+
+***********************************************************************************************************************
+
+>> Round-4 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	336	292	301	319	242	251	251	263	
+	1	294	282	323	311	245	273	254	250	
+	2	327	279	282	320	267	251	306	273	
+	3	308	295	328	291	232	258	256	278	
+	4	308	281	325	319	232	268	257	343	
+	5	301	318	273	375	334	257	235	233	
+	6	218	286	317	284	295	303	233	298	
+	7	56	59	48	34	32	29	34	26	
+
+>> Total 13606 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-4 (Strategy-1)  Workload Details===
+ WL-0[2168 Transactions (containing 4808 Data) of 10 types having a distribution of {2.0, 0.0, 2.0, 4.0, 2.0, 44.0, 1.0, 1.0, 16.0, 3.0}
+
+ # Distributed Transactions: 90.27% | Total Transactions: 2168 | DT Impact: 7.67
+ # Percentage of Data Movements: 282.99% | Total Data: 4808
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	3	7	0	2	6	5	1	4	
+	5	375	233	301	273	235	257	318	334	
+	4	319	343	308	325	257	268	281	232	
+	0	319	263	336	301	251	251	292	242	
+	3	291	278	308	328	256	258	295	232	
+	2	320	273	327	282	306	251	279	267	
+	6	284	298	218	317	233	303	286	295	
+	1	311	250	294	323	254	273	282	245	
+	7	34	26	56	48	34	29	59	32	
+
+>> Total 4134 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-4 (Strategy-2)  Workload Details===
+ WL-0[2168 Transactions (containing 4808 Data) of 10 types having a distribution of {2.0, 0.0, 2.0, 4.0, 2.0, 44.0, 1.0, 1.0, 16.0, 3.0}
+
+ # Distributed Transactions: 93.08% | Total Transactions: 2168 | DT Impact: 8.29
+ # Percentage of Data Movements: 85.98% | Total Data: 4808
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.14| Workload_mode: false| Transactions: 3066
+>> Round-5 :: Generating a transactional workload with 3066 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-5 (Initial)  Workload Details===
+ WL-0[2192 Transactions (containing 4816 Data) of 10 types having a distribution of {0.0, 0.0, 1.0, 2.0, 2.0, 12.0, 0.0, 0.0, 5.0, 2.0}
+
+ # Distributed Transactions: 93.16% | Total Transactions: 2192 | DT Impact: 10.29
+ # Percentage of Data Movements: 85.98% | Total Data: 4816
+
+***********************************************************************************************************************
+
+>> Round-5 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	260	219	224	299	294	322	304	361	
+	1	273	269	276	220	312	277	313	318	
+	2	209	225	333	225	366	362	325	284	
+	3	220	264	233	201	322	395	303	333	
+	4	196	281	189	245	365	450	311	323	
+	5	253	226	221	252	362	276	433	329	
+	6	235	231	250	219	337	331	300	357	
+	7	20	33	25	42	61	64	18	55	
+
+>> Total 13635 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-5 (Strategy-1)  Workload Details===
+ WL-0[2192 Transactions (containing 4816 Data) of 10 types having a distribution of {0.0, 0.0, 1.0, 2.0, 2.0, 12.0, 0.0, 0.0, 5.0, 2.0}
+
+ # Distributed Transactions: 90.6% | Total Transactions: 2192 | DT Impact: 9.4
+ # Percentage of Data Movements: 283.12% | Total Data: 4816
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	5	6	4	7	2	1	0	3	
+	4	450	311	365	323	189	281	196	245	
+	5	276	433	362	329	221	226	253	252	
+	2	362	325	366	284	333	225	209	225	
+	0	322	304	294	361	224	219	260	299	
+	1	277	313	312	318	276	269	273	220	
+	3	395	303	322	333	233	264	220	201	
+	6	331	300	337	357	250	231	235	219	
+	7	64	18	61	55	25	33	20	42	
+
+>> Total 4147 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-5 (Strategy-2)  Workload Details===
+ WL-0[2192 Transactions (containing 4816 Data) of 10 types having a distribution of {0.0, 0.0, 1.0, 2.0, 2.0, 12.0, 0.0, 0.0, 5.0, 2.0}
+
+ # Distributed Transactions: 97.03% | Total Transactions: 2192 | DT Impact: 11.16
+ # Percentage of Data Movements: 86.11% | Total Data: 4816
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.88| Workload_mode: false| Transactions: 368
+>> Round-6 :: Generating a transactional workload with 368 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-6 (Initial)  Workload Details===
+ WL-0[2202 Transactions (containing 4819 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 5.0, 1.0}
+
+ # Distributed Transactions: 97.05% | Total Transactions: 2202 | DT Impact: 13.35
+ # Percentage of Data Movements: 86.11% | Total Data: 4819
+
+***********************************************************************************************************************
+
+>> Round-6 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	306	195	248	261	305	355	327	296	
+	1	247	245	218	281	268	307	374	332	
+	2	218	309	219	208	383	359	312	334	
+	3	254	232	235	218	335	339	365	307	
+	4	258	216	230	298	399	334	361	279	
+	5	232	216	294	264	374	279	376	328	
+	6	215	261	229	209	309	330	341	374	
+	7	26	31	54	46	55	39	16	54	
+
+>> Total 13804 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-6 (Strategy-1)  Workload Details===
+ WL-0[2202 Transactions (containing 4819 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 5.0, 1.0}
+
+ # Distributed Transactions: 90.87% | Total Transactions: 2202 | DT Impact: 10.97
+ # Percentage of Data Movements: 286.45% | Total Data: 4819
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	4	6	7	5	0	3	2	1	
+	4	399	361	279	334	258	298	230	216	
+	5	374	376	328	279	232	264	294	216	
+	6	309	341	374	330	215	209	229	261	
+	2	383	312	334	359	218	208	219	309	
+	0	305	327	296	355	306	261	248	195	
+	1	268	374	332	307	247	281	218	245	
+	3	335	365	307	339	254	218	235	232	
+	7	55	16	54	39	26	46	54	31	
+
+>> Total 4151 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-6 (Strategy-2)  Workload Details===
+ WL-0[2202 Transactions (containing 4819 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 5.0, 1.0}
+
+ # Distributed Transactions: 93.82% | Total Transactions: 2202 | DT Impact: 12.54
+ # Percentage of Data Movements: 86.14% | Total Data: 4819
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.54| Workload_mode: true| Transactions: 566
+>> Round-7 :: Generating a transactional workload with 566 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-7 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0}
+
+ # Distributed Transactions: 93.83% | Total Transactions: 2205 | DT Impact: 14.65
+ # Percentage of Data Movements: 86.14% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-7 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	351	339	278	319	311	276	216	207	
+	1	321	287	331	323	273	219	282	239	
+	2	375	288	328	235	249	296	293	285	
+	3	413	270	277	350	227	180	268	302	
+	4	406	385	393	266	272	223	233	201	
+	5	266	356	340	412	256	258	243	235	
+	6	319	379	389	255	280	227	193	232	
+	7	63	61	33	31	22	29	51	32	
+
+>> Total 13744 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-7 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0}
+
+ # Distributed Transactions: 92.65% | Total Transactions: 2205 | DT Impact: 13.57
+ # Percentage of Data Movements: 285.15% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	3	2	1	4	5	6	7	
+	3	413	350	277	270	227	180	268	302	
+	5	266	412	340	356	256	258	243	235	
+	4	406	266	393	385	272	223	233	201	
+	6	319	255	389	379	280	227	193	232	
+	0	351	319	278	339	311	276	216	207	
+	2	375	235	328	288	249	296	293	285	
+	1	321	323	331	287	273	219	282	239	
+	7	63	31	33	61	22	29	51	32	
+
+>> Total 4117 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-7 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0}
+
+ # Distributed Transactions: 96.55% | Total Transactions: 2205 | DT Impact: 15.45
+ # Percentage of Data Movements: 85.41% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.33| Workload_mode: true| Transactions: 752
+>> Round-8 :: Generating a transactional workload with 752 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-8 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 96.55% | Total Transactions: 2205 | DT Impact: 17.68
+ # Percentage of Data Movements: 85.41% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-8 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	248	279	340	283	297	306	282	262	
+	1	285	294	272	281	277	283	280	303	
+	2	258	311	312	297	273	280	310	308	
+	3	287	319	258	275	308	260	297	283	
+	4	268	262	275	351	358	282	285	298	
+	5	283	221	244	301	373	290	318	336	
+	6	300	245	265	236	303	270	402	253	
+	7	25	31	25	55	45	27	67	47	
+
+>> Total 13822 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-8 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 92.02% | Total Transactions: 2205 | DT Impact: 15.73
+ # Percentage of Data Movements: 286.76% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	6	4	3	2	1	7	0	5	
+	6	402	303	236	265	245	253	300	270	
+	5	318	373	301	244	221	336	283	290	
+	4	285	358	351	275	262	298	268	282	
+	0	282	297	283	340	279	262	248	306	
+	3	297	308	275	258	319	283	287	260	
+	2	310	273	297	312	311	308	258	280	
+	1	280	277	281	272	294	303	285	283	
+	7	67	45	55	25	31	47	25	27	
+
+>> Total 4125 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-8 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 94.92% | Total Transactions: 2205 | DT Impact: 17.29
+ # Percentage of Data Movements: 85.58% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.76| Workload_mode: false| Transactions: 181
+>> Round-9 :: Generating a transactional workload with 181 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-9 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 94.92% | Total Transactions: 2205 | DT Impact: 19.47
+ # Percentage of Data Movements: 85.58% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-9 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	304	351	390	279	272	283	180	238	
+	1	336	342	304	351	273	197	216	256	
+	2	311	316	314	368	223	220	316	281	
+	3	276	354	323	316	253	288	230	247	
+	4	310	375	354	329	234	301	196	280	
+	5	325	336	311	397	259	241	251	246	
+	6	394	312	326	339	278	193	230	202	
+	7	56	42	25	44	25	23	59	48	
+
+>> Total 13817 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-9 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 89.93% | Total Transactions: 2205 | DT Impact: 16.58
+ # Percentage of Data Movements: 286.66% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	3	0	2	1	6	5	4	7	
+	5	397	325	311	336	251	241	259	246	
+	6	339	394	326	312	230	193	278	202	
+	0	279	304	390	351	180	283	272	238	
+	4	329	310	354	375	196	301	234	280	
+	2	368	311	314	316	316	220	223	281	
+	3	316	276	323	354	230	288	253	247	
+	1	351	336	304	342	216	197	273	256	
+	7	44	56	25	42	59	23	25	48	
+
+>> Total 4128 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-9 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.74% | Total Transactions: 2205 | DT Impact: 19.86
+ # Percentage of Data Movements: 85.64% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.91| Workload_mode: true| Transactions: 345
+>> Round-10 :: Generating a transactional workload with 345 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-10 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.74% | Total Transactions: 2205 | DT Impact: 22.09
+ # Percentage of Data Movements: 85.64% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-10 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	274	294	240	376	233	312	285	283	
+	1	266	268	293	279	301	267	337	264	
+	2	294	281	290	285	306	265	325	303	
+	3	299	291	316	235	282	246	256	362	
+	4	339	333	260	334	240	319	298	256	
+	5	299	343	323	261	314	264	307	255	
+	6	355	282	236	279	308	269	279	266	
+	7	36	47	59	31	42	44	47	16	
+
+>> Total 13820 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-10 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 91.56% | Total Transactions: 2205 | DT Impact: 19.21
+ # Percentage of Data Movements: 286.72% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	3	7	0	1	6	5	4	2	
+	0	376	283	274	294	285	312	233	240	
+	3	235	362	299	291	256	246	282	316	
+	6	279	266	355	282	279	269	308	236	
+	5	261	255	299	343	307	264	314	323	
+	1	279	264	266	268	337	267	301	293	
+	4	334	256	339	333	298	319	240	260	
+	2	285	303	294	281	325	265	306	290	
+	7	31	16	36	47	47	44	42	59	
+
+>> Total 4125 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-10 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 94.88% | Total Transactions: 2205 | DT Impact: 21.79
+ # Percentage of Data Movements: 85.58% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.64| Workload_mode: true| Transactions: 565
+>> Round-11 :: Generating a transactional workload with 565 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-11 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 94.88% | Total Transactions: 2205 | DT Impact: 23.99
+ # Percentage of Data Movements: 85.58% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-11 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	228	204	279	234	368	340	274	370	
+	1	206	272	227	190	360	380	328	312	
+	2	333	236	251	219	287	313	326	384	
+	3	210	258	245	265	291	278	366	374	
+	4	211	253	266	265	357	345	336	346	
+	5	231	261	276	254	378	311	352	303	
+	6	248	243	220	264	311	311	330	347	
+	7	20	17	34	58	35	41	88	29	
+
+>> Total 13892 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-11 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 90.07% | Total Transactions: 2205 | DT Impact: 21.38
+ # Percentage of Data Movements: 288.22% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	7	5	4	6	2	3	0	1	
+	2	384	313	287	326	251	219	333	236	
+	1	312	380	360	328	227	190	206	272	
+	5	303	311	378	352	276	254	231	261	
+	3	374	278	291	366	245	265	210	258	
+	0	370	340	368	274	279	234	228	204	
+	4	346	345	357	336	266	265	211	253	
+	6	347	311	311	330	220	264	248	243	
+	7	29	41	35	88	34	58	20	17	
+
+>> Total 4179 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-11 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.37% | Total Transactions: 2205 | DT Impact: 23.98
+ # Percentage of Data Movements: 86.7% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.76| Workload_mode: true| Transactions: 994
+>> Round-12 :: Generating a transactional workload with 994 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-12 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.37% | Total Transactions: 2205 | DT Impact: 26.17
+ # Percentage of Data Movements: 86.7% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-12 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	268	344	317	346	236	244	297	245	
+	1	251	336	355	336	278	255	188	276	
+	2	335	337	404	261	251	273	251	237	
+	3	388	341	257	350	230	270	244	207	
+	4	389	306	390	332	206	285	247	224	
+	5	327	398	294	325	268	220	298	236	
+	6	373	275	383	334	241	294	170	204	
+	7	60	28	46	56	32	21	45	34	
+
+>> Total 13862 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-12 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 90.07% | Total Transactions: 2205 | DT Impact: 22.58
+ # Percentage of Data Movements: 287.59% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	2	1	0	3	6	5	4	7	
+	2	404	337	335	261	251	273	251	237	
+	5	294	398	327	325	298	220	268	236	
+	4	390	306	389	332	247	285	206	224	
+	3	257	341	388	350	244	270	230	207	
+	0	317	344	268	346	297	244	236	245	
+	6	383	275	373	334	170	294	241	204	
+	1	355	336	251	336	188	255	278	276	
+	7	46	28	60	56	45	21	32	34	
+
+>> Total 4122 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-12 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.42% | Total Transactions: 2205 | DT Impact: 26.22
+ # Percentage of Data Movements: 85.52% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.1| Workload_mode: true| Transactions: 1093
+>> Round-13 :: Generating a transactional workload with 1093 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-13 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.42% | Total Transactions: 2205 | DT Impact: 28.42
+ # Percentage of Data Movements: 85.52% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-13 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	276	304	254	315	350	237	271	290	
+	1	289	288	328	229	245	347	289	260	
+	2	304	342	251	275	311	291	266	309	
+	3	325	262	270	247	279	292	276	336	
+	4	279	307	316	256	358	300	279	284	
+	5	294	329	300	341	311	266	258	267	
+	6	304	265	346	280	276	223	292	288	
+	7	58	43	44	35	40	38	7	57	
+
+>> Total 13862 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-13 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 90.43% | Total Transactions: 2205 | DT Impact: 24.9
+ # Percentage of Data Movements: 287.59% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	4	5	2	1	3	7	0	6	
+	4	358	300	316	307	256	284	279	279	
+	1	245	347	328	288	229	260	289	289	
+	6	276	223	346	265	280	288	304	292	
+	2	311	291	251	342	275	309	304	266	
+	5	311	266	300	329	341	267	294	258	
+	3	279	292	270	262	247	336	325	276	
+	0	350	237	254	304	315	290	276	271	
+	7	40	38	44	43	35	57	58	7	
+
+>> Total 4156 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-13 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.46% | Total Transactions: 2205 | DT Impact: 28.37
+ # Percentage of Data Movements: 86.22% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.3| Workload_mode: false| Transactions: 766
+>> Round-14 :: Generating a transactional workload with 766 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-14 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.46% | Total Transactions: 2205 | DT Impact: 30.56
+ # Percentage of Data Movements: 86.22% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-14 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	281	252	281	293	295	270	363	262	
+	1	274	245	285	309	220	327	279	336	
+	2	271	288	320	278	275	319	287	311	
+	3	249	266	302	354	253	300	262	301	
+	4	333	269	312	278	314	279	333	261	
+	5	295	273	319	257	334	260	266	362	
+	6	257	302	237	260	275	311	354	278	
+	7	17	35	53	16	35	51	66	49	
+
+>> Total 13854 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-14 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 91.79% | Total Transactions: 2205 | DT Impact: 26.87
+ # Percentage of Data Movements: 287.43% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	6	7	3	0	5	2	1	4	
+	0	363	262	293	281	270	281	252	295	
+	5	266	362	257	295	260	319	273	334	
+	3	262	301	354	249	300	302	266	253	
+	4	333	261	278	333	279	312	269	314	
+	1	279	336	309	274	327	285	245	220	
+	2	287	311	278	271	319	320	288	275	
+	6	354	278	260	257	311	237	302	275	
+	7	66	49	16	17	51	53	35	35	
+
+>> Total 4156 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-14 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 96.37% | Total Transactions: 2205 | DT Impact: 30.65
+ # Percentage of Data Movements: 86.22% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.73| Workload_mode: true| Transactions: 1325
+>> Round-15 :: Generating a transactional workload with 1325 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-15 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 96.37% | Total Transactions: 2205 | DT Impact: 32.85
+ # Percentage of Data Movements: 86.22% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-15 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	310	307	307	270	288	310	243	262	
+	1	248	258	280	359	278	306	251	295	
+	2	308	320	259	313	293	235	349	272	
+	3	287	355	308	284	206	284	252	311	
+	4	322	368	318	297	324	240	244	266	
+	5	355	327	258	328	295	251	314	238	
+	6	307	294	298	317	234	256	272	296	
+	7	59	19	41	43	38	37	24	61	
+
+>> Total 13855 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-15 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 92.11% | Total Transactions: 2205 | DT Impact: 28.87
+ # Percentage of Data Movements: 287.45% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	1	3	0	6	7	5	2	4	
+	4	368	297	322	244	266	240	318	324	
+	1	258	359	248	251	295	306	280	278	
+	5	327	328	355	314	238	251	258	295	
+	2	320	313	308	349	272	235	259	293	
+	3	355	284	287	252	311	284	308	206	
+	0	307	270	310	243	262	310	307	288	
+	6	294	317	307	272	296	256	298	234	
+	7	19	43	59	24	61	37	41	38	
+
+>> Total 4129 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-15 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.15% | Total Transactions: 2205 | DT Impact: 33.09
+ # Percentage of Data Movements: 85.66% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.97| Workload_mode: true| Transactions: 2610
+>> Round-16 :: Generating a transactional workload with 2610 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-16 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.15% | Total Transactions: 2205 | DT Impact: 35.3
+ # Percentage of Data Movements: 85.66% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-16 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	309	220	313	281	308	282	272	312	
+	1	347	254	291	292	287	291	260	253	
+	2	333	364	290	291	297	252	235	287	
+	3	261	318	310	216	263	248	333	338	
+	4	254	303	232	387	298	304	326	275	
+	5	289	288	342	270	330	295	251	301	
+	6	278	288	266	374	276	334	224	234	
+	7	56	36	37	39	27	43	49	35	
+
+>> Total 13774 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-16 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 92.43% | Total Transactions: 2205 | DT Impact: 31.86
+ # Percentage of Data Movements: 285.77% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	3	1	0	2	7	5	4	6	
+	4	387	303	254	232	275	304	298	326	
+	2	291	364	333	290	287	252	297	235	
+	1	292	254	347	291	253	291	287	260	
+	5	270	288	289	342	301	295	330	251	
+	3	216	318	261	310	338	248	263	333	
+	6	374	288	278	266	234	334	276	224	
+	0	281	220	309	313	312	282	308	272	
+	7	39	36	56	37	35	43	27	49	
+
+>> Total 4127 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-16 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 96.01% | Total Transactions: 2205 | DT Impact: 35.14
+ # Percentage of Data Movements: 85.62% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.29| Workload_mode: true| Transactions: 3366
+>> Round-17 :: Generating a transactional workload with 3366 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-17 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 96.01% | Total Transactions: 2205 | DT Impact: 37.34
+ # Percentage of Data Movements: 85.62% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-17 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	310	281	330	414	260	253	242	207	
+	1	304	328	292	356	243	292	214	246	
+	2	344	360	280	358	236	226	262	283	
+	3	355	319	299	336	273	259	226	220	
+	4	315	339	367	330	273	250	271	234	
+	5	311	337	341	351	238	260	233	295	
+	6	369	364	368	268	238	249	209	209	
+	7	44	54	44	58	22	41	35	24	
+
+>> Total 13903 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-17 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 91.43% | Total Transactions: 2205 | DT Impact: 31.6
+ # Percentage of Data Movements: 288.44% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	3	0	2	1	7	5	4	6	
+	0	414	310	330	281	207	253	260	242	
+	6	268	369	368	364	209	249	238	209	
+	4	330	315	367	339	234	250	273	271	
+	2	358	344	280	360	283	226	236	262	
+	5	351	311	341	337	295	260	238	233	
+	1	356	304	292	328	246	292	243	214	
+	3	336	355	299	319	220	259	273	226	
+	7	58	44	44	54	24	41	22	35	
+
+>> Total 4152 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-17 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.51% | Total Transactions: 2205 | DT Impact: 36.82
+ # Percentage of Data Movements: 86.14% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.22| Workload_mode: false| Transactions: 2626
+>> Round-18 :: Generating a transactional workload with 2626 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-18 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.51% | Total Transactions: 2205 | DT Impact: 38.99
+ # Percentage of Data Movements: 86.14% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-18 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	248	304	310	271	280	326	290	268	
+	1	311	266	264	303	301	255	297	278	
+	2	293	330	371	296	266	287	273	233	
+	3	305	240	274	300	289	314	310	255	
+	4	291	282	247	330	258	310	355	306	
+	5	287	292	327	334	235	293	247	351	
+	6	308	325	340	271	275	255	229	271	
+	7	54	37	50	31	64	32	26	28	
+
+>> Total 13870 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-18 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 92.43% | Total Transactions: 2205 | DT Impact: 33.67
+ # Percentage of Data Movements: 287.76% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	2	6	7	5	1	0	3	4	
+	2	371	273	233	287	330	293	296	266	
+	4	247	355	306	310	282	291	330	258	
+	5	327	247	351	293	292	287	334	235	
+	0	310	290	268	326	304	248	271	280	
+	6	340	229	271	255	325	308	271	275	
+	1	264	297	278	255	266	311	303	301	
+	3	274	310	255	314	240	305	300	289	
+	7	50	26	28	32	37	54	31	64	
+
+>> Total 4124 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-18 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.46% | Total Transactions: 2205 | DT Impact: 39.31
+ # Percentage of Data Movements: 85.56% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.59| Workload_mode: false| Transactions: 1077
+>> Round-19 :: Generating a transactional workload with 1077 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-19 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.46% | Total Transactions: 2205 | DT Impact: 41.5
+ # Percentage of Data Movements: 85.56% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-19 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	298	269	280	284	275	269	293	329	
+	1	292	315	316	230	314	257	283	268	
+	2	313	313	282	334	259	306	286	256	
+	3	246	281	271	313	259	291	303	323	
+	4	378	348	282	248	300	315	220	288	
+	5	337	296	256	296	335	303	279	264	
+	6	266	272	280	304	265	330	292	265	
+	7	39	43	31	59	42	34	52	22	
+
+>> Total 13876 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-19 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 92.2% | Total Transactions: 2205 | DT Impact: 37.77
+ # Percentage of Data Movements: 287.88% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	4	3	5	7	2	6	1	
+	4	378	300	248	315	288	282	220	348	
+	5	337	335	296	303	264	256	279	296	
+	2	313	259	334	306	256	282	286	313	
+	6	266	265	304	330	265	280	292	272	
+	0	298	275	284	269	329	280	293	269	
+	1	292	314	230	257	268	316	283	315	
+	3	246	259	313	291	323	271	303	281	
+	7	39	42	59	34	22	31	52	43	
+
+>> Total 4148 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-19 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.83% | Total Transactions: 2205 | DT Impact: 42.25
+ # Percentage of Data Movements: 86.06% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.23| Workload_mode: false| Transactions: 830
+>> Round-20 :: Generating a transactional workload with 830 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-20 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.83% | Total Transactions: 2205 | DT Impact: 44.48
+ # Percentage of Data Movements: 86.06% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-20 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	302	314	282	241	246	346	285	281	
+	1	301	295	236	309	334	269	258	273	
+	2	335	277	328	384	238	283	250	254	
+	3	253	248	318	276	274	338	292	288	
+	4	253	341	300	303	293	264	366	259	
+	5	286	253	317	265	317	316	293	319	
+	6	319	326	284	242	257	288	272	286	
+	7	43	30	23	61	52	41	27	45	
+
+>> Total 13796 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-20 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 92.29% | Total Transactions: 2205 | DT Impact: 38.52
+ # Percentage of Data Movements: 286.22% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	3	6	5	4	1	7	2	0	
+	2	384	250	283	238	277	254	328	335	
+	4	303	366	264	293	341	259	300	253	
+	0	241	285	346	246	314	281	282	302	
+	1	309	258	269	334	295	273	236	301	
+	6	242	272	288	257	326	286	284	319	
+	5	265	293	316	317	253	319	317	286	
+	3	276	292	338	274	248	288	318	253	
+	7	61	27	41	52	30	45	23	43	
+
+>> Total 4143 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-20 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.28% | Total Transactions: 2205 | DT Impact: 43.7
+ # Percentage of Data Movements: 85.95% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.3| Workload_mode: false| Transactions: 581
+>> Round-21 :: Generating a transactional workload with 581 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-21 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.28% | Total Transactions: 2205 | DT Impact: 45.9
+ # Percentage of Data Movements: 85.95% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-21 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	281	296	294	290	269	304	320	243	
+	1	299	248	295	332	258	292	321	230	
+	2	360	253	300	279	308	293	229	327	
+	3	222	351	304	237	288	322	268	295	
+	4	277	328	291	249	345	335	263	291	
+	5	306	269	326	287	294	258	313	313	
+	6	264	287	298	280	244	321	251	329	
+	7	28	29	44	49	44	57	24	47	
+
+>> Total 13850 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-21 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 90.61% | Total Transactions: 2205 | DT Impact: 40.96
+ # Percentage of Data Movements: 287.34% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	4	3	7	2	6	5	
+	2	360	253	308	279	327	300	229	293	
+	3	222	351	288	237	295	304	268	322	
+	4	277	328	345	249	291	291	263	335	
+	1	299	248	258	332	230	295	321	292	
+	6	264	287	244	280	329	298	251	321	
+	5	306	269	294	287	313	326	313	258	
+	0	281	296	269	290	243	294	320	304	
+	7	28	29	44	49	47	44	24	57	
+
+>> Total 4148 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-21 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.65% | Total Transactions: 2205 | DT Impact: 46.31
+ # Percentage of Data Movements: 86.06% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.66| Workload_mode: false| Transactions: 198
+>> Round-22 :: Generating a transactional workload with 198 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-22 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.65% | Total Transactions: 2205 | DT Impact: 48.52
+ # Percentage of Data Movements: 86.06% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-22 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	263	245	287	236	333	307	324	302	
+	1	307	259	273	268	241	334	274	319	
+	2	252	223	233	279	410	327	284	341	
+	3	239	239	231	190	303	316	385	384	
+	4	186	220	259	284	329	391	359	351	
+	5	258	220	210	228	424	361	321	344	
+	6	216	207	263	295	288	330	344	331	
+	7	39	48	27	26	53	35	59	35	
+
+>> Total 13817 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-22 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 90.79% | Total Transactions: 2205 | DT Impact: 42.93
+ # Percentage of Data Movements: 286.66% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	4	5	6	7	0	3	2	1	
+	5	424	361	321	344	258	228	210	220	
+	4	329	391	359	351	186	284	259	220	
+	3	303	316	385	384	239	190	231	239	
+	2	410	327	284	341	252	279	233	223	
+	1	241	334	274	319	307	268	273	259	
+	6	288	330	344	331	216	295	263	207	
+	0	333	307	324	302	263	236	287	245	
+	7	53	35	59	35	39	26	27	48	
+
+>> Total 4130 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-22 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.92% | Total Transactions: 2205 | DT Impact: 48.49
+ # Percentage of Data Movements: 85.68% | Total Data: 4820
+
+***********************************************************************************************************************
+
+
+@debug >> Workload Variant: 0.05| Workload_mode: true| Transactions: 207
+>> Round-23 :: Generating a transactional workload with 207 synthetic transactions ...
+
+
+***********************************************************************************************************************
+===Round-23 (Initial)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.92% | Total Transactions: 2205 | DT Impact: 50.7
+ # Percentage of Data Movements: 85.68% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Round-23 :: Workload generation completed !!!
+>> Run HyperGraph Partitioning on the Workload ...
+>> Strategy-1 :: One(Cluster)-to-One(Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	0	1	2	3	4	5	6	7	
+	0	285	264	295	311	285	256	301	300	
+	1	291	244	258	322	250	311	322	277	
+	2	365	274	208	295	334	303	311	259	
+	3	325	283	335	285	280	299	211	269	
+	4	199	348	312	271	311	268	309	361	
+	5	337	309	267	259	328	274	310	282	
+	6	257	237	292	235	284	294	308	367	
+	7	43	44	49	46	61	38	23	18	
+
+>> Total 13845 Data movements are required using Strategy-1.
+>> After data movement using Strategy-1 ...
+
+***********************************************************************************************************************
+===Round-23 (Strategy-1)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 91.38% | Total Transactions: 2205 | DT Impact: 45.08
+ # Percentage of Data Movements: 287.24% | Total Data: 4820
+
+***********************************************************************************************************************
+
+>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)
+>> Generating Data Movement Mapping Matrix ...
+   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
+	X	7	0	1	2	4	3	6	5	
+	6	367	257	237	292	284	235	308	294	
+	2	259	365	274	208	334	295	311	303	
+	4	361	199	348	312	311	271	309	268	
+	3	269	325	283	335	280	285	211	299	
+	5	282	337	309	267	328	259	310	274	
+	1	277	291	244	258	250	322	322	311	
+	0	300	285	264	295	285	311	301	256	
+	7	18	43	44	49	61	46	23	38	
+
+>> Total 4131 Data movements are required using Strategy-2.
+>> After data movement using Strategy-2 ...
+
+***********************************************************************************************************************
+===Round-23 (Strategy-2)  Workload Details===
+ WL-0[2205 Transactions (containing 4820 Data) of 10 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+
+ # Distributed Transactions: 95.46% | Total Transactions: 2205 | DT Impact: 50.49
+ # Percentage of Data Movements: 85.71% | Total Data: 4820
+
+***********************************************************************************************************************

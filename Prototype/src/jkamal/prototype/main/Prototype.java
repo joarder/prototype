@@ -21,10 +21,10 @@ import jkamal.prototype.workload.WorkloadGeneration;
 
 public class Prototype {	
 	public final static int DB_SERVERS = 4;
-	public final static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
+	public final static int DATA_OBJECTS = 5000; // 10GB Data (in Size)
 	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "hmetis";
-	public static int TRANSACTION_NUMS = 20;
+	public static int TRANSACTION_NUMS = 1000;
 	
 	public static void main(String[] args) throws IOException {
 		
@@ -40,6 +40,7 @@ public class Prototype {
 		// following partitioning schemes like Range, Salting, Hashing and Consistent Hashing partitioning
 		System.out.println(">> Started Bootstrapping Process ...");
 		System.out.println(">> Generating "+ DATA_OBJECTS +" synthetic data items ...");
+		System.out.println();
 		Bootstrapping bootstrapping = new Bootstrapping();
 		bootstrapping.bootstrapping(dbs, db, DATA_OBJECTS);
 		
@@ -52,82 +53,44 @@ public class Prototype {
 		//==============================================================================================
 		// Initial
 		WorkloadGeneration workloadGen = new WorkloadGeneration();
+		Workload workload = null;
 		File dir = new File(DIR_LOCATION);
+		HGraphMinCut minCut;
 		HGraphClusters hGraphClusters = new HGraphClusters();
-		Workload workload;		
+		DataMovement dataMovement = new DataMovement();
+		
 		double time_variant = 0.0;
 		double workload_variant = 0.0;
 		boolean workload_mode = true; // positive
-		int workload_round = 1;
+		int workload_round = 0;
 		Random rand;
 		
 		//============================================================================================== 		
-		// Synthetic Workload Generation 				
-		System.out.print("\n>> Generating a database workload with "+ TRANSACTION_NUMS +" synthetic transactions ...\n");		
-		Workload testWorkload = workloadGen.init(db, "AuctionMark", 0);		
-		testWorkload =	workloadGen.generate(dbs, db, testWorkload, TRANSACTION_NUMS, DIR_LOCATION);		
-		testWorkload.print(db);
-		System.out.println();
-		System.out.println("\n>> Workload generation complete !!!");		
-		
-		//==============================================================================================
-		// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
-		// distributed transactions as well as maintain the load balance among the data partitions				
-		System.out.println(">> Run HyperGraph Partitioning on the Workload ...");
-		// Sleep for 5sec to ensure the files are generated		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		//==============================================================================================
-		// Run hMetis HyperGraph Partitioning				
-		HGraphMinCut minCut = new HGraphMinCut(db, testWorkload, dir, HMETIS); 		
-		minCut.runHMetis();
-
-		// Sleep for 5sec to ensure the files are generated
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}		
-		
-		//==============================================================================================
-		// Read Part file and assign corresponding Data cluster Id		
-		hGraphClusters.readPartFile(db, testWorkload);
-				
-		//==============================================================================================
-		// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
-		DataMovement dataMovement = new DataMovement();
-		System.out.println(">> Strategy-1 :: One(Cluster)-to-One(Partition)");
-		dataMovement.strategy1(db, testWorkload);
-		System.out.println();
-		System.out.println("\n>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)");
-		dataMovement.strategy2(db, testWorkload);
-
-//==========================================================================================================================================		
-		while(workload_round != 0) {		
+		// Prototype Run Rounds
+		while(workload_round != 24) {		
 			// Generate Workload variations for successive rounds except the first run
 			if(workload_round !=0) {
 				rand = new Random();
 				time_variant = rand.nextDouble();
-				workload_variant = time_variant;
+				workload_variant = Math.round(time_variant * 100.0)/100.0;
 				workload_mode = rand.nextBoolean();
 														
 				if(workload_mode)
 					TRANSACTION_NUMS += (int)(TRANSACTION_NUMS * workload_variant);
 				else 
-					TRANSACTION_NUMS -= (int)(TRANSACTION_NUMS * workload_variant);				
+					TRANSACTION_NUMS -= (int)(TRANSACTION_NUMS * workload_variant);
+				
+				System.out.println("@debug >> Workload Variant: "+workload_variant+"| Workload_mode: "+workload_mode+"| Transactions: "+TRANSACTION_NUMS);
+			} else {
+				workload = workloadGen.init(db, "AuctionMark", 0);
 			}
-			
-			System.out.println("\n\n@debug >> Workload Variant: "+workload_variant+"| Workload_mode: "+workload_mode+"| Transactions: "+TRANSACTION_NUMS);
-			System.out.println("\n>> Generating a database workload with "+ TRANSACTION_NUMS +" synthetic transactions ...\n");			
-			workload = workloadGen.generateRepeatedWorkload(dbs, db, "AuctionMark", TRANSACTION_NUMS, DIR_LOCATION, testWorkload, workload_round, workload_mode);
+						
+			System.out.println(">> Round-"+workload_round+" :: Generating a transactional workload with "+ TRANSACTION_NUMS +" synthetic transactions ...\n");						
+			workload = workloadGen.generateRepeatedWorkload(dbs, db, TRANSACTION_NUMS, DIR_LOCATION, workload, workload_round, workload_mode);
 			workload.setMessage(" (Initial) ");
 			workload.print(db);
 			System.out.println();
-			System.out.println("\n>> Workload generation complete !!!");		
+			System.out.println(">> Round-"+workload_round+" :: Workload generation completed !!!");		
 			
 			//==============================================================================================
 			// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
@@ -154,21 +117,17 @@ public class Prototype {
 			
 			//==============================================================================================
 			// Read Part file and assign corresponding Data cluster Id			
-			hGraphClusters.readPartFile(db, workload);
-			//workload.print(db);			
+			hGraphClusters.readPartFile(db, workload);		
 			
 			//==============================================================================================
 			// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
-			dataMovement = new DataMovement();
-			System.out.println("\n>> Strategy-1 :: One(Cluster)-to-One(Partition)");
+			System.out.println(">> Strategy-1 :: One(Cluster)-to-One(Partition)");
 			dataMovement.strategy1(db, workload);
 			System.out.println();
-			System.out.println("\n>> Strategy-2 :: One(Cluster)-to-One(Unique Partition)");
+			System.out.println(">> Strategy-2 :: One(Cluster)-to-One(Unique Partition)");
 			dataMovement.strategy2(db, workload);										
 
-			System.out.println();
-			dbDetails.printDetails(dbs, db);
-			--workload_round;
+			++workload_round;
 		}		
 	}
 }

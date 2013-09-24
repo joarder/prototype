@@ -4,23 +4,30 @@
 
 package jkamal.prototype.workload;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 public class WorkloadSampling {
 	public WorkloadSampling() {}
 	
-	public Workload performSampling(Workload workload) {
-		Workload cloneWorkload = new Workload(workload);
-		int tr_id;
-		
-		for(Transaction transaction : cloneWorkload.getWrl_transactionList()) {
-			if(transaction.getTr_dtCost() == 0) {
-				tr_id = transaction.getTr_id();
-				
-				Transaction tr = workload.findWrl_transaction(tr_id);
-				if(tr_id == tr.getTr_id())
-					workload.getWrl_transactionList().remove(tr);
+	public void performSampling(Workload workload) {
+		System.out.println();
+		Set<Integer> trMarkers = new TreeSet<Integer>();		
+		for(Transaction transaction : workload.getWrl_transactionList()) {
+			if(transaction.getTr_dtCost() == 0) { 
+				trMarkers.add(transaction.getTr_id());
+				//System.out.println("@debug >> Marking Tr("+transaction.getTr_id()+")");
 			}
-		}							
+		}	
 		
-		return workload;
+		System.out.println();
+		// Remove the Transaction from the Transaction list and DataMap Tree
+		for(Integer marker : trMarkers) {
+			Transaction transaction = workload.findWrl_transaction(marker);			
+			
+			//System.out.println("@debug >> Deleting Tr("+transaction.getTr_id()+")");
+			workload.getWrl_transactionList().remove(transaction);
+			workload.getWrl_trDataMap().remove(marker);
+		}
 	}
 }

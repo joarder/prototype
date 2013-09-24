@@ -26,59 +26,43 @@ public class WorkloadGeneration {
 		
 		return null;
 	}
-
-	public Workload generate(DatabaseServer dbs, Database db, Workload workload, int transaction_nums, String DIR_LOCATION) {
-		// Generating Random proportions for different Transaction types based on Workload type
-		workload.setWrl_transactionProp(generateTransactionProp(workload, transaction_nums));
-
-		TransactionGeneration trGen = new TransactionGeneration();
-		trGen.generateTransaction(db, workload);		
-
-		// Generating Workload's Data Partition and Node Distribution Details
-		workload.generateDataPartitionTable();
-		workload.generateDataNodeTable();
-		
-		// Generating Workload and FixFile for HyperGraph Partitioning			
-		workload.generateWorkloadFile(dbs, DIR_LOCATION);
-		workload.generateFixFile(DIR_LOCATION);		
-		
-		// Calculate the percentage of DT
-		workload.calculateDTPercentage();
-
-		return workload;
-	}
 	
-	public Workload generateRepeatedWorkload(DatabaseServer dbs, Database db, String workload_name, int workload_transaction_nums, String DIR_LOCATION, 
-			Workload workload, int workload_round, boolean workload_mode) {
-		TransactionGeneration trGen = new TransactionGeneration();
-		WorkloadSampling workloadSampling = new WorkloadSampling();
-		Workload sampledWorkload = null;
+	public Workload generateRepeatedWorkload(DatabaseServer dbs, Database db, int workload_transaction_nums, String DIR_LOCATION, 
+			Workload workload, int workload_round, boolean workload_mode) {				
 		
 		if(workload_round != 0) {
 			workload.setWrl_transactionProp(generateRepeatedTransactionProp(workload, workload_mode));
 			workload.setWrl_round(workload_round);
+			this.incTransactionWeights(workload);
 		} else {
 			workload.setWrl_transactionProp(generateTransactionProp(workload, workload_transaction_nums));
-			workload.setWrl_round(workload_round);
+			workload.setWrl_round(workload_round);			
 		}
 				
-		trGen.generateTransaction(db, workload);
-
-		System.out.println("\n>> Performing workload sampling ...");		
-		sampledWorkload = workloadSampling.performSampling(workload);				
+		// Generating Workload Transactions
+		TransactionGeneration trGen = new TransactionGeneration();
+		trGen.generateTransaction(db, workload);					
 		
 		// Generating Workload's Data Partition and Node Distribution Details
-		sampledWorkload.generateDataPartitionTable();
-		sampledWorkload.generateDataNodeTable();		
+		workload.generateDataPartitionTable();
+		workload.generateDataNodeTable();		
 		
 		// Generating Workload and FixFile for HyperGraph Partitioning			
-		sampledWorkload.generateWorkloadFile(dbs, DIR_LOCATION);
-		sampledWorkload.generateFixFile(DIR_LOCATION);				
+		workload.generateWorkloadFile(dbs, workload, DIR_LOCATION);
+		workload.generateFixFile(DIR_LOCATION);				
 		
 		// Calculate the percentage of DT
 		workload.calculateDTPercentage();
-		
-		return sampledWorkload;
+				
+		return workload;
+	}
+	
+	public void incTransactionWeights(Workload workload) {
+		int tr_weight = 0;
+		for(Transaction transaction : workload.getWrl_transactionList()) {
+			tr_weight = transaction.getTr_weight();
+			transaction.setTr_weight(++tr_weight);			
+		}
 	}
 	
 	public static int randInt(int min, int max) {
@@ -133,8 +117,8 @@ public class WorkloadGeneration {
 		double[] oldProp = new double[workload.getWrl_transactionProp().length];
 		System.arraycopy(workload.getWrl_transactionProp(), 0, oldProp, 0, workload.getWrl_transactionProp().length);
 		
-		System.out.print("@debug >> OldProp: ");
-		workload.printWrl_transactionProp();
+		//System.out.print("@debug >> OldProp: ");
+		//workload.printWrl_transactionProp();
 		
 		for(int i = 0; i < oldProp.length; i++) {
 			double prop = oldProp[i];
@@ -154,8 +138,8 @@ public class WorkloadGeneration {
 			}
 		}				
 				
-		System.out.print("\n@debug >> NewProp:");
-		workload.printWrl_transactionProp();
+		//System.out.print("\n@debug >> NewProp:");
+		//workload.printWrl_transactionProp();
 				
 		double[] difference = new double[workload.getWrl_type()];
 		
@@ -171,10 +155,10 @@ public class WorkloadGeneration {
 			}
 		}
 			
-		System.out.print("\n@debug >> Difference: {");
-		for(int i = 0; i < difference.length; i++)
-			System.out.print(difference[i]+", ");
-		System.out.print("}");
+		//System.out.print("\n@debug >> Difference: {");
+		//for(int i = 0; i < difference.length; i++)
+			//System.out.print(difference[i]+", ");
+		//System.out.println("}");
 
 		
 		return difference;

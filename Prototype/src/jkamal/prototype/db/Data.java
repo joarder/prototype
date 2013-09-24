@@ -217,11 +217,11 @@ public class Data implements Comparable<Data> {
 		//return (this.data_label+"("+this.data_id+")");
 		//return (this.data_label+"[N"+this.data_node_id+"]");
 		if(this.isData_isPartitionRoaming())
-			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"]");//-C"+this.data_hmetis_cluster_id);
+			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"]");// @h("+this.data_shadow_hmetis_id+")-@C("+this.data_hmetis_cluster_id+")");
 		else if(this.isData_isPartitionRoaming() && this.isData_isNodeRoaming())
-			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"(*N"+this.data_roaming_node_id+")]");//-C"+this.data_hmetis_cluster_id);
+			return (this.data_label+"[P"+this.data_partition_id+"(*P"+this.data_roaming_partition_id+")|N"+this.data_node_id+"(*N"+this.data_roaming_node_id+")]");// @h("+this.data_shadow_hmetis_id+")-@C("+this.data_hmetis_cluster_id+")");
 		else
-			return (this.data_label+"[P"+this.data_partition_id+"|N"+this.data_node_id+"]");//-C"+this.data_hmetis_cluster_id);
+			return (this.data_label+"[P"+this.data_partition_id+"|N"+this.data_node_id+"]");// @h("+this.data_shadow_hmetis_id+")-@C("+this.data_hmetis_cluster_id+")");
 		//return (this.data_label+"["+this.data_current_trId+"]");
 	}
 

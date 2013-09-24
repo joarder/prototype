@@ -10,15 +10,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
+import jkamal.prototype.db.Partition;
 
 public class Workload implements Comparable<Workload> {
 	private int wrl_id;
@@ -26,13 +27,16 @@ public class Workload implements Comparable<Workload> {
 	private int wrl_database_id;
 	private String wrl_label;
 	private int wrl_type; // Represents the number of Transaction types. e.g. for AuctionMark it is 10	
-	private List<Transaction> wrl_transactionList;
-	private List<Data> wrl_dataList;
-	private double[] wrl_transactionProp;
-	private Map<Integer, ArrayList<Data>> dataPartitionTable;
-	private Map<Integer, ArrayList<Data>> dataNodeTable;
+	private Set<Transaction> wrl_transactionList;
+	private Map<Integer, Set<Data>> wrl_trDataMap;
+	private int wrl_totalTransaction;
+	private int wrl_totalData;
+	private double[] wrl_transactionProp;	
+	private Map<Integer, Set<Data>> dataPartitionTable;
+	private Map<Integer, Set<Data>> dataNodeTable;
 	private String wrl_workload_file = null;
 	private String wrl_fixfile = null;
+	private double wrl_dt_impact;
 	private int wrl_dt_nums;
 	private double wrl_percentage_dt;
 	private double wrl_percentage_dmv;
@@ -45,11 +49,14 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_database_id(db_id);
 		this.setWrl_label("WL-"+Integer.toString(this.getWrl_id()));
 		this.setWrl_type(type);
-		this.setWrl_transactionList(new ArrayList<Transaction>());
+		this.setWrl_transactionList(new TreeSet<Transaction>());
 		this.setWrl_transactionProp(new double[this.getWrl_type()]);
-		this.setWrl_dataList(new ArrayList<Data>());		
+		this.setWrl_trDataMap(new TreeMap<Integer, Set<Data>>());
+		this.setWrl_totalTransaction(0);
+		this.setWrl_totalData(0);
 		this.setWrl_workload_file("workload.txt");
 		this.setWrl_fixfile("fixfile.txt");
+		this.setWrl_dt_impact(0.0);
 		this.setWrl_dt_nums(0);
 		this.setWrl_percentage_dt(0.0);
 		this.setWrl_percentage_dmv(0.0);
@@ -65,21 +72,30 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_label(workload.getWrl_label());
 		this.setWrl_type(workload.getWrl_type());		
 		
-		List<Transaction> cloneTransactionList = new ArrayList<Transaction>();
+		Set<Transaction> cloneTransactionList = new TreeSet<Transaction>();
 		Transaction cloneTransaction;
 		for(Transaction transaction : workload.getWrl_transactionList()) {
 			cloneTransaction = new Transaction(transaction);
 			cloneTransactionList.add(cloneTransaction);
 		}
-		this.setWrl_transactionList(cloneTransactionList);
+		this.setWrl_transactionList(cloneTransactionList);				
 		
-		List<Data> cloneWrlDataList = new ArrayList<Data>();
-		Data cloneData;
-		for(Data data : workload.getWrl_dataList()) {
-			cloneData = new Data(data);
-			cloneWrlDataList.add(cloneData);
+		Map<Integer, Set<Data>> cloneTrDataMap = new TreeMap<Integer, Set<Data>>();
+		int cloneTrKey;
+		Set<Data> cloneTrDataSet;
+		Data cloneTrData;
+		for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
+			cloneTrKey = entry.getKey();
+			cloneTrDataSet = new TreeSet<Data>();
+			for(Data trData : entry.getValue()) {
+				cloneTrData = new Data(trData);
+				cloneTrDataSet.add(cloneTrData);
+			}
+			cloneTrDataMap.put(cloneTrKey, cloneTrDataSet);
 		}
-		this.setWrl_dataList(cloneWrlDataList);
+		this.setWrl_trDataMap(cloneTrDataMap);
+		this.setWrl_totalTransaction(workload.getWrl_totalTransaction());
+		this.setWrl_totalData(workload.getWrl_totalData());
 				
 		double[] cloneTransactionProp = new double[this.wrl_type];		
 		System.arraycopy(workload.getWrl_transactionProp(), 0, cloneTransactionProp, 0, workload.getWrl_transactionProp().length);
@@ -88,6 +104,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_round(workload.getWrl_round());
 		this.setWrl_workload_file(workload.getWrl_workload_file());
 		this.setWrl_fixfile(workload.getWrl_fixfile());
+		this.setWrl_dt_impact(workload.getWrl_dt_impact());
 		this.setWrl_dt_nums(workload.getWrl_dt_nums());
 		this.setWrl_percentage_dt(workload.getWrl_percentage_dt());
 		this.setWrl_percentage_dmv(workload.getWrl_percentage_dmv());
@@ -135,11 +152,11 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_type = wrl_type;
 	}
 
-	public List<Transaction> getWrl_transactionList() {
+	public Set<Transaction> getWrl_transactionList() {
 		return wrl_transactionList;
 	}
 
-	public void setWrl_transactionList(List<Transaction> wrl_transactionList) {
+	public void setWrl_transactionList(Set<Transaction> wrl_transactionList) {
 		this.wrl_transactionList = wrl_transactionList;
 	}
 
@@ -151,12 +168,28 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_transactionProp = wrl_transactionProp;
 	}
 
-	public List<Data> getWrl_dataList() {
-		return wrl_dataList;
+	public Map<Integer, Set<Data>> getWrl_trDataMap() {
+		return wrl_trDataMap;
 	}
 
-	public void setWrl_dataList(List<Data> wrl_dataList) {
-		this.wrl_dataList = wrl_dataList;
+	public void setWrl_trDataMap(Map<Integer, Set<Data>> wrl_trDataMap) {
+		this.wrl_trDataMap = wrl_trDataMap;
+	}
+
+	public int getWrl_totalTransaction() {
+		return wrl_totalTransaction;
+	}
+
+	public void setWrl_totalTransaction(int wrl_totalTransaction) {
+		this.wrl_totalTransaction = wrl_totalTransaction;
+	}
+
+	public int getWrl_totalData() {
+		return wrl_totalData;
+	}
+
+	public void setWrl_totalData(int wrl_totalData) {
+		this.wrl_totalData = wrl_totalData;
 	}
 
 	public String getWrl_workload_file() {
@@ -175,19 +208,27 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_fixfile = wrl_fixfile;
 	}
 	
-	public Map<Integer, ArrayList<Data>> getDataPartitionTable() {
+	public double getWrl_dt_impact() {
+		return wrl_dt_impact;
+	}
+
+	public void setWrl_dt_impact(double wrl_dt_impact) {
+		this.wrl_dt_impact = wrl_dt_impact;
+	}
+
+	public Map<Integer, Set<Data>> getDataPartitionTable() {
 		return dataPartitionTable;
 	}
 
-	public void setWrl_dataPartitionTable(Map<Integer, ArrayList<Data>> dataPartitionTable) {
+	public void setWrl_dataPartitionTable(Map<Integer, Set<Data>> dataPartitionTable) {
 		this.dataPartitionTable = dataPartitionTable;
 	}
 
-	public Map<Integer, ArrayList<Data>> getDataNodeTable() {
+	public Map<Integer, Set<Data>> getDataNodeTable() {
 		return dataNodeTable;
 	}
 
-	public void setWrl_dataNodeTable(Map<Integer, ArrayList<Data>> dataNodeTable) {
+	public void setWrl_dataNodeTable(Map<Integer, Set<Data>> dataNodeTable) {
 		this.dataNodeTable = dataNodeTable;
 	}
 	
@@ -199,14 +240,25 @@ public class Workload implements Comparable<Workload> {
 		
 		return null;
 	}
+	
+	public Data findWrl_transactionData(Transaction transaction, int data_id) {
+		Data data;
+		Iterator<Data> iterator = transaction.getTr_dataSet().iterator();
+		while(iterator.hasNext()) {
+			data = iterator.next();
+			if(data.getData_id() == data_id)
+				return data;
+		}		
+		
+		return null;
+	}
 
-	public void generateWorkloadFile(DatabaseServer dbs, String dir) {
-		List<Data> dataSet = this.getWrl_dataList();
+	public void generateWorkloadFile(DatabaseServer dbs, Workload workload, String dir) {
 		Transaction transaction;
 		File workloadFile = new File(dir+"\\"+this.getWrl_workload_file());
-		Data data;
-		int totalTransactions = this.getWrl_transactionList().size() + dbs.getDbs_nodes().size();
-		int totalDataItems = dataSet.size();		
+		Data trData;
+		int totalTransactions = this.getWrl_trDataMap().size() + dbs.getDbs_nodes().size();
+		int totalDataItems = this.getWrl_totalData();
 		int hasTransactionWeight = 1;
 		int hasDataWeight = 1;						
 		
@@ -224,8 +276,9 @@ public class Workload implements Comparable<Workload> {
 						
 						Iterator<Data> itr_data =  transaction.getTr_dataSet().iterator();
 						while(itr_data.hasNext()) {
-							data = itr_data.next();
-							writer.write(Integer.toString(data.getData_shadow_hmetis_id()));							
+							trData = itr_data.next();
+							//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
+							writer.write(Integer.toString(trData.getData_shadow_hmetis_id()));							
 							
 							if(itr_data.hasNext())
 								writer.write(" "); 
@@ -234,7 +287,7 @@ public class Workload implements Comparable<Workload> {
 				} // end -- while() loop
 				
 				// Adding a single HyperEdge for each Node containing Data items within the Workload
-				for(Entry<Integer, ArrayList<Data>> entry : this.getDataNodeTable().entrySet()) {
+				for(Entry<Integer, Set<Data>> entry : this.getDataNodeTable().entrySet()) {
 					writer.write("1"+" "); // 1 = Node HyperEdge Weight will be always equals to 1
 					Iterator<Data> itr_node = entry.getValue().iterator();
 					while(itr_node.hasNext()) {
@@ -245,14 +298,13 @@ public class Workload implements Comparable<Workload> {
 					} // end -- while() loop
 					writer.write("\n");
 				} // end -- for() loop
-				
-				// Writing Data weight.
-				Iterator<Data> iterator = dataSet.iterator();
-				while(iterator.hasNext()) {
-					writer.write(Integer.toString(iterator.next().getData_weight()));
-					
-					if(iterator.hasNext())
+
+				// Writing Data Weight
+				for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
+					for(Data data : entry.getValue()) {
+						writer.write(Integer.toString(data.getData_weight()));
 						writer.write("\n");
+					}
 				}
 				
 			} catch(IOException e) {
@@ -266,9 +318,9 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void generateFixFile(String dir) {
-		List<Data> dataSet = this.getWrl_dataList();
+		//List<Data> dataSet = this.getWrl_dataList();
 		File fixFile = new File(dir+"\\"+this.getWrl_fixfile());
-		Data data;
+		//Data data;
 		
 		try {
 			fixFile.createNewFile();
@@ -276,17 +328,15 @@ public class Workload implements Comparable<Workload> {
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fixFile), "utf-8"));
 				
-				Iterator<Data> iterator = dataSet.iterator();
-				while(iterator.hasNext()) {
-					data = iterator.next();
-					
-					if(data.isData_isMoveable())
-						writer.write(Integer.toString(data.getData_partition_id()));
-					else
-						writer.write(Integer.toString(-1));
-					
-					if(iterator.hasNext())
+				for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
+					for(Data data : entry.getValue()) {
+						if(data.isData_isMoveable())
+							writer.write(Integer.toString(data.getData_partition_id()));
+						else
+							writer.write(Integer.toString(-1));
+						
 						writer.write("\n");
+					}					
 				}
 			} catch(IOException e) {
 				e.printStackTrace();
@@ -330,6 +380,17 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_hasDataMoved = wrl_hasDataMoved;
 	}
 
+	// Calculate DT Impacts for the Workload
+	public void calculateDTImapct() {
+		int total_impact = 0;
+		for(Transaction transaction : this.getWrl_transactionList())
+			total_impact += transaction.getTr_dtCost()*transaction.getTr_weight();		
+				
+		double dt_impact = (double) total_impact/this.getWrl_transactionList().size();
+		dt_impact = Math.round(dt_impact * 100.0)/100.0;		
+		this.setWrl_dt_impact(dt_impact);
+	}
+
 	// Calculate the percentage of Distributed Transactions within the Workload (before and after the Data movements)
 	public void calculateDTPercentage() {
 		int counts = 0; 
@@ -339,19 +400,17 @@ public class Workload implements Comparable<Workload> {
 		}
 				
 		double percentage = ((double)counts/(double)this.getWrl_transactionList().size())*100.0;
-		percentage = Math.round(percentage*100.0)/100.0;
+		percentage = Math.round(percentage * 100.0)/100.0;
 		this.setWrl_dt_nums(counts);
 		this.setWrl_percentage_dt(percentage);	
-		//System.out.println("@debug >> % "+percentage+"|Count: "+counts+"|Total Transaction: "+this.getWrl_transactionList().size());
 	}
 	
 	// Calculate the percentage of Data movements within the Workload (after running Strategy-1 and 2)
 	public void calculateDMVPercentage(int movements) {
-		int counts = this.getWrl_dataList().size();		
+		int counts = this.getWrl_totalData();		
 		double percentage = ((double)movements/(double)counts)*100.0;
 		percentage = Math.round(percentage*100.0)/100.0;
 		this.setWrl_percentage_dmv(percentage);
-		//System.out.println("@debug >> % "+percentage+"|Move: "+movements+"|Total Data: "+count);
 	}
 
 	public String getMessage() {
@@ -364,64 +423,58 @@ public class Workload implements Comparable<Workload> {
 
 	// Generates Workload Data Partition Table
 	public void generateDataPartitionTable() {
-		this.setWrl_dataPartitionTable(new TreeMap<Integer, ArrayList<Data>>());
-		List<Data> trDataList = this.getWrl_dataList();
-		Data data;
-		ArrayList<Data> dataList;
-		
-		Iterator<Data> iterator = trDataList.iterator();
-		while(iterator.hasNext()) {
-			data = iterator.next();			
-			
-			if(!data.isData_isPartitionRoaming()) {			
-				if(this.getDataPartitionTable().containsKey(data.getData_partition_id())) {
-					this.getDataPartitionTable().get(data.getData_partition_id()).add(data);
+		this.setWrl_dataPartitionTable(new TreeMap<Integer, Set<Data>>());
+		TreeSet<Data> dataSet;
+				
+		for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
+			for(Data data : entry.getValue()) {			
+				if(!data.isData_isPartitionRoaming()) {			
+					if(this.getDataPartitionTable().containsKey(data.getData_partition_id())) {
+						this.getDataPartitionTable().get(data.getData_partition_id()).add(data);
+					} else {
+						dataSet = new TreeSet<Data>();
+						dataSet.add(data);
+						this.getDataPartitionTable().put(data.getData_partition_id(), dataSet);
+					}
 				} else {
-					dataList = new ArrayList<Data>();
-					dataList.add(data);
-					this.getDataPartitionTable().put(data.getData_partition_id(), dataList);
-				}
-			} else {
-				if(this.getDataPartitionTable().containsKey(data.getData_roaming_partition_id())) {
-					this.getDataPartitionTable().get(data.getData_roaming_partition_id()).add(data);
-				} else {
-					dataList = new ArrayList<Data>();
-					dataList.add(data);
-					this.getDataPartitionTable().put(data.getData_roaming_partition_id(), dataList);
+					if(this.getDataPartitionTable().containsKey(data.getData_roaming_partition_id())) {
+						this.getDataPartitionTable().get(data.getData_roaming_partition_id()).add(data);
+					} else {
+						dataSet = new TreeSet<Data>();
+						dataSet.add(data);
+						this.getDataPartitionTable().put(data.getData_roaming_partition_id(), dataSet);
+					}
 				}
 			}
-		}			
+		}
 	}
 	
 	// Generates Workload Data Node Table
-	public void generateDataNodeTable() {
-		this.setWrl_dataNodeTable(new TreeMap<Integer, ArrayList<Data>>());
-		List<Data> trDataList = this.getWrl_dataList();
-		Data data;
-		ArrayList<Data> dataList;
+	public void generateDataNodeTable() {		
+		this.setWrl_dataNodeTable(new TreeMap<Integer, Set<Data>>());
+		Set<Data> dataSet;
 		
-		Iterator<Data> iterator = trDataList.iterator();
-		while(iterator.hasNext()) {
-			data = iterator.next();			
-			
-			if(!data.isData_isNodeRoaming()) {
-				if(this.getDataNodeTable().containsKey(data.getData_node_id())) {
-					this.getDataNodeTable().get(data.getData_node_id()).add(data);
+		for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
+			for(Data data : entry.getValue()) {			
+				if(!data.isData_isNodeRoaming()) {
+					if(this.getDataNodeTable().containsKey(data.getData_node_id())) {
+						this.getDataNodeTable().get(data.getData_node_id()).add(data);
+					} else {
+						dataSet = new TreeSet<Data>();
+						dataSet.add(data);
+						this.getDataNodeTable().put(data.getData_node_id(), dataSet);
+					}
 				} else {
-					dataList = new ArrayList<Data>();
-					dataList.add(data);
-					this.getDataNodeTable().put(data.getData_node_id(), dataList);
-				}
-			} else {
-				if(this.getDataNodeTable().containsKey(data.getData_roaming_node_id())) {
-					this.getDataNodeTable().get(data.getData_roaming_node_id()).add(data);
-				} else {
-					dataList = new ArrayList<Data>();
-					dataList.add(data);
-					this.getDataNodeTable().put(data.getData_roaming_node_id(), dataList);
+					if(this.getDataNodeTable().containsKey(data.getData_roaming_node_id())) {
+						this.getDataNodeTable().get(data.getData_roaming_node_id()).add(data);
+					} else {
+						dataSet = new TreeSet<Data>();
+						dataSet.add(data);
+						this.getDataNodeTable().put(data.getData_roaming_node_id(), dataSet);
+					}
 				}
 			}
-		}			
+		}
 	}
 	
 	public void printWrl_transactionProp() {
@@ -444,24 +497,26 @@ public class Workload implements Comparable<Workload> {
 		
 		// Workload's Data - Partition Details
 		System.out.println();
-		System.out.print("\n===Workload's Data - Partition Details========================\n");						
-		for(Entry<Integer, ArrayList<Data>> entry : this.getDataPartitionTable().entrySet()) {
-			System.out.print(" P"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
+		System.out.print("\n===Workload's Data - Partition Details===\n");						
+		for(Entry<Integer, Set<Data>> entry : this.getDataPartitionTable().entrySet()) {
+			System.out.print(" P"+entry.getKey()+"["+entry.getValue().size()+"]");
 			
+			//System.out.print(": {");						
 			roaming_data = 0;
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
-				System.out.print(data.toString());
+				//System.out.print(data.toString());
 				if(data.isData_isPartitionRoaming())
 					++roaming_data;
 				
 				if(comma != 1)
-					System.out.print(", ");
+					//System.out.print(", ");
 			
 				--comma;						
 			} // end -- for() loop
 			
-			System.out.print("} || Roaming["+roaming_data+"]\n");
+			//System.out.print("} || ");
+			System.out.print(" Roaming["+roaming_data+"]\n");
 		} // end -- for() loop		
 	}
 	
@@ -471,51 +526,84 @@ public class Workload implements Comparable<Workload> {
 		
 		// Workload's Data - Node Details
 		System.out.println();
-		System.out.print("===Workload's Data - Node Details========================\n");						
-		for(Entry<Integer, ArrayList<Data>> entry : this.getDataNodeTable().entrySet()) {
-			System.out.print(" N"+entry.getKey()+"["+entry.getValue().size()+"]: {");			
+		System.out.print("===Workload's Data - Node Details===\n");						
+		for(Entry<Integer, Set<Data>> entry : this.getDataNodeTable().entrySet()) {
+			System.out.print(" N"+entry.getKey()+"["+entry.getValue().size()+"] ");
 			
+			//System.out.print(": {");			
 			roaming_data = 0;
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
-				System.out.print(data.toString());
+				//System.out.print(data.toString());
 				if(data.isData_isNodeRoaming())
 					++roaming_data;
 				
 				if(comma != 1)
-					System.out.print(", ");
+					//System.out.print(", ");
 			
 				--comma;						
 			} // end -- for() loop
 			
-			System.out.print("} || Roaming["+roaming_data+"]\n");
+			//System.out.print("} || ");
+			System.out.print(" Roaming["+roaming_data+"]\n");
 		} // end -- for() loop		
 	}
 	
+	public void printPartitionTable(Database db) {		
+		// Partition Table Details
+		System.out.println();
+		System.out.println("===Database Partition Table Details===");
+		int comma = -1;
+		for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {
+			System.out.print(" N"+entry.getKey()+"{");
+			
+			comma = entry.getValue().size();
+			for(Partition partition : entry.getValue()) {
+				System.out.print(partition.toString());
+				
+				if(comma != 1)
+					System.out.print(", ");
+			
+				--comma;
+			}
+			
+			System.out.print("}\n");			
+		}		
+	}
+	
 	public void print(Database db) {
-		System.out.println("\n===Round-"+this.getWrl_round()+this.getMessage()+" Workload Details========================");
-		System.out.print("\n "+this.toString()+" having a distribution of ");				
+		System.out.println();
+		System.out.println("***********************************************************************************************************************");
+		System.out.println("===Round-"+this.getWrl_round()+this.getMessage()+" Workload Details===");
+		System.out.print(" "+this.toString()+" having a distribution of ");				
 		this.printWrl_transactionProp();
 		
 		System.out.println();
 		for(Transaction transaction : this.getWrl_transactionList()) {
 			transaction.generateTransactionCost(db);
-			transaction.print();			
+			//transaction.print();			
 		}						
-		
+				
+		this.calculateDTPercentage();	
+		this.calculateDTImapct();
 		System.out.println();
-		this.calculateDTPercentage();		
-		System.out.println(" # Distributed Transactions: "+this.getWrl_percentage_dt()+"% | Total Transactions: "+this.getWrl_transactionList().size());
+		System.out.println(" # Distributed Transactions: "+this.getWrl_percentage_dt()+"% | Total Transactions: "+this.getWrl_transactionList().size()
+				+" | DT Impact: "+this.getWrl_dt_impact()
+				);
 		if(this.isWrl_hasDataMoved())
-			System.out.println(" # Percentage of Data Movements: "+this.getWrl_percentage_dmv()+"% | Total Data: "+this.getWrl_dataList().size());
+			System.out.println(" # Percentage of Data Movements: "+this.getWrl_percentage_dmv()+"% | Total Data: "+this.getWrl_totalData());
 		
+		//this.printPartitionTable(db);
 		//this.printDataPartitionTable();
 		//this.printDataNodeTable();
+		System.out.println();
+		System.out.println("***********************************************************************************************************************");
 	}
 	
 	@Override
 	public String toString() {	
-		return (this.wrl_label+"["+this.getWrl_transactionList().size()+" Transactions of "+this.getWrl_type()+" types");
+		return (this.wrl_label+"["+this.getWrl_transactionList().size()+" Transactions (containing "+this.getWrl_totalData())
+				+ " Data) of "+this.getWrl_type()+" types";
 	}
 
 	@Override

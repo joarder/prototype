@@ -159,10 +159,10 @@ public class Transaction implements Comparable<Transaction> {
 	// This function will print all of the contents of the representative Transaction
 	public void print() {
 		//System.out.println("===Transaction Details========================");
-		System.out.print("\n "+this.getTr_label()+"[CDT("+this.getTr_dtCost()+"), " +
+		System.out.print(" "+this.getTr_label()+"[CDT("+this.getTr_dtCost()+"), " +
 				"PS("+this.getTr_psCost()+"), Data("+this.getTr_dataSet().size()+")]");
 		
-		/*System.out.print("{");
+		System.out.print("{");
 		Iterator<Data> data =  this.getTr_dataSet().iterator();
 		while(data.hasNext()) {
 			System.out.print(data.next().toString());
@@ -170,7 +170,7 @@ public class Transaction implements Comparable<Transaction> {
 				System.out.print(", ");
 		}				
 		
-		System.out.print("}");*/		
+		System.out.println("}");		
 	}
 	
 	@Override
