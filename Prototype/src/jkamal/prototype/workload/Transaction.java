@@ -160,7 +160,7 @@ public class Transaction implements Comparable<Transaction> {
 	public void print() {
 		//System.out.println("===Transaction Details========================");
 		System.out.print(" "+this.getTr_label()+"[CDT("+this.getTr_dtCost()+"), " +
-				"PS("+this.getTr_psCost()+"), Data("+this.getTr_dataSet().size()+")]");
+				"FRQ("+this.getTr_weight()+"), Data("+this.getTr_dataSet().size()+")]");
 		
 		System.out.print("{");
 		Iterator<Data> data =  this.getTr_dataSet().iterator();

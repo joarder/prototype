@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -23,43 +24,61 @@ import jkamal.prototype.db.Partition;
 
 public class Workload implements Comparable<Workload> {
 	private int wrl_id;
-	private int wrl_round;
-	private int wrl_database_id;
 	private String wrl_label;
-	private int wrl_type; // Represents the number of Transaction types. e.g. for AuctionMark it is 10	
-	private Set<Transaction> wrl_transactionList;
-	private Map<Integer, Set<Data>> wrl_trDataMap;
-	private int wrl_totalTransaction;
-	private int wrl_totalData;
+	private int wrl_round;
+	private boolean wrl_mode;
+	private int wrl_transactionVariant;
+	private int wrl_database_id;	
+	private WorkloadSampling workloadSampling;
+	private boolean workloadEmpty;
+	
+	private int wrl_transactionTypes; // Represents the number of Transaction types. e.g. for AuctionMark it is 10
 	private double[] wrl_transactionProp;	
+	private Map<Integer, ArrayList<Transaction>> wrl_transactionMap;
+	private int wrl_totalTransaction;
+		
+	private int wrl_totalData;		
+	
 	private Map<Integer, Set<Data>> dataPartitionTable;
 	private Map<Integer, Set<Data>> dataNodeTable;
+	
 	private String wrl_workload_file = null;
 	private String wrl_fixfile = null;
+	
 	private double wrl_dt_impact;
 	private int wrl_dt_nums;
 	private double wrl_percentage_dt;
 	private double wrl_percentage_dmv;
+	
 	private boolean wrl_hasDataMoved;
 	private String message = null;
 	
-	public Workload(int id, int type, int db_id) {
+	public Workload(int id, int trTypes, int db_id) {
 		this.setWrl_id(id);
-		this.setWrl_round(0);
-		this.setWrl_database_id(db_id);
 		this.setWrl_label("WL-"+Integer.toString(this.getWrl_id()));
-		this.setWrl_type(type);
-		this.setWrl_transactionList(new TreeSet<Transaction>());
-		this.setWrl_transactionProp(new double[this.getWrl_type()]);
-		this.setWrl_trDataMap(new TreeMap<Integer, Set<Data>>());
+		this.setWrl_round(0);
+		this.setWrl_mode(true);
+		this.setWrl_transactionVariant(0);
+		this.setWrl_database_id(db_id);		
+		this.setWorkloadSampling(new WorkloadSampling());
+		this.setWorkloadEmpty(false);
+		
+		this.setWrl_transactionTypes(trTypes);
+		this.setWrl_transactionProp(new double[this.getWrl_transactionTypes()]);
+
+		this.setWrl_transactionMap(new TreeMap<Integer, ArrayList<Transaction>>());
 		this.setWrl_totalTransaction(0);
+		
 		this.setWrl_totalData(0);
+		
 		this.setWrl_workload_file("workload.txt");
 		this.setWrl_fixfile("fixfile.txt");
+		
 		this.setWrl_dt_impact(0.0);
 		this.setWrl_dt_nums(0);
 		this.setWrl_percentage_dt(0.0);
 		this.setWrl_percentage_dmv(0.0);
+		
 		this.setWrl_hasDataMoved(false);
 		this.setMessage(" (Initial Stage) ");
 	}
@@ -67,40 +86,36 @@ public class Workload implements Comparable<Workload> {
 	// Copy Constructor
 	public Workload(Workload workload) {
 		this.setWrl_id(workload.getWrl_id());
-		this.setWrl_round(workload.getWrl_round());
-		this.setWrl_database_id(workload.getWrl_database_id()); 
 		this.setWrl_label(workload.getWrl_label());
-		this.setWrl_type(workload.getWrl_type());		
+		this.setWrl_round(workload.getWrl_round());
+		this.setWrl_mode(workload.isWrl_mode());
+		this.setWrl_transactionVariant(workload.getWrl_transactionVariant());
+		this.setWrl_database_id(workload.getWrl_database_id()); 
+		this.setWorkloadSampling(workload.getWorkloadSampling());
+		this.setWorkloadEmpty(workload.isWorkloadEmpty());
 		
-		Set<Transaction> cloneTransactionList = new TreeSet<Transaction>();
-		Transaction cloneTransaction;
-		for(Transaction transaction : workload.getWrl_transactionList()) {
-			cloneTransaction = new Transaction(transaction);
-			cloneTransactionList.add(cloneTransaction);
-		}
-		this.setWrl_transactionList(cloneTransactionList);				
+		this.setWrl_transactionTypes(workload.getWrl_transactionTypes());
 		
-		Map<Integer, Set<Data>> cloneTrDataMap = new TreeMap<Integer, Set<Data>>();
-		int cloneTrKey;
-		Set<Data> cloneTrDataSet;
-		Data cloneTrData;
-		for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
-			cloneTrKey = entry.getKey();
-			cloneTrDataSet = new TreeSet<Data>();
-			for(Data trData : entry.getValue()) {
-				cloneTrData = new Data(trData);
-				cloneTrDataSet.add(cloneTrData);
-			}
-			cloneTrDataMap.put(cloneTrKey, cloneTrDataSet);
-		}
-		this.setWrl_trDataMap(cloneTrDataMap);
-		this.setWrl_totalTransaction(workload.getWrl_totalTransaction());
-		this.setWrl_totalData(workload.getWrl_totalData());
-				
-		double[] cloneTransactionProp = new double[this.wrl_type];		
+		double[] cloneTransactionProp = new double[this.wrl_transactionTypes];		
 		System.arraycopy(workload.getWrl_transactionProp(), 0, cloneTransactionProp, 0, workload.getWrl_transactionProp().length);
-		this.setWrl_transactionProp(cloneTransactionProp);								
-				
+		this.setWrl_transactionProp(cloneTransactionProp);				
+		
+		Map<Integer, ArrayList<Transaction>> cloneTransactionMap = new TreeMap<Integer, ArrayList<Transaction>>();
+		int cloneTransactionType;		
+		ArrayList<Transaction> cloneTransactionList;
+		Transaction cloneTransaction;		
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			cloneTransactionType = entry.getKey();
+			cloneTransactionList = new ArrayList<Transaction>();
+			for(Transaction tr : entry.getValue()) {
+				cloneTransaction = new Transaction(tr);
+				cloneTransactionList.add(cloneTransaction);
+			}
+			cloneTransactionMap.put(cloneTransactionType, cloneTransactionList);
+		}
+		this.setWrl_transactionMap(cloneTransactionMap);
+		this.setWrl_totalTransaction(workload.getWrl_totalTransaction());
+						
 		this.setWrl_round(workload.getWrl_round());
 		this.setWrl_workload_file(workload.getWrl_workload_file());
 		this.setWrl_fixfile(workload.getWrl_fixfile());
@@ -128,12 +143,44 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_round = wrl_round;
 	}
 
+	public boolean isWrl_mode() {
+		return wrl_mode;
+	}
+
+	public void setWrl_mode(boolean wrl_mode) {
+		this.wrl_mode = wrl_mode;
+	}
+
+	public int getWrl_transactionVariant() {
+		return wrl_transactionVariant;
+	}
+
+	public void setWrl_transactionVariant(int wrl_transactionVariant) {
+		this.wrl_transactionVariant = wrl_transactionVariant;
+	}
+
 	public int getWrl_database_id() {
 		return wrl_database_id;
 	}
 
 	public void setWrl_database_id(int wrl_database_id) {
 		this.wrl_database_id = wrl_database_id;
+	}
+
+	public WorkloadSampling getWorkloadSampling() {
+		return workloadSampling;
+	}
+
+	public void setWorkloadSampling(WorkloadSampling workloadSampling) {
+		this.workloadSampling = workloadSampling;
+	}
+
+	public boolean isWorkloadEmpty() {
+		return workloadEmpty;
+	}
+
+	public void setWorkloadEmpty(boolean workloadEmpty) {
+		this.workloadEmpty = workloadEmpty;
 	}
 
 	public String getWrl_label() {
@@ -144,20 +191,20 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_label = label;
 	}
 
-	public int getWrl_type() {
-		return wrl_type;
+	public int getWrl_transactionTypes() {
+		return wrl_transactionTypes;
 	}
 
-	public void setWrl_type(int wrl_type) {
-		this.wrl_type = wrl_type;
+	public void setWrl_transactionTypes(int wrl_type) {
+		this.wrl_transactionTypes = wrl_type;
 	}
 
-	public Set<Transaction> getWrl_transactionList() {
-		return wrl_transactionList;
+	public Map<Integer, ArrayList<Transaction>> getWrl_transactionMap() {
+		return wrl_transactionMap;
 	}
 
-	public void setWrl_transactionList(Set<Transaction> wrl_transactionList) {
-		this.wrl_transactionList = wrl_transactionList;
+	public void setWrl_transactionMap(Map<Integer, ArrayList<Transaction>> wrl_transactionMap) {
+		this.wrl_transactionMap = wrl_transactionMap;
 	}
 
 	public double[] getWrl_transactionProp() {
@@ -166,14 +213,6 @@ public class Workload implements Comparable<Workload> {
 
 	public void setWrl_transactionProp(double[] wrl_transactionProp) {
 		this.wrl_transactionProp = wrl_transactionProp;
-	}
-
-	public Map<Integer, Set<Data>> getWrl_trDataMap() {
-		return wrl_trDataMap;
-	}
-
-	public void setWrl_trDataMap(Map<Integer, Set<Data>> wrl_trDataMap) {
-		this.wrl_trDataMap = wrl_trDataMap;
 	}
 
 	public int getWrl_totalTransaction() {
@@ -232,11 +271,13 @@ public class Workload implements Comparable<Workload> {
 		this.dataNodeTable = dataNodeTable;
 	}
 	
-	public Transaction findWrl_transaction(int tr_id) {
-		for(Transaction transaction : this.getWrl_transactionList()){
-			if(transaction.getTr_id() == tr_id)
-				return transaction;
-		} 
+	public Transaction findWrl_transaction(int tr_id) {		
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {			
+			for(Transaction transaction : entry.getValue()) {
+				if(transaction.getTr_id() == tr_id)
+					return transaction;
+			}
+		}
 		
 		return null;
 	}
@@ -254,10 +295,9 @@ public class Workload implements Comparable<Workload> {
 	}
 
 	public void generateWorkloadFile(DatabaseServer dbs, Workload workload, String dir) {
-		Transaction transaction;
 		File workloadFile = new File(dir+"\\"+this.getWrl_workload_file());
 		Data trData;
-		int totalTransactions = this.getWrl_trDataMap().size() + dbs.getDbs_nodes().size();
+		int totalHyperEdges = this.getWrl_totalTransaction() + dbs.getDbs_nodes().size();
 		int totalDataItems = this.getWrl_totalData();
 		int hasTransactionWeight = 1;
 		int hasDataWeight = 1;						
@@ -267,24 +307,24 @@ public class Workload implements Comparable<Workload> {
 			Writer writer = null;
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workloadFile), "utf-8"));
-				writer.write(totalTransactions+" "+totalDataItems+" "+hasTransactionWeight+""+hasDataWeight+"\n");
-							
-				Iterator<Transaction> itr_tr = this.getWrl_transactionList().iterator();
-				while(itr_tr.hasNext()) {
-					transaction = itr_tr.next();
-					writer.write(transaction.getTr_weight()+" ");
+				writer.write(totalHyperEdges+" "+totalDataItems+" "+hasTransactionWeight+""+hasDataWeight+"\n");
+				
+				for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+					for(Transaction transaction : entry.getValue()) {
+						writer.write(transaction.getTr_weight()+" ");
 						
-						Iterator<Data> itr_data =  transaction.getTr_dataSet().iterator();
-						while(itr_data.hasNext()) {
-							trData = itr_data.next();
+						Iterator<Data> data =  transaction.getTr_dataSet().iterator();
+						while(data.hasNext()) {
+							trData = data.next();
 							//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
 							writer.write(Integer.toString(trData.getData_shadow_hmetis_id()));							
 							
-							if(itr_data.hasNext())
+							if(data.hasNext())
 								writer.write(" "); 
 						} // end -- while() loop						
-						writer.write("\n");
-				} // end -- while() loop
+						writer.write("\n");						
+					} // end -- for()-Transaction
+				} // end -- for()-Transaction-Types
 				
 				// Adding a single HyperEdge for each Node containing Data items within the Workload
 				for(Entry<Integer, Set<Data>> entry : this.getDataNodeTable().entrySet()) {
@@ -300,10 +340,12 @@ public class Workload implements Comparable<Workload> {
 				} // end -- for() loop
 
 				// Writing Data Weight
-				for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
-					for(Data data : entry.getValue()) {
-						writer.write(Integer.toString(data.getData_weight()));
-						writer.write("\n");
+				for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+					for(Transaction tr : entry.getValue()) {
+						for(Data data : tr.getTr_dataSet()) {
+							writer.write(Integer.toString(data.getData_weight()));
+							writer.write("\n");
+						}
 					}
 				}
 				
@@ -318,9 +360,7 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void generateFixFile(String dir) {
-		//List<Data> dataSet = this.getWrl_dataList();
 		File fixFile = new File(dir+"\\"+this.getWrl_fixfile());
-		//Data data;
 		
 		try {
 			fixFile.createNewFile();
@@ -328,14 +368,16 @@ public class Workload implements Comparable<Workload> {
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fixFile), "utf-8"));
 				
-				for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
-					for(Data data : entry.getValue()) {
-						if(data.isData_isMoveable())
-							writer.write(Integer.toString(data.getData_partition_id()));
-						else
-							writer.write(Integer.toString(-1));
-						
-						writer.write("\n");
+				for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+					for(Transaction transaction : entry.getValue()) {			
+						for(Data data : transaction.getTr_dataSet()) {						
+							if(data.isData_isMoveable())
+								writer.write(Integer.toString(data.getData_partition_id()));
+							else
+								writer.write(Integer.toString(-1));
+							
+							writer.write("\n");
+						}
 					}					
 				}
 			} catch(IOException e) {
@@ -383,10 +425,16 @@ public class Workload implements Comparable<Workload> {
 	// Calculate DT Impacts for the Workload
 	public void calculateDTImapct() {
 		int total_impact = 0;
-		for(Transaction transaction : this.getWrl_transactionList())
-			total_impact += transaction.getTr_dtCost()*transaction.getTr_weight();		
+		int total_trFreq = 0;
+		
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) 
+			for(Transaction transaction : entry.getValue()) {
+				total_impact += transaction.getTr_dtCost()*transaction.getTr_weight();
+				total_trFreq += transaction.getTr_weight();
+			}
 				
-		double dt_impact = (double) total_impact/this.getWrl_transactionList().size();
+		//double dt_impact = (double) total_impact/this.getWrl_totalTransaction();
+		double dt_impact = (double) total_impact/total_trFreq;
 		dt_impact = Math.round(dt_impact * 100.0)/100.0;		
 		this.setWrl_dt_impact(dt_impact);
 	}
@@ -394,12 +442,15 @@ public class Workload implements Comparable<Workload> {
 	// Calculate the percentage of Distributed Transactions within the Workload (before and after the Data movements)
 	public void calculateDTPercentage() {
 		int counts = 0; 
-		for(Transaction transaction : this.getWrl_transactionList()) {
-			if(transaction.getTr_dtCost() >= 1)
-				++counts;			
-		}
+		
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				if(transaction.getTr_dtCost() >= 1)
+					++counts;			
+			} // end -- for()-Transaction		
+		} // end -- for()-
 				
-		double percentage = ((double)counts/(double)this.getWrl_transactionList().size())*100.0;
+		double percentage = ((double)counts/(double)this.getWrl_totalTransaction())*100.0;
 		percentage = Math.round(percentage * 100.0)/100.0;
 		this.setWrl_dt_nums(counts);
 		this.setWrl_percentage_dt(percentage);	
@@ -426,27 +477,29 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_dataPartitionTable(new TreeMap<Integer, Set<Data>>());
 		TreeSet<Data> dataSet;
 				
-		for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
-			for(Data data : entry.getValue()) {			
-				if(!data.isData_isPartitionRoaming()) {			
-					if(this.getDataPartitionTable().containsKey(data.getData_partition_id())) {
-						this.getDataPartitionTable().get(data.getData_partition_id()).add(data);
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				for(Data data : transaction.getTr_dataSet()) {
+					if(!data.isData_isPartitionRoaming()) {			
+						if(this.getDataPartitionTable().containsKey(data.getData_partition_id())) {
+							this.getDataPartitionTable().get(data.getData_partition_id()).add(data);
+						} else {
+							dataSet = new TreeSet<Data>();
+							dataSet.add(data);
+							this.getDataPartitionTable().put(data.getData_partition_id(), dataSet);
+						}
 					} else {
-						dataSet = new TreeSet<Data>();
-						dataSet.add(data);
-						this.getDataPartitionTable().put(data.getData_partition_id(), dataSet);
+						if(this.getDataPartitionTable().containsKey(data.getData_roaming_partition_id())) {
+							this.getDataPartitionTable().get(data.getData_roaming_partition_id()).add(data);
+						} else {
+							dataSet = new TreeSet<Data>();
+							dataSet.add(data);
+							this.getDataPartitionTable().put(data.getData_roaming_partition_id(), dataSet);
+						}
 					}
-				} else {
-					if(this.getDataPartitionTable().containsKey(data.getData_roaming_partition_id())) {
-						this.getDataPartitionTable().get(data.getData_roaming_partition_id()).add(data);
-					} else {
-						dataSet = new TreeSet<Data>();
-						dataSet.add(data);
-						this.getDataPartitionTable().put(data.getData_roaming_partition_id(), dataSet);
-					}
-				}
-			}
-		}
+				} // end -- for()-Data
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction Types
 	}
 	
 	// Generates Workload Data Node Table
@@ -454,27 +507,29 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_dataNodeTable(new TreeMap<Integer, Set<Data>>());
 		Set<Data> dataSet;
 		
-		for(Entry<Integer, Set<Data>> entry : this.getWrl_trDataMap().entrySet()) {
-			for(Data data : entry.getValue()) {			
-				if(!data.isData_isNodeRoaming()) {
-					if(this.getDataNodeTable().containsKey(data.getData_node_id())) {
-						this.getDataNodeTable().get(data.getData_node_id()).add(data);
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {	
+				for(Data data : transaction.getTr_dataSet()) {
+					if(!data.isData_isNodeRoaming()) {
+						if(this.getDataNodeTable().containsKey(data.getData_node_id())) {
+							this.getDataNodeTable().get(data.getData_node_id()).add(data);
+						} else {
+							dataSet = new TreeSet<Data>();
+							dataSet.add(data);
+							this.getDataNodeTable().put(data.getData_node_id(), dataSet);
+						}
 					} else {
-						dataSet = new TreeSet<Data>();
-						dataSet.add(data);
-						this.getDataNodeTable().put(data.getData_node_id(), dataSet);
+						if(this.getDataNodeTable().containsKey(data.getData_roaming_node_id())) {
+							this.getDataNodeTable().get(data.getData_roaming_node_id()).add(data);
+						} else {
+							dataSet = new TreeSet<Data>();
+							dataSet.add(data);
+							this.getDataNodeTable().put(data.getData_roaming_node_id(), dataSet);
+						}
 					}
-				} else {
-					if(this.getDataNodeTable().containsKey(data.getData_roaming_node_id())) {
-						this.getDataNodeTable().get(data.getData_roaming_node_id()).add(data);
-					} else {
-						dataSet = new TreeSet<Data>();
-						dataSet.add(data);
-						this.getDataNodeTable().put(data.getData_roaming_node_id(), dataSet);
-					}
-				}
-			}
-		}
+				} // end -- for()-Data
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction Types
 	}
 	
 	public void printWrl_transactionProp() {
@@ -575,19 +630,21 @@ public class Workload implements Comparable<Workload> {
 		System.out.println();
 		System.out.println("***********************************************************************************************************************");
 		System.out.println("===Round-"+this.getWrl_round()+this.getMessage()+" Workload Details===");
-		System.out.print(" "+this.toString()+" having a distribution of ");				
-		this.printWrl_transactionProp();
+		System.out.print(" "+this.toString()); //+" having a distribution of ");				
+		//this.printWrl_transactionProp();
 		
 		System.out.println();
-		for(Transaction transaction : this.getWrl_transactionList()) {
-			transaction.generateTransactionCost(db);
-			//transaction.print();			
-		}						
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				transaction.generateTransactionCost(db);
+				transaction.print();
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction Types						
 				
 		this.calculateDTPercentage();	
 		this.calculateDTImapct();
 		System.out.println();
-		System.out.println(" # Distributed Transactions: "+this.getWrl_percentage_dt()+"% | Total Transactions: "+this.getWrl_transactionList().size()
+		System.out.println(" # Distributed Transactions: "+this.getWrl_percentage_dt()+"% | Total Transactions: "+this.getWrl_totalTransaction()
 				+" | DT Impact: "+this.getWrl_dt_impact()
 				);
 		if(this.isWrl_hasDataMoved())
@@ -602,8 +659,8 @@ public class Workload implements Comparable<Workload> {
 	
 	@Override
 	public String toString() {	
-		return (this.wrl_label+"["+this.getWrl_transactionList().size()+" Transactions (containing "+this.getWrl_totalData())
-				+ " Data) of "+this.getWrl_type()+" types";
+		return (this.wrl_label+"["+this.getWrl_totalTransaction()+" Transactions (containing "+this.getWrl_totalData())
+						+ " Data) of "+this.getWrl_transactionTypes()+" types.";
 	}
 
 	@Override

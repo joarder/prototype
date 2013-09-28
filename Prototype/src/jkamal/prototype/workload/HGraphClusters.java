@@ -6,9 +6,9 @@ package jkamal.prototype.workload;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -40,17 +40,21 @@ public class HGraphClusters {
 			scanner.close();
 		}	
 		
-		for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
-			for(Data data : entry.getValue()) {					
-				if(data.isData_hasShadowHMetisId()) {					
-					data.setData_hmetis_cluster_id(keyMap.get(data.getData_shadow_hmetis_id()));
-					//System.out.println("@debug >> Data ("+data.toString()+") | hkey: "+data.getData_shadow_hmetis_id()+" | Cluster: "+data.getData_hmetis_cluster_id());
-					data.setData_shadow_hmetis_id(-1);
-					data.setData_hasShadowHMetisId(false);
-				} else {
-					//System.out.println("@debug >> *Repeated Data ("+data.toString()+") | hkey: "+data.getData_shadow_hmetis_id());
-				}
-			}
-		}
+		//for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+			//for(Data data : entry.getValue()) {
+				for(Data data : transaction.getTr_dataSet()) {
+					if(data.isData_hasShadowHMetisId()) {					
+						data.setData_hmetis_cluster_id(keyMap.get(data.getData_shadow_hmetis_id()));
+						//System.out.println("@debug >> Data ("+data.toString()+") | hkey: "+data.getData_shadow_hmetis_id()+" | Cluster: "+data.getData_hmetis_cluster_id());
+						data.setData_shadow_hmetis_id(-1);
+						data.setData_hasShadowHMetisId(false);
+					} else {
+						//System.out.println("@debug >> *Repeated Data ("+data.toString()+") | hkey: "+data.getData_shadow_hmetis_id());
+					}
+				} // end -- for()-Data
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction Types
 	}
 }

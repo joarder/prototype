@@ -7,9 +7,8 @@
 package jkamal.prototype.db;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import jkamal.prototype.util.Matrix;
@@ -21,14 +20,10 @@ import jkamal.prototype.workload.Workload;
 public class DataMovement {
 	public DataMovement() {}
 	
-	public void strategy1(Database db, Workload workload) throws IOException {
-		// Create a Clone of the Database and Workload using Copy Constructor
-		Database cloneDb = new Database(db);
-		Workload cloneWorkload = new Workload(workload);
-		
+	public void strategy1(Database db, Workload workload) throws IOException {		
 		// Create Mapping Matrix
 		MappingTable mappingTable = new MappingTable();		
-		Matrix mapping = mappingTable.generateMappingTable(cloneDb, cloneWorkload);
+		Matrix mapping = mappingTable.generateMappingTable(db, workload);
 		System.out.println(">> Generating Data Movement Mapping Matrix ...\n   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]");
 		mapping.print();
 		
@@ -42,48 +37,21 @@ public class DataMovement {
 		}
 		
 		// Perform Actual Data Movement
-		// Stage-1: Within the Workload Data List
-		int movements = this.move(cloneDb, cloneWorkload, keyMap);
-		cloneWorkload.setWrl_hasDataMoved(true);
-		System.out.println("\n>> Total "+movements+" Data movements are required using Strategy-1.");
-		
-		// Stage-2: Within the individual Transaction Data List (Only due to cloned Workload, otherwise NOT required)
-		Set<Transaction> transactionList = cloneWorkload.getWrl_transactionList();
-		Transaction transaction;
-		Data trData;
-		int dst_partition_id = -1;
-		
-		Iterator<Transaction> tr_iterator = transactionList.iterator();
-		while(tr_iterator.hasNext()) {
-			transaction = tr_iterator.next();
-			Iterator<Data> tr_data_iterator = transaction.getTr_dataSet().iterator();
-			while(tr_data_iterator.hasNext()) {
-				trData = tr_data_iterator.next();
-				
-				if(trData.getData_hmetis_cluster_id() == -1)					
-					System.out.println("\n@debug >> (-1) ("+trData.toString()+") | "+trData.getData_shadow_hmetis_id());
-				
-				dst_partition_id = keyMap.get(trData.getData_hmetis_cluster_id());	//@debug				
-				
-				if(trData.getData_partition_id() != dst_partition_id && !trData.isData_isPartitionRoaming()) {
-					trData.setData_roaming_partition_id(dst_partition_id);
-					trData.setData_isPartitionRoaming(true);
-				}
-			}
-			transaction.generateTransactionCost(cloneDb);
-		}						
+		int movements = this.move(db, workload, keyMap);
+		workload.setWrl_hasDataMoved(true);
+		System.out.println("\n>> Total "+movements+" Data movements are required using Strategy-1.");					
 		
 		// Generating Workload's Data Partition and Node Distribution Details
-		cloneWorkload.generateDataPartitionTable();
-		cloneWorkload.generateDataNodeTable();
-		cloneWorkload.calculateDMVPercentage(movements);
-		cloneWorkload.calculateDTPercentage();
+		workload.generateDataPartitionTable();
+		workload.generateDataNodeTable();
+		workload.calculateDMVPercentage(movements);
+		workload.calculateDTPercentage();
 		
 		//==============================================================================================
 		// Printing out details after performing Data Movement using hMetis		
 		System.out.println(">> After data movement using Strategy-1 ...");
-		cloneWorkload.setMessage(" (Strategy-1) ");
-		cloneWorkload.print(cloneDb);		
+		workload.setMessage(" (Strategy-1) ");
+		workload.print(db);		
 	}
 	
 	public void strategy2(Database db, Workload workload) {
@@ -155,84 +123,87 @@ public class DataMovement {
 		int dst_node_id = -1;
 		int movements = 0;
 		
-		for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
-			for(Data wrlData : entry.getValue()) {
-			
-				home_partition = db.getDb_partition_table().getPartition(wrlData.getData_home_partition_id());
-			
-				old_partition_id = wrlData.getData_partition_id();
-				old_partition = db.getDb_partition_table().getPartition(old_partition_id);
-				old_node_id = db.getDb_partition_table().lookup(old_partition_id);			
-			
-				if(wrlData.getData_hmetis_cluster_id() != -1) {
-					dst_partition_id = keyMap.get(wrlData.getData_hmetis_cluster_id());
-					dst_partition = db.getDb_partition_table().getPartition(dst_partition_id);
-					dst_node_id = db.getDb_partition_table().lookup(dst_partition_id);
-				} else {
-					dst_partition_id = old_partition_id;
-				}
-				//System.out.print("\n-#"+wrlData.toString()+" || dst-P"+dst_partition_id);			
-			
-				if(old_partition_id != dst_partition_id) { // Data needs to be moved
-					wrlData.setData_hmetis_cluster_id(-1);
-					wrlData.setData_shadow_hmetis_id(-1);
-					wrlData.setData_hasShadowHMetisId(false);
+		//for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+			//for(Data wrlData : entry.getValue()) {
+				for(Data wrlData : transaction.getTr_dataSet()) {			
+					home_partition = db.getDb_partition_table().getPartition(wrlData.getData_home_partition_id());
 				
-					if(wrlData.isData_isRoaming()) { // Data is already Roaming
-					//System.out.print("\n >> @debug :: *R"+d+"-"+wrlData.toString());
+					old_partition_id = wrlData.getData_partition_id();
+					old_partition = db.getDb_partition_table().getPartition(old_partition_id);
+					old_node_id = db.getDb_partition_table().lookup(old_partition_id);			
+				
+					if(wrlData.getData_hmetis_cluster_id() != -1) {
+						dst_partition_id = keyMap.get(wrlData.getData_hmetis_cluster_id());
+						dst_partition = db.getDb_partition_table().getPartition(dst_partition_id);
+						dst_node_id = db.getDb_partition_table().lookup(dst_partition_id);
+					} else {
+						dst_partition_id = old_partition_id;
+					}
+					//System.out.print("\n-#"+wrlData.toString()+" || dst-P"+dst_partition_id);			
+				
+					if(old_partition_id != dst_partition_id) { // Data needs to be moved
+						wrlData.setData_hmetis_cluster_id(-1);
+						wrlData.setData_shadow_hmetis_id(-1);
+						wrlData.setData_hasShadowHMetisId(false);
 					
-						// Case-1: Returning to Home
-						if(dst_partition_id != wrlData.getData_home_partition_id()) {
-							wrlData.setData_isRoaming(false);
-							wrlData.setData_isPartitionRoaming(false);												
+						if(wrlData.isData_isRoaming()) { // Data is already Roaming
+						//System.out.print("\n >> @debug :: *R"+d+"-"+wrlData.toString());
 						
-							roaming_data = this.createRoamingData(wrlData, dst_partition_id, dst_node_id);
-												
-							home_partition.getPartition_data_items().add(roaming_data);
-							home_partition.getRoaming_data_items().remove(wrlData.getData_id());						
-						
-							old_partition.getForeign_data_items().remove(wrlData);
-						} else { // Case-2: Roaming to another Partition
+							// Case-1: Returning to Home
+							if(dst_partition_id != wrlData.getData_home_partition_id()) {
+								wrlData.setData_isRoaming(false);
+								wrlData.setData_isPartitionRoaming(false);												
+							
+								roaming_data = this.createRoamingData(wrlData, dst_partition_id, dst_node_id);
+													
+								home_partition.getPartition_data_items().add(roaming_data);
+								home_partition.getRoaming_data_items().remove(wrlData.getData_id());						
+							
+								old_partition.getForeign_data_items().remove(wrlData);
+							} else { // Case-2: Roaming to another Partition
+								wrlData.setData_roaming_partition_id(dst_partition_id);
+								if(old_node_id != dst_node_id) {
+									wrlData.setData_roaming_node_id(dst_node_id);					
+									wrlData.setData_isNodeRoaming(true);
+								}
+							
+								roaming_data = this.createRoamingData(wrlData, dst_partition_id, dst_node_id);
+							
+								home_partition.getRoaming_data_items().remove(wrlData.getData_id());
+								home_partition.getRoaming_data_items().put(wrlData.getData_id(), dst_partition_id);
+							
+								dst_partition.getForeign_data_items().add(roaming_data);
+								old_partition.getForeign_data_items().remove(wrlData);
+							}						
+	
+							++movements;
+						} else { // Data will be Roaming for the first time
+							wrlData.setData_isRoaming(true);
+							wrlData.setData_isPartitionRoaming(true);
 							wrlData.setData_roaming_partition_id(dst_partition_id);
+							
 							if(old_node_id != dst_node_id) {
 								wrlData.setData_roaming_node_id(dst_node_id);					
 								wrlData.setData_isNodeRoaming(true);
-							}
-						
+							}										
+					
 							roaming_data = this.createRoamingData(wrlData, dst_partition_id, dst_node_id);
 						
-							home_partition.getRoaming_data_items().remove(wrlData.getData_id());
-							home_partition.getRoaming_data_items().put(wrlData.getData_id(), dst_partition_id);
-						
+							// Add the Roaming Data into the destination Partition's Foreign Data Item List
+							// Add an entry in the Old Partition Table's Roaming Data Item Table
+							// Remove the Data item from Old Partition's Data Item List
 							dst_partition.getForeign_data_items().add(roaming_data);
-							old_partition.getForeign_data_items().remove(wrlData);
-						}						
-
-						++movements;
-					} else { // Data will be Roaming for the first time
-						wrlData.setData_isRoaming(true);
-						wrlData.setData_isPartitionRoaming(true);
-						wrlData.setData_roaming_partition_id(dst_partition_id);
-						
-						if(old_node_id != dst_node_id) {
-							wrlData.setData_roaming_node_id(dst_node_id);					
-							wrlData.setData_isNodeRoaming(true);
-						}										
-				
-						roaming_data = this.createRoamingData(wrlData, dst_partition_id, dst_node_id);
-					
-						// Add the Roaming Data into the destination Partition's Foreign Data Item List
-						// Add an entry in the Old Partition Table's Roaming Data Item Table
-						// Remove the Data item from Old Partition's Data Item List
-						dst_partition.getForeign_data_items().add(roaming_data);
-						old_partition.getRoaming_data_items().put(wrlData.getData_id(), dst_partition_id);
-						old_partition.getPartition_data_items().remove(wrlData);
-
-						++movements;						
-					} // end -- if-else()			
-				} // end -- if()
-			} // end -- inner for()
-		} // end -- outer for()
+							old_partition.getRoaming_data_items().put(wrlData.getData_id(), dst_partition_id);
+							old_partition.getPartition_data_items().remove(wrlData);
+	
+							++movements;						
+						} // end -- if-else()			
+					} // end -- if()
+				} // end -- for()-Data
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction-Type
 		
 		return movements;
 	}

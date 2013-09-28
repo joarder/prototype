@@ -13,14 +13,14 @@ public class PrintWorkloadDetails {
 		//System.out.println();
 		System.out.println("===Workload Details========================");
 		//System.out.println("Total number of transactions: "+workload.getWrl_total_transactions());
-		System.out.println("Total number of transaction types: "+workload.getWrl_type());
+		System.out.println("Total number of transaction types: "+workload.getWrl_transactionTypes());
 		System.out.print("Transaction proportions: {");				
 		
 		
 				
 		System.out.println("\n");
 		System.out.println("===Transaction Details========================");
-		for(int i = 0; i < workload.getWrl_type(); i++) {
+		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {
 			System.out.println("===Type["+i+"] Transactions===");
 			
 			if(workload.getWrl_transactionProp()[i] == 0)

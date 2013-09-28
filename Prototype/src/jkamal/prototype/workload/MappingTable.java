@@ -4,7 +4,7 @@
 
 package jkamal.prototype.workload;
 
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
@@ -42,15 +42,19 @@ public class MappingTable {
 		int partition_id = -1;
 		int cluster_id = -1;
 		MatrixElement e;				
-		for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
-			for(Data d1 : entry.getValue()) {
-				partition_id = d1.getData_partition_id();
-				cluster_id = d1.getData_hmetis_cluster_id();			
-				
-				e = mapping[partition_id+1][cluster_id+1];
-				e.setCounts(e.getCounts()+1);
-			}
-		}
+		//for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {							
+				//for(Data d1 : entry.getValue()) {
+				for(Data d1 : transaction.getTr_dataSet()) {
+					partition_id = d1.getData_partition_id();
+					cluster_id = d1.getData_hmetis_cluster_id();			
+					
+					e = mapping[partition_id+1][cluster_id+1];
+					e.setCounts(e.getCounts()+1);
+				} // end -- for()-Data
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction Types
 		
 		// Create the Movement Matrix
 		return (new Matrix(mapping));		 

@@ -4,7 +4,11 @@
 
 package jkamal.prototype.workload;
 
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Map.Entry;
+
+import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
 
@@ -27,140 +31,164 @@ public class WorkloadGeneration {
 		return null;
 	}
 	
-	public Workload generateRepeatedWorkload(DatabaseServer dbs, Database db, int workload_transaction_nums, String DIR_LOCATION, 
-			Workload workload, int workload_round, boolean workload_mode) {				
-		
-		if(workload_round != 0) {
-			workload.setWrl_transactionProp(generateRepeatedTransactionProp(workload, workload_mode));
-			workload.setWrl_round(workload_round);
-			this.incTransactionWeights(workload);
-		} else {
-			workload.setWrl_transactionProp(generateTransactionProp(workload, workload_transaction_nums));
-			workload.setWrl_round(workload_round);			
+	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {								
+		if(workload.getWrl_round() != 0) {
+			workload.setWrl_transactionProp(generateTransactionProp(workload));
+			this.incrTransactionWeights(workload);
+		} else {			
+			workload.setWrl_transactionProp(generateTransactionProp(workload));			
 		}
-				
-		// Generating Workload Transactions
-		TransactionGeneration trGen = new TransactionGeneration();
-		trGen.generateTransaction(db, workload);					
+
+		workload.printWrl_transactionProp();
+		System.out.println();
 		
-		// Generating Workload's Data Partition and Node Distribution Details
-		workload.generateDataPartitionTable();
-		workload.generateDataNodeTable();		
+		if(workload.isWrl_mode()) {
+			// Generating Workload Transactions
+			TransactionGeneration trGen = new TransactionGeneration();
+			trGen.generateTransaction(db, workload);
+			if(workload.getWrl_round() != 0)
+				System.out.println("[MSG] Total "+workload.getWrl_transactionVariant()+" transaction are added to the workload as a result of workload variation.");
+			
+			this.workloadEvaluation(db, workload);
+			this.assignHMetisId(workload);
+		} else {
+			// Reducing Workload Transactions
+			TransactionReduction trRed = new TransactionReduction();
+			trRed.reduceTransaction(db, workload);
+			if(workload.getWrl_round() != 0)
+				System.out.println("[MSG] Total "+workload.getWrl_transactionVariant()+" transaction are removed from the workload as a result of workload variation.");
+			
+			this.workloadEvaluation(db, workload);
+			this.assignHMetisId(workload);
+		}
 		
-		// Generating Workload and FixFile for HyperGraph Partitioning			
-		workload.generateWorkloadFile(dbs, workload, DIR_LOCATION);
-		workload.generateFixFile(DIR_LOCATION);				
-		
-		// Calculate the percentage of DT
-		workload.calculateDTPercentage();
+		if(!workload.isWorkloadEmpty()) {
+			// Generating Workload's Data Partition and Node Distribution Details
+			workload.generateDataPartitionTable();
+			workload.generateDataNodeTable();		
+			
+			// Generating Workload and FixFile for HyperGraph Partitioning			
+			workload.generateWorkloadFile(dbs, workload, DIR_LOCATION);
+			workload.generateFixFile(DIR_LOCATION);				
+			
+			// Calculate the percentage of DT
+			workload.calculateDTPercentage();
+		} else {
+			// Workload is empty
+		}
 				
 		return workload;
 	}
 	
-	public void incTransactionWeights(Workload workload) {
+	public void incrTransactionWeights(Workload workload) {
 		int tr_weight = 0;
-		for(Transaction transaction : workload.getWrl_transactionList()) {
-			tr_weight = transaction.getTr_weight();
-			transaction.setTr_weight(++tr_weight);			
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				tr_weight = transaction.getTr_weight();
+				transaction.setTr_weight(++tr_weight);
+			}
 		}
 	}
 	
-	public static int randInt(int min, int max) {
-	    Random random = new Random();
-	    int randomNum = random.nextInt((max - min) + 1) + min;
-
-	    return randomNum;
-	}	
-	
-	public double[] generateTransactionProp(Workload workload, int nums) {
-		int type = workload.getWrl_type();		
-		double array[] = new double[type];
+	public double[] generateTransactionProp(Workload workload) {
+		int array_size = workload.getWrl_transactionTypes();
+		double array[] = new double[array_size];
         double sum = 0.0d;
         double rounding_result = 0.0d;
-        //double rounding_correction = 0.0d;
         Random random = new Random();
         
-        for (int i = 0; i < type; i++) {
-        	array[i] = random.nextDouble();
+        
+        for (int i = 0; i < array_size; i++) {
+        	array[i] = random.nextDouble();        
         	sum += array[i];
-        }
-                
-        double roundings = nums;
-        for (int i = 0; i < type; i++) {
-        	array[i] = (double)Math.round((array[i] / sum) * roundings);
-        	rounding_result += array[i];
+        }        
+            
+        double roundings = 0.0d;
+        if(workload.getWrl_round() != 0)
+        	roundings = workload.getWrl_transactionVariant();
+        else
+        	roundings = workload.getWrl_totalTransaction();
+        
+        for (int i = 0; i < array_size; i++) {
+        	array[i] = (double)Math.round((array[i] / sum) * roundings);        
+        	rounding_result += array[i];        	
         }       
                         
-        //System.out.println("Rounding Result = "+rounding_result);        
-        
+        //System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);        
+                
+        int trNums = 0;
         if(rounding_result > roundings) {
-        	array[type-1] -= (rounding_result - roundings);
-        	//rounding_correction -= rounding_result - roundings;
+        	if(workload.getWrl_round() != 0)
+        		trNums = workload.getWrl_transactionVariant();
+        	else
+        		trNums = workload.getWrl_totalTransaction();
+        	
+        	for(int i = 0; i < array_size; i++) {        		
+        		trNums -= array[i];
+        		if(trNums <= 1)
+        			array[i] -= Math.abs((rounding_result - roundings));
+            }
         }
         
         if(rounding_result < roundings) {
-        	array[type-1] += (roundings - rounding_result);
-        	//rounding_correction += roundings - rounding_result;
-        }
-        
-        //System.out.println("Rounding Correction = "+rounding_correction);
+        	if(workload.getWrl_round() != 0)
+        		trNums = workload.getWrl_transactionVariant();
+        	else
+        		trNums = workload.getWrl_totalTransaction();
+        	
+        	for(int i = 0; i < array_size; i++) {        		
+        		trNums -= array[i];        	        		
+        		if(trNums <= 1)
+        			array[i] += Math.abs((rounding_result - roundings));
+            }
+        }        
         
         return array;
 	}
 	
-	public double[] generateRepeatedTransactionProp(Workload workload, boolean workload_mode) {
-		// Generating Random proportions for different Transaction types based on Workload type
-		Random random = new Random();
-		double randomProp = 0.0;
-		double newProp = 0.0;
-		//double sumProp = 0.0;
-		double[] oldProp = new double[workload.getWrl_transactionProp().length];
-		System.arraycopy(workload.getWrl_transactionProp(), 0, oldProp, 0, workload.getWrl_transactionProp().length);
+	public void assignHMetisId(Workload workload) {
+		int total_dataItems = 0;
+		int hmetis_shadow_data_id = 1;
 		
-		//System.out.print("@debug >> OldProp: ");
-		//workload.printWrl_transactionProp();
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				for(Data trData : transaction.getTr_dataSet()) {
+					if(!trData.isData_hasShadowHMetisId()) {					
+						trData.setData_shadow_hmetis_id(hmetis_shadow_data_id);
+						trData.setData_hasShadowHMetisId(true);
+						//System.out.println("@debug >> hData("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
+						
+						++total_dataItems;
+						++hmetis_shadow_data_id;					
+					} else {
+						//System.out.println("@debug >> *Repeated Data ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());					
+					}
+				} // end -- for()-Data
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction Types
 		
-		for(int i = 0; i < oldProp.length; i++) {
-			double prop = oldProp[i];
-			if(prop > 1) {
-				randomProp = Math.round(random.nextDouble()*100.0)/100.0;
-				newProp = Math.round(prop*randomProp);
-				
-				if(workload_mode)
-					workload.getWrl_transactionProp()[i] += newProp;
-				else
-					workload.getWrl_transactionProp()[i] -= newProp;
-				
-				//sumProp += newProp;
-				//System.out.println("newProp: "+newProp+"| prop: "+prop+"| randomProp: "+randomProp);
-			} else {
-				// 
-			}
-		}				
-				
-		//System.out.print("\n@debug >> NewProp:");
-		//workload.printWrl_transactionProp();
-				
-		double[] difference = new double[workload.getWrl_type()];
+		workload.setWrl_totalData(total_dataItems);
+	}
+	
+	public void workloadEvaluation(Database db, Workload workload) {
+		WorkloadSampling workloadSampling = workload.getWorkloadSampling();
+		boolean emptyWorkload = false;
 		
-		if(workload_mode) {
-			for(int i = 0; i < difference.length; i++) {
-				difference[i] = workload.getWrl_transactionProp()[i] - oldProp[i];
-				//System.out.println("* difference[i]: "+difference[i]+"| NewProp: "+workload.getWrl_transactionProp()[i]+"| oldProp: "+oldProp[i]);
-			}
-		} else {
-			for(int i = 0; i < difference.length; i++) {
-				difference[i] = oldProp[i] - workload.getWrl_transactionProp()[i];
-				//System.out.println("^ difference[i]: "+difference[i]+"| oldProp: "+oldProp[i]+"NewProp: "+workload.getWrl_transactionProp()[i]);
-			}
+		// Workload Sampling
+		System.out.println(">> Performing workload sampling ...");		
+		workloadSampling.performSampling(workload);
+		System.out.println("[MSG] Total "+workloadSampling.getDiscardedTransaction()+" non-distributed transactions are discarded from the workload.");
+						
+		// Re-evaluate Discarded Transactions
+		if(workload.getWrl_round() != 0) {
+			System.out.println(">> Re-evaluating previously discarded workload ...");
+			emptyWorkload = workloadSampling.includeDiscardedWorkload(db, workload);
+			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()+" distributed transactions are included from the previously discarded workload.");
 		}
-			
-		//System.out.print("\n@debug >> Difference: {");
-		//for(int i = 0; i < difference.length; i++)
-			//System.out.print(difference[i]+", ");
-		//System.out.println("}");
-
 		
-		return difference;
+		if(emptyWorkload) {
+			System.out.println("[ALERT] Empty workload !!! No transactions included !!!");
+			workload.setWorkloadEmpty(true);
+		}
 	}
 }
