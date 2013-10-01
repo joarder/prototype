@@ -33,21 +33,25 @@ public class WorkloadGeneration {
 	
 	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {								
 		if(workload.getWrl_round() != 0) {
-			workload.setWrl_transactionProp(generateTransactionProp(workload));
+			//workload.setWrl_transactionVarProp(generateTransactionProp(workload));
+			workload.setWrl_transactionVarProp(generateWorkloadVar(workload));
 			this.incrTransactionWeights(workload);
+			workload.printWrl_transactionVarProp();
+			System.out.println();
 		} else {			
-			workload.setWrl_transactionProp(generateTransactionProp(workload));			
-		}
-
-		workload.printWrl_transactionProp();
-		System.out.println();
+			workload.setWrl_transactionProp(generateTransactionProp(workload));
+			workload.printWrl_transactionProp();
+			System.out.println();
+		}		
 		
 		if(workload.isWrl_mode()) {
 			// Generating Workload Transactions
 			TransactionGeneration trGen = new TransactionGeneration();
 			trGen.generateTransaction(db, workload);
-			if(workload.getWrl_round() != 0)
-				System.out.println("[MSG] Total "+workload.getWrl_transactionVariant()+" transaction are added to the workload as a result of workload variation.");
+			if(workload.getWrl_round() != 0) {
+				System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" new transaction are added to the workload as a result of workload variation.");
+				WorkloadGeneration.print(workload);
+			}
 			
 			this.workloadEvaluation(db, workload);
 			this.assignHMetisId(workload);
@@ -55,8 +59,10 @@ public class WorkloadGeneration {
 			// Reducing Workload Transactions
 			TransactionReduction trRed = new TransactionReduction();
 			trRed.reduceTransaction(db, workload);
-			if(workload.getWrl_round() != 0)
-				System.out.println("[MSG] Total "+workload.getWrl_transactionVariant()+" transaction are removed from the workload as a result of workload variation.");
+			if(workload.getWrl_round() != 0) {
+				System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" old transaction are removed from the workload as a result of workload variation.");
+				WorkloadGeneration.print(workload);			
+			}
 			
 			this.workloadEvaluation(db, workload);
 			this.assignHMetisId(workload);
@@ -88,6 +94,90 @@ public class WorkloadGeneration {
 				transaction.setTr_weight(++tr_weight);
 			}
 		}
+	}
+	
+	public static int randInt(int min, int max) {
+	    Random rand = new Random();
+	    int randomNumber = rand.nextInt((max - min) + 1) + min;	    
+
+	    return randomNumber;
+	}
+	
+	public double[] generateWorkloadVar(Workload workload) {
+		int array_size = workload.getWrl_transactionTypes();
+		double array[] = new double[array_size];
+		int maxRange = 0;
+		int minRange = 1;		
+		int sum = 0;
+		
+		for(int i = 0; i < array_size; i++) {
+			maxRange = (int)workload.getWrl_transactionProp()[i];
+			if(maxRange == 0) {
+				maxRange = 0;
+				minRange = 0;
+			} else {
+				minRange = 1;
+			}
+			
+			array[i] = (int)WorkloadGeneration.randInt(minRange, maxRange);
+			//System.out.println("Max = "+maxRange+" | array[i]="+array[i]);
+			sum += array[i];
+		}
+		
+		 int roundings = 0;
+		 int rounding_result = 0;
+		 
+		 if(workload.getWrl_round() != 0)
+			 roundings = workload.getWrl_transactionVariant();
+		 else
+			 roundings = workload.getWrl_totalTransaction();
+	        
+		 int val = 0;
+		 int remain = 0;
+		 for (int i = 0; i < array_size; i++) {
+	        	val = (int)Math.round((array[i] / sum) * roundings);
+	        	val += remain;
+	        	
+	        	if(val >= workload.getWrl_transactionProp()[i]) {
+	        		array[i] = workload.getWrl_transactionProp()[i];
+	        		remain = val - (int)workload.getWrl_transactionProp()[i];
+	        	} else {
+	        		array[i] = val;
+	        	}
+	        	
+	        	rounding_result += array[i];        	
+		 }        
+		
+		//System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);
+		 
+		 int trNums = 0;
+		 if(rounding_result > roundings) {
+	        	if(workload.getWrl_round() != 0)
+	        		trNums = workload.getWrl_transactionVariant();
+	        	else
+	        		trNums = workload.getWrl_totalTransaction();
+	        	
+	        	for(int i = 0; i < array_size; i++) {        		
+	        		trNums -= array[i];
+	        		if(trNums <= 1)
+	        			array[i] -= Math.abs((rounding_result - roundings));
+	        	}
+		 }		 
+	        
+		 if(rounding_result < roundings) {
+	        	if(workload.getWrl_round() != 0)
+	        		trNums = workload.getWrl_transactionVariant();
+	        	else
+	        		trNums = workload.getWrl_totalTransaction();
+	        	
+	        	for(int i = 0; i < array_size; i++) {        		
+	        		trNums -= array[i];        	        		
+	        		if(trNums <= 1)
+	        			array[i] += Math.abs((rounding_result - roundings));
+	            }
+		 }   
+		 
+		 return array;
 	}
 	
 	public double[] generateTransactionProp(Workload workload) {
@@ -175,20 +265,29 @@ public class WorkloadGeneration {
 		boolean emptyWorkload = false;
 		
 		// Workload Sampling
-		System.out.println(">> Performing workload sampling ...");		
+		System.out.println("[ACT] Sampling Workload ...");		
 		workloadSampling.performSampling(workload);
 		System.out.println("[MSG] Total "+workloadSampling.getDiscardedTransaction()+" non-distributed transactions are discarded from the workload.");
+		WorkloadGeneration.print(workload);
 						
 		// Re-evaluate Discarded Transactions
 		if(workload.getWrl_round() != 0) {
-			System.out.println(">> Re-evaluating previously discarded workload ...");
+			System.out.println("[ACT] Re-evaluating previously discarded workload ...");
 			emptyWorkload = workloadSampling.includeDiscardedWorkload(db, workload);
-			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()+" distributed transactions are included from the previously discarded workload.");
+			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()+" newly distributed transactions are included from the previously discarded workload.");
+			WorkloadGeneration.print(workload);
 		}
 		
 		if(emptyWorkload) {
-			System.out.println("[ALERT] Empty workload !!! No transactions included !!!");
+			System.out.println("[ALM] Empty workload !!! No transactions included !!!");
 			workload.setWorkloadEmpty(true);
 		}
 	}
+	
+	public static void print(Workload workload) {
+		System.out.print("[MSG] Total "+workload.getWrl_totalTransaction()+" transactions of "
+				+workload.getWrl_transactionTypes()+" types having a distribution of ");										
+				workload.printWrl_transactionProp();
+				System.out.println(" are currently in the workload.");
+	}	
 }

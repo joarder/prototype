@@ -34,12 +34,12 @@ public class WorkloadReplay {
 		this.wrl_replayMap = workloadReplay;
 	}
 	
-	public void captureWorkload(Database db, Workload workload) {
+	public void captureWorkload(int capture_round, Database db, Workload workload) {
 		// Create a Clone of the Database and Workload using Copy Constructor
 		Database cloneDb = new Database(db);
 		Workload cloneWorkload = new Workload(workload);
 
-		this.getDb_replayMap().put(cloneWorkload.getWrl_round(), cloneDb);
-		this.getWrl_ReplayMap().put(cloneWorkload.getWrl_round(), cloneWorkload);
+		this.getDb_replayMap().put(capture_round, cloneDb);
+		this.getWrl_ReplayMap().put(capture_round, cloneWorkload);
 	}
 }

@@ -19,15 +19,16 @@ public class PrintDatabaseDetails {
 	
 	public void printDetails(DatabaseServer dbs, Database db) {
 		// DBS Details
-		System.out.print("\n===Database Server Details===");
-		System.out.print("\n Database Server: "+dbs.getDbs_name());
-		System.out.print("\n Number of Nodes: "+dbs.getDbs_nodes().size());
+		//System.out.println();
+		System.out.println("[OUT] Database Server Details===");
+		System.out.println("      Database Server: "+dbs.getDbs_name());
+		System.out.println("      Number of Nodes: "+dbs.getDbs_nodes().size());
 		
 		// Node Details
-		System.out.println();
-		System.out.print("\n===Node Details===");
+		//System.out.println();
+		System.out.print("[OUT] Node Details===");
 		for(Node node : dbs.getDbs_nodes()) {						
-			System.out.print("\n "+node.getNode_label()
+			System.out.print("\n      "+node.getNode_label()
 			+" with "
 			+node.getNode_partitions().size()+" Partitions."
 			+" Current Load "
@@ -36,18 +37,18 @@ public class PrintDatabaseDetails {
 		System.out.print("\n");
 		
 		// DB Details
-		System.out.println();
-		System.out.println("===Database Details====");
-		System.out.println(" Database: "+db.getDb_name());
-		System.out.println(" Number of Partitions: "+db.getDb_partitions().size());
+		//System.out.println();
+		System.out.println("[OUT] Database Details====");
+		System.out.println("      Database: "+db.getDb_name());
+		System.out.println("      Number of Partitions: "+db.getDb_partitions().size());
 		
 		// Partition Table Details
-		System.out.println();
-		System.out.println("===Partition Table Details====");		
+		//System.out.println();
+		System.out.println("[OUT] Partition Table Details====");		
 		
 		int comma = -1;
 		for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {
-			System.out.print(" N"+entry.getKey()+" {");
+			System.out.print("      N"+entry.getKey()+" {");
 			
 			comma = entry.getValue().size();
 			for(Partition partition : entry.getValue()) {

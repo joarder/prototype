@@ -84,7 +84,6 @@ public class WorkloadSampling {
 		Transaction delTransaction = null;
 		Transaction cloneTransaction = null;
 		int trType = 0;
-		int totalTransaction = 0;
 		int discardedTransaction = 0;
 		ArrayList<Transaction> transactionList;
 		
@@ -92,7 +91,7 @@ public class WorkloadSampling {
 			delTransaction = workload.findWrl_transaction(marker);
 			trType = delTransaction.getTr_type();
 			
-			//System.out.println("@debug >> Discarding Tr("+delTransaction.getTr_id()+")");
+			//System.out.println("@debug >> Discarding Tr("+delTransaction.getTr_id()+") type"+trType);
 			
 			cloneTransaction = new Transaction(delTransaction);						
 			if(this.getDiscardedWorkload().containsKey(trType))
@@ -101,21 +100,25 @@ public class WorkloadSampling {
 				transactionList = new ArrayList<Transaction>();
 				transactionList.add(delTransaction);
 				this.getDiscardedWorkload().put(trType, transactionList);
-			}
+			}						
+			
+			workload.getWrl_transactionMap().get(trType).remove(delTransaction);
 			
 			++discardedTransaction;
 			this.setDiscardedTransaction(discardedTransaction);
 			
-			workload.getWrl_transactionMap().get(trType).remove(delTransaction);
-			totalTransaction = workload.getWrl_totalTransaction();
-			--totalTransaction;
-			workload.setWrl_totalTransaction(totalTransaction);						
-		}				
+			workload.decWrl_transactionPropVal(trType);						
+			workload.decWrl_totalTransaction();							
+		}
+		
+		//@debug
+		//System.out.print("*");
+		//workload.printWrl_transactionProp();
+		//System.out.println("");
 	}
 	
 	public boolean includeDiscardedWorkload(Database db, Workload workload) {
 		int trType = 0;
-		int totalTransaction = 0;
 		int reselectedTransactions = 0;
 		Set<Integer> delMarkers = new TreeSet<Integer>();
 				
@@ -126,10 +129,11 @@ public class WorkloadSampling {
 				
 				if(transaction.getTr_dtCost() != 0) { // DT
 					workload.getWrl_transactionMap().get(trType).add(transaction);
-					totalTransaction = workload.getWrl_totalTransaction();
-					++totalTransaction;
-					++reselectedTransactions;
-					workload.setWrl_totalTransaction(totalTransaction);
+					
+					workload.incWrl_transactionPropVal(trType);					
+					workload.incWrl_totalTransaction();
+										
+					++reselectedTransactions;										
 					this.setReseletedTransaction(reselectedTransactions);
 				} else {
 					// Not DT, therefore finally discarded
@@ -151,10 +155,14 @@ public class WorkloadSampling {
 			this.setDiscardedTransaction(discardedTransaction);
 		}	
 		
-		//workload.setWrl_totalTransaction(totalTransaction);
-		if(totalTransaction <= 0) {
+		if(workload.getWrl_totalTransaction() <= 0) {
 			return true;
 		}
+		
+		//@debug		
+		//System.out.print("*[");
+		//workload.printWrl_transactionProp();
+		//System.out.println("]");
 		
 		return false;
 	}

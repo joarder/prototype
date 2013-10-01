@@ -26,6 +26,7 @@ public class Workload implements Comparable<Workload> {
 	private int wrl_id;
 	private String wrl_label;
 	private int wrl_round;
+	private int wrl_capture;
 	private boolean wrl_mode;
 	private int wrl_transactionVariant;
 	private int wrl_database_id;	
@@ -33,11 +34,13 @@ public class Workload implements Comparable<Workload> {
 	private boolean workloadEmpty;
 	
 	private int wrl_transactionTypes; // Represents the number of Transaction types. e.g. for AuctionMark it is 10
-	private double[] wrl_transactionProp;	
+	private double[] wrl_transactionProp;
+	private double[] wrl_transactionVarProp;
 	private Map<Integer, ArrayList<Transaction>> wrl_transactionMap;
 	private int wrl_totalTransaction;
 		
-	private int wrl_totalData;		
+	private int wrl_totalData;	
+	private int wrl_dataMoved;
 	
 	private Map<Integer, Set<Data>> dataPartitionTable;
 	private Map<Integer, Set<Data>> dataNodeTable;
@@ -57,6 +60,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_id(id);
 		this.setWrl_label("WL-"+Integer.toString(this.getWrl_id()));
 		this.setWrl_round(0);
+		this.setWrl_capture(0);
 		this.setWrl_mode(true);
 		this.setWrl_transactionVariant(0);
 		this.setWrl_database_id(db_id);		
@@ -65,11 +69,12 @@ public class Workload implements Comparable<Workload> {
 		
 		this.setWrl_transactionTypes(trTypes);
 		this.setWrl_transactionProp(new double[this.getWrl_transactionTypes()]);
-
+		this.setWrl_transactionVarProp(new double[this.getWrl_transactionTypes()]);
 		this.setWrl_transactionMap(new TreeMap<Integer, ArrayList<Transaction>>());
 		this.setWrl_totalTransaction(0);
 		
 		this.setWrl_totalData(0);
+		this.setWrl_dataMoved(0);
 		
 		this.setWrl_workload_file("workload.txt");
 		this.setWrl_fixfile("fixfile.txt");
@@ -88,6 +93,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_id(workload.getWrl_id());
 		this.setWrl_label(workload.getWrl_label());
 		this.setWrl_round(workload.getWrl_round());
+		this.setWrl_capture(workload.getWrl_capture());
 		this.setWrl_mode(workload.isWrl_mode());
 		this.setWrl_transactionVariant(workload.getWrl_transactionVariant());
 		this.setWrl_database_id(workload.getWrl_database_id()); 
@@ -98,7 +104,11 @@ public class Workload implements Comparable<Workload> {
 		
 		double[] cloneTransactionProp = new double[this.wrl_transactionTypes];		
 		System.arraycopy(workload.getWrl_transactionProp(), 0, cloneTransactionProp, 0, workload.getWrl_transactionProp().length);
-		this.setWrl_transactionProp(cloneTransactionProp);				
+		this.setWrl_transactionProp(cloneTransactionProp);
+		
+		double[] cloneTransactionVarProp = new double[this.wrl_transactionTypes];		
+		System.arraycopy(workload.getWrl_transactionVarProp(), 0, cloneTransactionVarProp, 0, workload.getWrl_transactionVarProp().length);
+		this.setWrl_transactionVarProp(cloneTransactionVarProp);
 		
 		Map<Integer, ArrayList<Transaction>> cloneTransactionMap = new TreeMap<Integer, ArrayList<Transaction>>();
 		int cloneTransactionType;		
@@ -116,13 +126,17 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_transactionMap(cloneTransactionMap);
 		this.setWrl_totalTransaction(workload.getWrl_totalTransaction());
 						
-		this.setWrl_round(workload.getWrl_round());
+		this.setWrl_totalData(workload.getWrl_totalData());
+		this.setWrl_dataMoved(workload.getWrl_dataMoved());
+				
 		this.setWrl_workload_file(workload.getWrl_workload_file());
 		this.setWrl_fixfile(workload.getWrl_fixfile());
+		
 		this.setWrl_dt_impact(workload.getWrl_dt_impact());
 		this.setWrl_dt_nums(workload.getWrl_dt_nums());
 		this.setWrl_percentage_dt(workload.getWrl_percentage_dt());
 		this.setWrl_percentage_dmv(workload.getWrl_percentage_dmv());
+		
 		this.setWrl_hasDataMoved(workload.isWrl_hasDataMoved());
 		this.setMessage(workload.getMessage());
 	}
@@ -141,6 +155,14 @@ public class Workload implements Comparable<Workload> {
 
 	public void setWrl_round(int wrl_round) {
 		this.wrl_round = wrl_round;
+	}
+
+	public int getWrl_capture() {
+		return wrl_capture;
+	}
+
+	public void setWrl_capture(int wrl_capture) {
+		this.wrl_capture = wrl_capture;
 	}
 
 	public boolean isWrl_mode() {
@@ -214,6 +236,34 @@ public class Workload implements Comparable<Workload> {
 	public void setWrl_transactionProp(double[] wrl_transactionProp) {
 		this.wrl_transactionProp = wrl_transactionProp;
 	}
+	
+	public double[] getWrl_transactionVarProp() {
+		return wrl_transactionVarProp;
+	}
+
+	public void setWrl_transactionVarProp(double[] wrl_transactionVarProp) {
+		this.wrl_transactionVarProp = wrl_transactionVarProp;
+	}
+
+	public void incWrl_transactionPropVal(int pos) {
+		++this.getWrl_transactionProp()[pos];
+	}
+	
+	public void incWrl_transactionPropVal(int pos, int val) {
+		Double value = this.getWrl_transactionProp()[pos];
+		value += val;
+		this.getWrl_transactionProp()[pos] = value;
+	}
+	
+	public void decWrl_transactionPropVal(int pos) {		
+		--this.getWrl_transactionProp()[pos];		
+	}
+	
+	public void decWrl_transactionPropVal(int pos, int val) {
+		Double value = this.getWrl_transactionProp()[pos];
+		value -= val;
+		this.getWrl_transactionProp()[pos] = value;
+	}
 
 	public int getWrl_totalTransaction() {
 		return wrl_totalTransaction;
@@ -222,6 +272,18 @@ public class Workload implements Comparable<Workload> {
 	public void setWrl_totalTransaction(int wrl_totalTransaction) {
 		this.wrl_totalTransaction = wrl_totalTransaction;
 	}
+	
+	public void incWrl_totalTransaction() {
+		int totalTransaction = this.getWrl_totalTransaction();		
+		++totalTransaction;
+		this.setWrl_totalTransaction(totalTransaction);
+	}
+	
+	public void decWrl_totalTransaction() {
+		int totalTransaction = this.getWrl_totalTransaction();		
+		--totalTransaction;
+		this.setWrl_totalTransaction(totalTransaction);
+	}
 
 	public int getWrl_totalData() {
 		return wrl_totalData;
@@ -229,6 +291,14 @@ public class Workload implements Comparable<Workload> {
 
 	public void setWrl_totalData(int wrl_totalData) {
 		this.wrl_totalData = wrl_totalData;
+	}
+
+	public int getWrl_dataMoved() {
+		return wrl_dataMoved;
+	}
+
+	public void setWrl_dataMoved(int wrl_dataMoved) {
+		this.wrl_dataMoved = wrl_dataMoved;
 	}
 
 	public String getWrl_workload_file() {
@@ -459,7 +529,7 @@ public class Workload implements Comparable<Workload> {
 	// Calculate the percentage of Data movements within the Workload (after running Strategy-1 and 2)
 	public void calculateDMVPercentage(int movements) {
 		int counts = this.getWrl_totalData();		
-		double percentage = ((double)movements/(double)counts)*100.0;
+		double percentage = ((double)movements/counts)*100.0;
 		percentage = Math.round(percentage*100.0)/100.0;
 		this.setWrl_percentage_dmv(percentage);
 	}
@@ -537,6 +607,20 @@ public class Workload implements Comparable<Workload> {
 		
 		System.out.print("{");
 		for(double prop : this.getWrl_transactionProp()) {
+			System.out.print(prop);
+			--size;
+			
+			if(size != 0)
+				System.out.print(", ");
+		}		
+		System.out.print("}");
+	}
+		
+	public void printWrl_transactionVarProp() {
+		int size = this.getWrl_transactionVarProp().length;
+		
+		System.out.print("{");
+		for(double prop : this.getWrl_transactionVarProp()) {
 			System.out.print(prop);
 			--size;
 			
@@ -626,41 +710,42 @@ public class Workload implements Comparable<Workload> {
 		}		
 	}
 	
-	public void print(Database db) {
-		System.out.println();
-		System.out.println("***********************************************************************************************************************");
-		System.out.println("===Round-"+this.getWrl_round()+this.getMessage()+" Workload Details===");
-		System.out.print(" "+this.toString()); //+" having a distribution of ");				
-		//this.printWrl_transactionProp();
-		
+	public void print(Database db) {				
+		System.out.println("[OUT] Capture-"+this.getWrl_capture()+" | Round-"+this.getWrl_round()+this.getMessage()+" :: Workload Details");
+		System.out.print("      "+this.toString() +" having a distribution of ");				
+		this.printWrl_transactionProp();
+				
+		System.out.println("\n      -----------------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {
 				transaction.generateTransactionCost(db);
-				transaction.print();
+				//transaction.print();
 			} // end -- for()-Transaction
 		} // end -- for()-Transaction Types						
 				
 		this.calculateDTPercentage();	
 		this.calculateDTImapct();
 		System.out.println();
-		System.out.println(" # Distributed Transactions: "+this.getWrl_percentage_dt()+"% | Total Transactions: "+this.getWrl_totalTransaction()
+		System.out.println("      # Distributed Transactions: "+this.getWrl_dt_nums()+"("+this.getWrl_percentage_dt()+"%) " +
+				"| Total Transactions: "+this.getWrl_totalTransaction()
 				+" | DT Impact: "+this.getWrl_dt_impact()
 				);
 		if(this.isWrl_hasDataMoved())
-			System.out.println(" # Percentage of Data Movements: "+this.getWrl_percentage_dmv()+"% | Total Data: "+this.getWrl_totalData());
+			System.out.println("      # Data Movements: "+this.getWrl_dataMoved()+"("+this.getWrl_percentage_dmv()+"%) " +
+					"| Total Data: "+this.getWrl_totalData());
 		
 		//this.printPartitionTable(db);
 		//this.printDataPartitionTable();
 		//this.printDataNodeTable();
-		System.out.println();
-		System.out.println("***********************************************************************************************************************");
+		//System.out.println();
+		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
 	}
 	
 	@Override
 	public String toString() {	
-		return (this.wrl_label+"["+this.getWrl_totalTransaction()+" Transactions (containing "+this.getWrl_totalData())
-						+ " Data) of "+this.getWrl_transactionTypes()+" types.";
+		return (this.wrl_label+" ["+this.getWrl_totalTransaction()+" Transactions (containing "+this.getWrl_totalData()
+				+" Data) of "+this.getWrl_transactionTypes());//+" types having a distribution of ");//+this.printWrl_transactionProp()+"]");
 	}
 
 	@Override

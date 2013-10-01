@@ -37,7 +37,7 @@ public class Bootstrapping {
 			// Create a new Partition and attach it to the Database			
 			partition = new Partition(partition_id, String.valueOf(partition_id), node_id);			
 			db.getDb_partitions().add(partition);						
-			System.out.print(" Creating Partition "+partition.getPartition_label());			
+			System.out.print("[ACT] Creating Partition "+partition.getPartition_label());			
 			
 			// Create an ArrayList for placing into the Routing Table for each i-th Partition entry
 			dataList = new ArrayList<Data>();																											
@@ -76,9 +76,8 @@ public class Bootstrapping {
 		db.setDb_routing_table(routingTable);
 		// Attaching the Global Data Map with the Database
 		db.setDb_dataMap(globalDataList);
-		
-		System.out.println();
-		System.out.println(">> Total Data Items: "+globalDataList.getData_items().size());
-		System.out.println(">> Total Partitions: "+routingTable.getData_items().size());
+				
+		System.out.println("[MSG] Total Data Items: "+globalDataList.getData_items().size());
+		System.out.println("[MSG] Total Partitions: "+routingTable.getData_items().size());
 	}
 }

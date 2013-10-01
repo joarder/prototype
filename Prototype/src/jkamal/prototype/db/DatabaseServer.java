@@ -69,4 +69,24 @@ public class DatabaseServer {
 	public void setDbs_tenants(Set<Database> dbs_tenants) {
 		this.dbs_tenants = dbs_tenants;
 	}
+	
+	public void print() {
+		// DBS Details
+		//System.out.println();
+		System.out.println("[OUT] Database Server Details===");
+		System.out.println("      Database Server: "+this.getDbs_name());
+		System.out.println("      Number of Nodes: "+this.getDbs_nodes().size());
+		
+		// Node Details
+		//System.out.println();
+		System.out.print("[OUT] Node Details===");
+		for(Node node : this.getDbs_nodes()) {						
+			System.out.print("\n      "+node.getNode_label()
+			+" with "
+			+node.getNode_partitions().size()+" Partitions."
+			+" Current Load "
+			+((double)node.getNode_partitions().size()/(double)Node.getNODE_MAX_CAPACITY())*100+"%");			
+		}
+		System.out.print("\n");
+	}
 }

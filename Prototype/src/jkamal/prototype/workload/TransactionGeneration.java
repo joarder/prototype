@@ -21,8 +21,15 @@ public class TransactionGeneration {
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
 		Set<Data> trDataSet;
-		Data data;		
+		Data data;
+		double[] prop;
 		
+		//Selecting Transaction Prop
+		if(workload.getWrl_round() != 0)
+			prop = workload.getWrl_transactionVarProp();
+		else 
+			prop = workload.getWrl_transactionProp();
+			
 		// Creating required local variables
 		int data_id = 0;
 		int data_weight = 0;
@@ -39,8 +46,9 @@ public class TransactionGeneration {
 		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {	
 			transactionList = new ArrayList<Transaction>();
 			
+			int typedTransactions = 0;
 			// j -- a specific Transaction type in the Transaction proportion array
-			for(int j = 0; j < (int)workload.getWrl_transactionProp()[i]; j++) {				
+			for(int j = 0; j < (int)prop[i]; j++) {				
 				trDataSet = new TreeSet<Data>();
 				
 				// k -- required numbers of Data items based on Transaction type
@@ -57,16 +65,28 @@ public class TransactionGeneration {
 				transaction.setTr_type(i);
 				transaction.generateTransactionCost(db);
 				
-				if(workload.getWrl_transactionMap().containsKey(i))
+				if(workload.getWrl_transactionMap().containsKey(i)) {
 					workload.getWrl_transactionMap().get(i).add(transaction);
-				else
+					++typedTransactions;
+				} else
 					transactionList.add(transaction);
 			} // end--j for() loop
 										
-			if(workload.getWrl_round() == 0)
+			if(workload.getWrl_round() == 0) {
 				workload.getWrl_transactionMap().put(i, transactionList);
+				
+				//if(workload.getWrl_capture() != 0)
+					//workload.incWrl_transactionPropVal(i, trType);
+			} else {
+				workload.incWrl_transactionPropVal(i, typedTransactions);
+			}
 		} // end--i for() loop
 		
 		workload.setWrl_totalTransaction(tr_id);
+		
+		//@debug
+		//System.out.print("*[");
+		//workload.printWrl_transactionProp();
+		//System.out.println("]");
 	}		
 }

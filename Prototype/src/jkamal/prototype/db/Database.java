@@ -6,6 +6,7 @@ package jkamal.prototype.db;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 public class Database {
 	private int db_id;
@@ -50,7 +51,7 @@ public class Database {
 		this.db_partitions = cloneDbPartitions;
 		
 		this.db_partition_table = new PartitionTable(db.getDb_partition_table());
-		this.db_routing_table = new RoutingTable(db.getDb_routing_table());
+		//this.db_routing_table = new RoutingTable(db.getDb_routing_table());
 	}
 
 	public int getDb_id() {
@@ -136,5 +137,34 @@ public class Database {
 	
 	public void delete() {
 		
+	}
+	
+	public void print() {
+		// DB Details
+		//System.out.println();
+		System.out.println("[OUT] Database Details====");
+		System.out.println("      Database: "+this.getDb_name());
+		System.out.println("      Number of Partitions: "+this.getDb_partitions().size());
+		
+		// Partition Table Details
+		//System.out.println();
+		System.out.println("[OUT] Partition Table Details====");		
+		
+		int comma = -1;
+		for(Entry<Integer, Set<Partition>> entry : this.getDb_partition_table().getPartition_table().entrySet()) {
+			System.out.print("      N"+entry.getKey()+" {");
+			
+			comma = entry.getValue().size();
+			for(Partition partition : entry.getValue()) {
+				System.out.print(partition.toString());
+				
+				if(comma != 1)
+					System.out.print(", ");
+			
+				--comma;
+			}
+			
+			System.out.print("}\n");			
+		}		
 	}
 }
