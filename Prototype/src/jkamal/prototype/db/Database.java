@@ -17,7 +17,7 @@ public class Database {
 	private PartitioningModel db_partition_model; // Options: Range, Salting, Hash (Random), Consistent-Hash (Random)	
 	private PartitionTable db_partition_table;
 	private RoutingTable db_routing_table;
-	private String db_dmv_strategy;
+	private String db_dmv_strategy;	
 	
 	public Database(int id, String name, int tenant_id, String model) {
 		this.setDb_id(id);

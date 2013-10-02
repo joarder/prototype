@@ -33,12 +33,11 @@ public class TransactionGeneration {
 		// Creating required local variables
 		int data_id = 0;
 		int data_weight = 0;
-		
-		int tr_id; 
+				
+		int tr_id = 0; 
 		if(workload.getWrl_round() != 0)
-			tr_id = workload.getWrl_totalTransaction();
-		else 
-			tr_id = 0;
+			//tr_id = workload.getWrl_totalTransaction();
+			tr_id = workload.getWrl_globalTrId();
 		
 		// Creating a Random Object for randomly chosen Data items
 		Random random = new Random();
@@ -59,11 +58,12 @@ public class TransactionGeneration {
 					data.setData_weight(++data_weight);					
 					trDataSet.add(data);					
 				} // end--k for() loop
-				
+								
 				++tr_id;				
 				transaction = new Transaction(tr_id, trDataSet);				
 				transaction.setTr_type(i);
 				transaction.generateTransactionCost(db);
+				workload.incWrl_totalTransaction();
 				
 				if(workload.getWrl_transactionMap().containsKey(i)) {
 					workload.getWrl_transactionMap().get(i).add(transaction);
@@ -72,21 +72,13 @@ public class TransactionGeneration {
 					transactionList.add(transaction);
 			} // end--j for() loop
 										
-			if(workload.getWrl_round() == 0) {
+			if(workload.getWrl_round() == 0)
 				workload.getWrl_transactionMap().put(i, transactionList);
-				
-				//if(workload.getWrl_capture() != 0)
-					//workload.incWrl_transactionPropVal(i, trType);
-			} else {
-				workload.incWrl_transactionPropVal(i, typedTransactions);
-			}
+			else
+				workload.incWrl_transactionPropVal(i, typedTransactions);			
 		} // end--i for() loop
 		
-		workload.setWrl_totalTransaction(tr_id);
-		
-		//@debug
-		//System.out.print("*[");
-		//workload.printWrl_transactionProp();
-		//System.out.println("]");
+		workload.setWrl_globalTrId(tr_id);
+		//workload.setWrl_totalTransaction(tr_id);
 	}		
 }

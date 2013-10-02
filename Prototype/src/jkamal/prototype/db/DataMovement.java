@@ -8,6 +8,7 @@ package jkamal.prototype.db;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import jkamal.prototype.util.Matrix;
@@ -17,8 +18,18 @@ import jkamal.prototype.workload.Transaction;
 import jkamal.prototype.workload.Workload;
 
 public class DataMovement {
+	private String strategy;
+	
 	public DataMovement() {}
 	
+	public String getStrategy() {
+		return strategy;
+	}
+
+	public void setStrategy(String strategy) {
+		this.strategy = strategy;
+	}
+
 	public void baseStrategy(Database db, Workload workload) {
 		// Create Mapping Matrix
 		MappingTable mappingTable = new MappingTable();		
@@ -36,23 +47,10 @@ public class DataMovement {
 		
 		// Perform Actual Data Movement
 		this.move(db, workload, keyMap);
-		//workload.setWrl_interPartitionDataMovements(movements);
-		workload.setWrl_hasDataMoved(true);
-		System.out.println("\n[MSG] Total "+workload.getWrl_interPartitionDataMovements()+" Data movements are required using Base Strategy.");					
-		
-		// Generating Workload's Data Partition and Node Distribution Details
-		workload.generateDataPartitionTable();
-		workload.generateDataNodeTable();
-		
-		// Calculating Various Metrics
-		workload.calculateDTPercentage();
-		workload.calculateDTImapct();
-		workload.calculatePDMVPercentage(workload.getWrl_interPartitionDataMovements());
-		workload.calculateNDMVPercentage(workload.getWrl_interNodeDataMovements());		
-		
-		//==============================================================================================
-		// Printing out details after performing Data Movement using hMetis				
-		workload.setMessage(" (Base Strategy) ");
+		workload.setWrl_hasDataMoved(true);					
+		workload.setMessage("Base Strategy");
+				
+		this.metricsGeneration(db, workload);		
 		workload.print(db);		
 	}
 	
@@ -76,21 +74,9 @@ public class DataMovement {
 		this.move(db, workload, keyMap);
 		//workload.setWrl_interPartitionDataMovements(movements);
 		workload.setWrl_hasDataMoved(true);
-		System.out.println("\n[MSG] Total "+workload.getWrl_interPartitionDataMovements()+" Data movements are required using Strategy-1.");					
+		workload.setMessage("Strategy-1");
 		
-		// Generating Workload's Data Partition and Node Distribution Details
-		workload.generateDataPartitionTable();
-		workload.generateDataNodeTable();
-		
-		// Calculating Various Metrics
-		workload.calculateDTPercentage();
-		workload.calculateDTImapct();
-		workload.calculatePDMVPercentage(workload.getWrl_interPartitionDataMovements());
-		workload.calculateNDMVPercentage(workload.getWrl_interNodeDataMovements());
-		
-		//==============================================================================================
-		// Printing out details after performing Data Movement using hMetis				
-		workload.setMessage(" (Strategy-1) ");
+		this.metricsGeneration(db, workload);
 		workload.print(db);		
 	}
 	
@@ -132,23 +118,10 @@ public class DataMovement {
 	
 		// Perform Actual Data Movement	
 		this.move(db, workload, keyMap);
-		//workload.setWrl_interPartitionDataMovements(movements);
-		workload.setWrl_hasDataMoved(true);
-		System.out.println("\n[MSG] Total "+workload.getWrl_interPartitionDataMovements()+" Data movements are required using Strategy-2.");
-		
-		// Generating Workload's Data Partition and Node Distribution Details
-		workload.generateDataPartitionTable();
-		workload.generateDataNodeTable();
-		
-		// Calculating Various Metrics
-		workload.calculateDTPercentage();
-		workload.calculateDTImapct();
-		workload.calculatePDMVPercentage(workload.getWrl_interPartitionDataMovements());
-		workload.calculateNDMVPercentage(workload.getWrl_interNodeDataMovements());		
-		
-		//==============================================================================================
-		// Printing out details after performing Data Movement using hMetis				
-		workload.setMessage(" (Strategy-2) ");
+		workload.setWrl_hasDataMoved(true);				
+		workload.setMessage("Strategy-2");
+
+		this.metricsGeneration(db, workload);			
 		workload.print(db);
 	}
 	
@@ -253,8 +226,6 @@ public class DataMovement {
 		
 		workload.setWrl_interPartitionDataMovements(inter_partition_movements);
 		workload.setWrl_interNodeDataMovements(inter_node_movements);
-		
-		//return inter_partition_movements;
 	}
 	
 	// Create a Roaming Data from the Workload Data
@@ -266,5 +237,29 @@ public class DataMovement {
 		roaming_data.setData_roaming_node_id(-1);				
 		
 		return roaming_data;
+	}
+	
+	public void metricsGeneration(Database db, Workload workload) {
+		System.out.println("\n[MSG] Total "+workload.getWrl_interPartitionDataMovements()+" Data movements are required using "
+				+workload.getMessage()+".");
+		
+		// Generating Workload's Data Partition and Node Distribution Details
+		workload.generateDataPartitionTable();
+		workload.generateDataNodeTable();
+		
+		// Calculating Various Metrics
+		workload.calculateDTPercentage();
+		workload.calculateDTImapct();
+		workload.calculatePDMVPercentage(workload.getWrl_interPartitionDataMovements());
+		workload.calculateNDMVPercentage(workload.getWrl_interNodeDataMovements());
+		
+		for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {
+			for(Partition partition : entry.getValue()) {
+				partition.calculateMainOccupied();
+				partition.calculateRoamingOccupied();
+				partition.calculateForeignOccupied();
+				partition.calculateCurrentLoad();
+			}						
+		}
 	}
 }

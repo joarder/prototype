@@ -197,7 +197,7 @@ public class WorkloadGeneration {
         if(workload.getWrl_round() != 0)
         	roundings = workload.getWrl_transactionVariant();
         else
-        	roundings = workload.getWrl_totalTransaction();
+        	roundings = workload.getWrl_initTotalTransactions();
         
         for (int i = 0; i < array_size; i++) {
         	array[i] = (double)Math.round((array[i] / sum) * roundings);        
@@ -211,7 +211,7 @@ public class WorkloadGeneration {
         	if(workload.getWrl_round() != 0)
         		trNums = workload.getWrl_transactionVariant();
         	else
-        		trNums = workload.getWrl_totalTransaction();
+        		trNums = workload.getWrl_initTotalTransactions();
         	
         	for(int i = 0; i < array_size; i++) {        		
         		trNums -= array[i];
@@ -224,7 +224,7 @@ public class WorkloadGeneration {
         	if(workload.getWrl_round() != 0)
         		trNums = workload.getWrl_transactionVariant();
         	else
-        		trNums = workload.getWrl_totalTransaction();
+        		trNums = workload.getWrl_initTotalTransactions();
         	
         	for(int i = 0; i < array_size; i++) {        		
         		trNums -= array[i];        	        		

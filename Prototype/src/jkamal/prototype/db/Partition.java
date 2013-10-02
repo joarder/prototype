@@ -22,6 +22,11 @@ public class Partition implements Comparable<Partition> {
 	public final static int MAX_ALLOWED_DATA_ITEMS = (int)(1000*0.7); // 70% of the Partition is allowed to be filled up.
 	public final static int MAX_FOREIGN_DATA_ITEMS = (int)(1000*0.2); // 20% of the Partition is allowed to be filled up with Foreign Data Items.
 	public final static int MAX_THRESHOLD_DATA_ITEMS = 900;
+	private double partition_percentage_main;
+	private double partition_percentage_roaming;
+	private double partition_percentage_foreign;
+	private double partition_current_load;
+	private boolean partition_overloaded;
 	
 	public Partition(int pid, String label, int nid) {
 		this.setPartition_id(pid);
@@ -31,6 +36,11 @@ public class Partition implements Comparable<Partition> {
 		this.setPartition_data_items(new ArrayList<Data>());
 		this.setRoaming_data_items(new TreeMap<Integer, Integer>());
 		this.setForeign_data_items(new ArrayList<Data>());
+		this.setPartition_percentage_main(0.0d);
+		this.setPartition_percentage_roaming(0.0d);
+		this.setPartition_percentage_foreign(0.0d);
+		this.setPartition_current_load(0.0d);
+		this.setPartition_overloaded(false);
 	}	
 
 	// Copy Constructor
@@ -61,6 +71,12 @@ public class Partition implements Comparable<Partition> {
 			cloneForeignDataItems.add(cloneForeignData);
 		}
 		this.foreign_data_items = cloneForeignDataItems;
+		
+		this.setPartition_percentage_main(partition.getPartition_percentage_main());
+		this.setPartition_percentage_roaming(partition.getPartition_percentage_roaming());
+		this.setPartition_percentage_foreign(partition.getPartition_percentage_foreign());
+		this.setPartition_current_load(partition.getPartition_current_load());
+		this.setPartition_overloaded(partition.isPartition_overloaded());
 	}
 	
 	public int getPartition_id() {
@@ -119,15 +135,88 @@ public class Partition implements Comparable<Partition> {
 		this.foreign_data_items = foreign_data_items;
 	}
 
+	public double getPartition_percentage_main() {
+		return partition_percentage_main;
+	}
+
+	public void setPartition_percentage_main(double partition_percentage_main) {
+		this.partition_percentage_main = partition_percentage_main;
+	}
+
+	public double getPartition_percentage_roaming() {
+		return partition_percentage_roaming;
+	}
+
+	public void setPartition_percentage_roaming(double partition_percentage_roaming) {
+		this.partition_percentage_roaming = partition_percentage_roaming;
+	}
+
+	public double getPartition_percentage_foreign() {
+		return partition_percentage_foreign;
+	}
+
+	public void setPartition_percentage_foreign(double partition_percentage_foreign) {
+		this.partition_percentage_foreign = partition_percentage_foreign;
+	}
+	
+	public double getPartition_current_load() {
+		return partition_current_load;
+	}
+
+	public void setPartition_current_load(double partition_current_load) {
+		this.partition_current_load = partition_current_load;
+	}
+
+	public boolean isPartition_overloaded() {
+		return partition_overloaded;
+	}
+
+	public void setPartition_overloaded(boolean partition_overloaded) {
+		this.partition_overloaded = partition_overloaded;
+	}
+
+	public void calculateMainOccupied() {
+		double percentage = ((double)this.getPartition_data_items().size()/Partition.MAX_DATA_ITEMS)*100.0;
+		percentage = Math.round(percentage*100.0)/100.0;
+		this.setPartition_percentage_main(percentage);
+	}
+	
+	public void calculateRoamingOccupied() {
+		double percentage = ((double)this.getRoaming_data_items().size()/Partition.MAX_DATA_ITEMS)*100.0;
+		percentage = Math.round(percentage*100.0)/100.0;
+		this.setPartition_percentage_roaming(percentage);
+	}
+
+	public void calculateForeignOccupied() {
+		double percentage = ((double)this.getForeign_data_items().size()/Partition.MAX_DATA_ITEMS)*100.0;
+		percentage = Math.round(percentage*100.0)/100.0;
+		this.setPartition_percentage_foreign(percentage);		
+	}
+	
+	public void calculateCurrentLoad() {
+		int totalData = this.getPartition_data_items().size()+this.getForeign_data_items().size();
+		
+		if(totalData >= Partition.MAX_THRESHOLD_DATA_ITEMS)
+			this.setPartition_overloaded(true);
+		else 
+			this.setPartition_overloaded(false);
+		
+		double percentage = ((double)totalData/Partition.MAX_DATA_ITEMS)*100.0;
+		percentage = Math.round(percentage*100.0)/100.0;
+		this.setPartition_current_load(percentage);
+	}
+
 	@Override
 	public String toString() {
 		if(this.getRoaming_data_items().size() != 0 || this.getForeign_data_items().size() !=0)
-			return (this.partition_label+"["+this.getPartition_data_items().size()
-					+"|R*"+this.getRoaming_data_items().size()
-					+"|F*"+this.getForeign_data_items().size()
+			return (this.getPartition_label()+"("+this.getPartition_current_load()+"%)"
+					+"[H*"+this.getPartition_data_items().size()+"("+this.getPartition_percentage_main()+"%)"
+					+"|R*"+this.getRoaming_data_items().size()+"("+this.getPartition_percentage_roaming()+"%)"
+					+"|F*"+this.getForeign_data_items().size()+"("+this.getPartition_percentage_foreign()+"%)"
 					+"]");
 		else	
-			return (this.partition_label+"["+this.partition_data_items.size()+"]");
+			return (this.getPartition_label()+"("+this.getPartition_current_load()+"%)"
+					+"[H*"+this.getPartition_data_items().size()+"]");
 	}
 
 	@Override
