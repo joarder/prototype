@@ -29,16 +29,34 @@
       N2 {P2[700], P5[700]}
 ***********************************************************************************************************************
 [RUN] Prototype Run [0]
-[ACT] Capture-0 | Round-0 :: Generating an initial workload with 100 transactions of 5 types having a proportion of {3.0, 6.0, 31.0, 29.0, 31.0}
+[ACT] Capture-0 | Round-0 :: Generating an initial workload with 100 transactions of 5 types having a proportion of {6, 11, 34, 8, 41}
 [ACT] Sampling Workload ...
-[MSG] Total 5 non-distributed transactions are discarded from the workload.
-[MSG] Total 95 transactions of 5 types having a distribution of {1.0, 6.0, 29.0, 28.0, 31.0} are currently in the workload.
+[MSG] Total 8 non-distributed transactions are discarded from the workload.
+[MSG] Total 92 transactions of 5 types having a distribution of {3, 11, 31, 7, 40} are currently in the workload.
 [OUT] Capture-0 | Round-0 (Initial)  :: Workload Details
-      WL-0 [95 Transactions (containing 437 Data) of 5 having a distribution of {1.0, 6.0, 29.0, 28.0, 31.0}
+      WL-0 [92 Transactions (containing 413 Data) of 5 having a distribution of {3, 11, 31, 7, 40}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 95(100.0%) | Total Transactions: 95 | DT Impact: 1.44
+      # Distributed Transactions: 92 (100.0% of Total 92 Workload Transactions)
+      # Impact of Distributed Transactions: 1.59 (for a particular workload round)
+      # Database Partition Table Details
+        N0{P0[700], P3[700], P6[700]}
+        N1{P1[700], P4[700], P7[100]}
+        N2{P2[700], P5[700]}
+      # Workload's Data-Partition Details
+        P0[54] Roaming[0]
+        P1[64] Roaming[0]
+        P2[64] Roaming[0]
+        P3[57] Roaming[0]
+        P4[61] Roaming[0]
+        P5[44] Roaming[0]
+        P6[58] Roaming[0]
+        P7[11] Roaming[0]
+      # Workload's Data-Node Details
+        N0[169]  Roaming[0]
+        N1[136]  Roaming[0]
+        N2[108]  Roaming[0]
       -----------------------------------------------------------------------------------------------------------------
 
 [MSG] Capture-0 | Round-0 :: Workload generation completed !!!
@@ -47,491 +65,465 @@
 [ACT] Generating Data Movement Mapping Matrix ...
       (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
 	X	0	1	2	3	4	5	6	7	
-	0	10	10	2	8	6	5	9	8	
-	1	12	5	10	9	9	9	6	8	
-	2	4	9	6	12	9	3	7	7	
-	3	5	6	9	8	15	13	8	10	
-	4	8	8	9	6	10	10	10	13	
-	5	8	12	6	8	4	7	9	4	
-	6	8	7	10	10	7	7	7	7	
-	7	0	1	4	2	0	0	2	1	
+	0	2	5	9	8	9	4	6	13	
+	1	7	7	6	13	7	7	11	9	
+	2	15	9	6	8	5	9	10	7	
+	3	7	8	11	7	8	4	6	8	
+	4	8	9	10	8	9	9	7	5	
+	5	4	11	10	2	8	7	4	3	
+	6	6	7	7	8	7	11	8	7	
+	7	2	1	0	1	0	3	4	1	
 
-[MSG] Total 385 Data movements are required using Base Strategy.
+[MSG] Total 369 Data movements are required using Base Strategy.
 [OUT] Capture-0 | Round-0 (Base Strategy)  :: Workload Details
-      WL-0 [95 Transactions (containing 437 Data) of 5 having a distribution of {1.0, 6.0, 29.0, 28.0, 31.0}
+      WL-0 [92 Transactions (containing 413 Data) of 5 having a distribution of {3, 11, 31, 7, 40}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 0(0.0%) | Total Transactions: 95 | DT Impact: 0.0
-      # Data Movements: 385(88.1%) | Total Data: 437
+      # Distributed Transactions: 0 (0.0% of Total 92 Workload Transactions)
+      # Impact of Distributed Transactions: 0.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 369 (89.35% of Total 413 Workload Data)
+      # Inter-Node Data Movements: 284 (68.77% of Total 413 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[650|R*50|F*44], P6[650|R*50|F*46]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[641|R*59|F*47], P5[662|R*38|F*46]}
+      # Workload's Data-Partition Details
+        P0[49] Roaming[47]
+        P1[54] Roaming[47]
+        P2[52] Roaming[47]
+        P3[51] Roaming[44]
+        P4[51] Roaming[43]
+        P5[52] Roaming[46]
+        P6[54] Roaming[46]
+        P7[50] Roaming[49]
+      # Workload's Data-Node Details
+        N0[154]  Roaming[98]
+        N1[155]  Roaming[110]
+        N2[104]  Roaming[76]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
 [RUN] Prototype Run [1]
-[DBG] Workload variation: 26.0% | false
-[ACT] Round-1 :: Varying the workload by reducing 24 transactions of 5 types having a proportion of {1.0, 3.0, 10.0, 8.0, 2.0}
-[MSG] 24 old transaction are removed from the workload as a result of workload variation.
-[MSG] Total 71 transactions of 5 types having a distribution of {0.0, 3.0, 19.0, 20.0, 29.0} are currently in the workload.
+[DBG] Workload variation: 47.0% | false
+[ACT] Round-1 :: Varying the workload by reducing 43 transactions of 5 types having a proportion of {1, 9, 4, 4, 25}
+[MSG] 43 old transaction are removed from the workload as a result of workload variation.
+[MSG] Total 49 transactions of 5 types having a distribution of {2, 2, 27, 3, 15} are currently in the workload.
 [ACT] Sampling Workload ...
-[MSG] Total 71 non-distributed transactions are discarded from the workload.
-[MSG] Total 0 transactions of 5 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0} are currently in the workload.
+[MSG] Total 49 non-distributed transactions are discarded from the workload.
+[MSG] Total 0 transactions of 5 types having a distribution of {0, 0, 0, 0, 0} are currently in the workload.
 [ACT] Re-evaluating previously discarded workload ...
-[MSG] Total 0 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 0 transactions of 5 types having a distribution of {0.0, 0.0, 0.0, 0.0, 0.0} are currently in the workload.
-[ALM] Empty workload !!! No transactions included !!!
-[RUN] Prototype Run [1]
-[ACT] Capture-1 | Round-0 :: Generating an initial workload with 100 transactions of 5 types having a proportion of {48.0, 4.0, 7.0, 31.0, 10.0}
-[ACT] Sampling Workload ...
-[MSG] Total 20 non-distributed transactions are discarded from the workload.
-[MSG] Total 80 transactions of 5 types having a distribution of {30.0, 4.0, 7.0, 29.0, 10.0} are currently in the workload.
-[OUT] Capture-1 | Round-0 (Initial)  :: Workload Details
-      WL-0 [80 Transactions (containing 292 Data) of 5 having a distribution of {30.0, 4.0, 7.0, 29.0, 10.0}
+[MSG] Total 2 newly distributed transactions are included from the previously discarded workload.
+[MSG] Total 2 transactions of 5 types having a distribution of {0, 0, 1, 1, 0} are currently in the workload.
+[OUT] Capture-1 | Round-1 (Initial)  :: Workload Details
+      WL-0 [2 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 1, 1, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 80(100.0%) | Total Transactions: 80 | DT Impact: 1.44
+      # Distributed Transactions: 2 (100.0% of Total 2 Workload Transactions)
+      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 369 (89.35% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 284 (68.77% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[650|R*50|F*44], P6[650|R*50|F*46]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[641|R*59|F*47], P5[662|R*38|F*46]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[4] Roaming[1]
+        P3[1] Roaming[0]
+        P5[1] Roaming[0]
+        P6[1] Roaming[0]
+        P7[1] Roaming[1]
+      # Workload's Data-Node Details
+        N0[3]  Roaming[0]
+        N1[1]  Roaming[1]
+        N2[5]  Roaming[1]
       -----------------------------------------------------------------------------------------------------------------
 
-[MSG] Capture-1 | Round-0 :: Workload generation completed !!!
-[ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Round-0] :: One(Cluster)-to-One(Partition) Peer
-[ACT] Generating Data Movement Mapping Matrix ...
-      (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
-	X	0	1	2	3	4	5	6	7	
-	0	5	8	5	9	4	4	3	3	
-	1	4	4	5	7	8	7	8	5	
-	2	8	7	7	3	3	5	4	5	
-	3	3	3	3	1	3	5	2	6	
-	4	4	6	5	5	5	5	7	4	
-	5	4	4	3	7	6	9	6	3	
-	6	5	10	10	5	9	4	7	5	
-	7	5	0	1	2	0	0	1	1	
-
-[MSG] Total 255 Data movements are required using Base Strategy.
-[OUT] Capture-1 | Round-0 (Base Strategy)  :: Workload Details
-      WL-0 [80 Transactions (containing 292 Data) of 5 having a distribution of {30.0, 4.0, 7.0, 29.0, 10.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 17(21.25%) | Total Transactions: 80 | DT Impact: 0.23
-      # Data Movements: 255(87.33%) | Total Data: 292
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[RUN] Prototype Run [2]
-[DBG] Workload variation: 33.0% | true
-[ACT] Round-1 :: Varying the workload by increasing 26 transactions of 5 types having a proportion of {7.0, 1.0, 2.0, 12.0, 4.0}
-[MSG] 26 new transaction are added to the workload as a result of workload variation.
-[MSG] Total 106 transactions of 5 types having a distribution of {37.0, 5.0, 9.0, 41.0, 14.0} are currently in the workload.
-[ACT] Sampling Workload ...
-[MSG] Total 64 non-distributed transactions are discarded from the workload.
-[MSG] Total 42 transactions of 5 types having a distribution of {7.0, 1.0, 3.0, 17.0, 14.0} are currently in the workload.
-[ACT] Re-evaluating previously discarded workload ...
-[MSG] Total 13 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 55 transactions of 5 types having a distribution of {11.0, 2.0, 4.0, 24.0, 14.0} are currently in the workload.
-[OUT] Capture-2 | Round-1 (Initial)  :: Workload Details
-      WL-0 [55 Transactions (containing 240 Data) of 5 having a distribution of {11.0, 2.0, 4.0, 24.0, 14.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 42(76.36%) | Total Transactions: 55 | DT Impact: 0.84
-      # Data Movements: 255(87.33%) | Total Data: 240
-      -----------------------------------------------------------------------------------------------------------------
-
-[MSG] Capture-2 | Round-1 :: Workload generation completed !!!
+[MSG] Capture-1 | Round-1 :: Workload generation completed !!!
 [ACT] Run HyperGraph Partitioning on the Workload ...
 [ACT] Base Strategy[Round-1] :: One(Cluster)-to-One(Partition) Peer
 [ACT] Generating Data Movement Mapping Matrix ...
       (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
 	X	0	1	2	3	4	5	6	7	
-	0	8	6	3	4	5	6	6	2	
-	1	5	6	2	5	7	3	2	2	
-	2	1	3	4	5	4	6	5	3	
-	3	3	2	4	6	7	2	3	4	
-	4	5	2	5	2	5	3	8	9	
-	5	4	6	5	1	3	6	5	3	
-	6	2	3	7	5	2	6	3	6	
-	7	1	1	3	0	1	1	0	1	
+	0	0	0	0	0	0	2	0	0	
+	1	0	0	0	0	0	0	0	0	
+	2	0	0	0	2	0	0	2	0	
+	3	0	0	0	0	0	0	1	0	
+	4	0	0	0	0	0	0	0	0	
+	5	0	0	0	0	0	0	1	0	
+	6	0	0	0	0	0	0	1	0	
+	7	0	0	0	0	0	0	0	0	
 
-[MSG] Total 202 Data movements are required using Base Strategy.
-[OUT] Capture-2 | Round-1 (Base Strategy)  :: Workload Details
-      WL-0 [55 Transactions (containing 240 Data) of 5 having a distribution of {11.0, 2.0, 4.0, 24.0, 14.0}
+[MSG] Total 8 Data movements are required using Base Strategy.
+[OUT] Capture-1 | Round-1 (Base Strategy)  :: Workload Details
+      WL-0 [2 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 1, 1, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 40(72.73%) | Total Transactions: 55 | DT Impact: 1.13
-      # Data Movements: 202(84.17%) | Total Data: 240
+      # Distributed Transactions: 2 (100.0% of Total 2 Workload Transactions)
+      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 8 (88.89% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 5 (55.56% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[649|R*51|F*46], P6[650|R*50|F*49]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[639|R*61|F*47], P5[661|R*39|F*47]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[1] Roaming[0]
+        P3[2] Roaming[2]
+        P5[1] Roaming[1]
+        P6[4] Roaming[3]
+      # Workload's Data-Node Details
+        N0[6]  Roaming[4]
+        N1[1]  Roaming[1]
+        N2[2]  Roaming[2]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
-[RUN] Prototype Run [3]
-[DBG] Workload variation: 16.0% | false
-[ACT] Round-2 :: Varying the workload by reducing 8 transactions of 5 types having a proportion of {1.0, 0.0, 1.0, 2.0, 4.0}
-[MSG] 8 old transaction are removed from the workload as a result of workload variation.
-[MSG] Total 47 transactions of 5 types having a distribution of {10.0, 2.0, 3.0, 22.0, 10.0} are currently in the workload.
+[RUN] Prototype Run [2]
+[DBG] Workload variation: 15.0% | true
+[ACT] Round-2 :: Varying the workload by increasing 0 transactions of 5 types having a proportion of {0, 0, 0, 0, 0}
+[MSG] 0 new transaction are added to the workload as a result of workload variation.
+[MSG] Total 2 transactions of 5 types having a distribution of {0, 0, 1, 1, 0} are currently in the workload.
 [ACT] Sampling Workload ...
-[MSG] Total 10 non-distributed transactions are discarded from the workload.
-[MSG] Total 37 transactions of 5 types having a distribution of {8.0, 1.0, 2.0, 16.0, 10.0} are currently in the workload.
+[MSG] Total -6 non-distributed transactions are discarded from the workload.
+[MSG] Total 2 transactions of 5 types having a distribution of {0, 0, 1, 1, 0} are currently in the workload.
 [ACT] Re-evaluating previously discarded workload ...
-[MSG] Total 7 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 44 transactions of 5 types having a distribution of {11.0, 1.0, 3.0, 19.0, 10.0} are currently in the workload.
-[OUT] Capture-3 | Round-2 (Initial)  :: Workload Details
-      WL-0 [44 Transactions (containing 167 Data) of 5 having a distribution of {11.0, 1.0, 3.0, 19.0, 10.0}
+[MSG] Total 2 newly distributed transactions are included from the previously discarded workload.
+[MSG] Total 4 transactions of 5 types having a distribution of {0, 0, 2, 2, 0} are currently in the workload.
+[OUT] Capture-2 | Round-2 (Initial)  :: Workload Details
+      WL-0 [4 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 2, 2, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 44(100.0%) | Total Transactions: 44 | DT Impact: 1.37
-      # Data Movements: 202(84.17%) | Total Data: 167
+      # Distributed Transactions: 4 (100.0% of Total 4 Workload Transactions)
+      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 8 (88.89% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 5 (55.56% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[649|R*51|F*46], P6[650|R*50|F*49]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[639|R*61|F*47], P5[661|R*39|F*47]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[1] Roaming[0]
+        P3[2] Roaming[2]
+        P5[1] Roaming[1]
+        P6[4] Roaming[3]
+      # Workload's Data-Node Details
+        N0[6]  Roaming[4]
+        N1[1]  Roaming[1]
+        N2[2]  Roaming[2]
       -----------------------------------------------------------------------------------------------------------------
 
-[MSG] Capture-3 | Round-2 :: Workload generation completed !!!
+[MSG] Capture-2 | Round-2 :: Workload generation completed !!!
 [ACT] Run HyperGraph Partitioning on the Workload ...
 [ACT] Base Strategy[Round-2] :: One(Cluster)-to-One(Partition) Peer
 [ACT] Generating Data Movement Mapping Matrix ...
       (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
 	X	0	1	2	3	4	5	6	7	
-	0	2	4	1	2	4	2	6	3	
-	1	4	5	1	4	4	1	6	1	
-	2	2	1	6	1	3	8	3	2	
-	3	6	4	3	3	1	3	0	5	
-	4	6	5	2	3	1	2	1	8	
-	5	3	10	3	3	2	5	4	2	
-	6	4	1	1	5	4	1	3	5	
-	7	0	1	3	1	0	1	1	0	
+	0	0	0	0	0	0	4	0	0	
+	1	0	0	0	0	0	0	0	0	
+	2	0	0	0	4	0	0	4	0	
+	3	0	0	0	0	0	0	2	0	
+	4	0	0	0	0	0	0	0	0	
+	5	0	0	0	0	0	0	2	0	
+	6	0	0	0	0	0	0	2	0	
+	7	0	0	0	0	0	0	0	0	
 
-[MSG] Total 144 Data movements are required using Base Strategy.
-[OUT] Capture-3 | Round-2 (Base Strategy)  :: Workload Details
-      WL-0 [44 Transactions (containing 167 Data) of 5 having a distribution of {11.0, 1.0, 3.0, 19.0, 10.0}
+[MSG] Total 8 Data movements are required using Base Strategy.
+[OUT] Capture-2 | Round-2 (Base Strategy)  :: Workload Details
+      WL-0 [4 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 2, 2, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 31(70.45%) | Total Transactions: 44 | DT Impact: 0.86
-      # Data Movements: 144(86.23%) | Total Data: 167
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[RUN] Prototype Run [4]
-[DBG] Workload variation: 28.999999999999996% | true
-[ACT] Round-3 :: Varying the workload by increasing 12 transactions of 5 types having a proportion of {4.0, 1.0, 1.0, 3.0, 3.0}
-[MSG] 12 new transaction are added to the workload as a result of workload variation.
-[MSG] Total 56 transactions of 5 types having a distribution of {15.0, 2.0, 4.0, 22.0, 13.0} are currently in the workload.
-[ACT] Sampling Workload ...
-[MSG] Total 13 non-distributed transactions are discarded from the workload.
-[MSG] Total 43 transactions of 5 types having a distribution of {10.0, 2.0, 1.0, 20.0, 10.0} are currently in the workload.
-[ACT] Re-evaluating previously discarded workload ...
-[MSG] Total 10 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 53 transactions of 5 types having a distribution of {13.0, 2.0, 3.0, 25.0, 10.0} are currently in the workload.
-[OUT] Capture-4 | Round-3 (Initial)  :: Workload Details
-      WL-0 [53 Transactions (containing 199 Data) of 5 having a distribution of {13.0, 2.0, 3.0, 25.0, 10.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 48(90.57%) | Total Transactions: 53 | DT Impact: 1.16
-      # Data Movements: 144(86.23%) | Total Data: 199
-      -----------------------------------------------------------------------------------------------------------------
-
-[MSG] Capture-4 | Round-3 :: Workload generation completed !!!
-[ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Round-3] :: One(Cluster)-to-One(Partition) Peer
-[ACT] Generating Data Movement Mapping Matrix ...
-      (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
-	X	0	1	2	3	4	5	6	7	
-	0	4	2	1	7	4	7	5	2	
-	1	2	4	3	2	2	7	1	5	
-	2	4	3	3	2	5	4	5	5	
-	3	5	5	5	1	6	8	1	3	
-	4	4	3	3	4	12	2	5	6	
-	5	8	2	4	6	2	6	4	4	
-	6	3	6	4	2	2	1	6	1	
-	7	2	0	1	1	0	1	0	1	
-
-[MSG] Total 168 Data movements are required using Base Strategy.
-[OUT] Capture-4 | Round-3 (Base Strategy)  :: Workload Details
-      WL-0 [53 Transactions (containing 199 Data) of 5 having a distribution of {13.0, 2.0, 3.0, 25.0, 10.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 38(71.7%) | Total Transactions: 53 | DT Impact: 1.06
-      # Data Movements: 168(84.42%) | Total Data: 199
+      # Distributed Transactions: 4 (100.0% of Total 4 Workload Transactions)
+      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 8 (88.89% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 2 (22.22% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[649|R*52|F*47], P3[650|R*50|F*46], P6[650|R*50|F*50]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[642|R*59|F*47], P5[662|R*38|F*48]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[3] Roaming[0]
+        P3[1] Roaming[0]
+        P5[2] Roaming[1]
+        P6[2] Roaming[1]
+      # Workload's Data-Node Details
+        N0[7]  Roaming[5]
+        N2[2]  Roaming[2]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
 [ACT] Replaying Workload Capture using Strategy-1 ...
 ***********************************************************************************************************************
-[ACT] Strategy-1[Capture-4 | Round-3] :: One(Cluster)-to-One(Partition) [Column Max]
+[ACT] Strategy-1[Capture-2 | Round-2] :: One(Cluster)-to-One(Partition) [Column Max]
 [ACT] Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
 	X	0	1	2	3	4	5	6	7	
-	0	10	10	2	8	6	5	9	8	
-	1	12	5	10	9	9	9	6	8	
-	2	4	9	6	12	9	3	7	7	
-	3	5	6	9	8	15	13	8	10	
-	4	8	8	9	6	10	10	10	13	
-	5	8	12	6	8	4	7	9	4	
-	6	8	7	10	10	7	7	7	7	
-	7	0	1	4	2	0	0	2	1	
+	0	2	5	9	8	9	4	6	13	
+	1	7	7	6	13	7	7	11	9	
+	2	15	9	6	8	5	9	10	7	
+	3	7	8	11	7	8	4	6	8	
+	4	8	9	10	8	9	9	7	5	
+	5	4	11	10	2	8	7	4	3	
+	6	6	7	7	8	7	11	8	7	
+	7	2	1	0	1	0	3	4	1	
 
-[MSG] Total 365 Data movements are required using Strategy-1.
+[MSG] Total 344 Data movements are required using Strategy-1.
 [OUT] Capture-0 | Round-0 (Strategy-1)  :: Workload Details
-      WL-0 [95 Transactions (containing 437 Data) of 5 having a distribution of {1.0, 6.0, 29.0, 28.0, 31.0}
+      WL-0 [92 Transactions (containing 413 Data) of 5 having a distribution of {3, 11, 31, 7, 40}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 0(0.0%) | Total Transactions: 95 | DT Impact: 0.0
-      # Data Movements: 365(83.52%) | Total Data: 437
+      # Distributed Transactions: 0 (0.0% of Total 92 Workload Transactions)
+      # Impact of Distributed Transactions: 0.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 344 (83.29% of Total 413 Workload Data)
+      # Inter-Node Data Movements: 265 (64.16% of Total 413 Workload Data)
+      # Database Partition Table Details
+        N0{P0[700|R*42|F*40], P3[700|R*47|F*48], P6[700|R*47|F*43]}
+        N1{P1[700|R*42|F*87], P4[700|R*53|F*44], P7[100|R*11|F*0]}
+        N2{P2[700|R*50|F*36], P5[700|R*34|F*46]}
+      # Workload's Data-Partition Details
+        P0[50] Roaming[38]
+        P1[105] Roaming[83]
+        P2[49] Roaming[35]
+        P3[52] Roaming[42]
+        P4[51] Roaming[43]
+        P5[54] Roaming[44]
+        P6[52] Roaming[41]
+      # Workload's Data-Node Details
+        N0[154]  Roaming[84]
+        N1[156]  Roaming[100]
+        N2[103]  Roaming[67]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
-[ACT] Strategy-1[Capture-4 | Round-3] :: One(Cluster)-to-One(Partition) [Column Max]
+[ACT] Strategy-1[Capture-2 | Round-2] :: One(Cluster)-to-One(Partition) [Column Max]
 [ACT] Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
 	X	0	1	2	3	4	5	6	7	
-	0	5	8	5	9	4	4	3	3	
-	1	4	4	5	7	8	7	8	5	
-	2	8	7	7	3	3	5	4	5	
-	3	3	3	3	1	3	5	2	6	
-	4	4	6	5	5	5	5	7	4	
-	5	4	4	3	7	6	9	6	3	
-	6	5	10	10	5	9	4	7	5	
-	7	5	0	1	2	0	0	1	1	
+	0	0	0	0	0	0	2	0	0	
+	1	0	0	0	0	0	0	0	0	
+	2	0	0	0	2	0	0	2	0	
+	3	0	0	0	0	0	0	1	0	
+	4	0	0	0	0	0	0	0	0	
+	5	0	0	0	0	0	0	1	0	
+	6	0	0	0	0	0	0	1	0	
+	7	0	0	0	0	0	0	0	0	
 
-[MSG] Total 236 Data movements are required using Strategy-1.
-[OUT] Capture-1 | Round-0 (Strategy-1)  :: Workload Details
-      WL-0 [80 Transactions (containing 292 Data) of 5 having a distribution of {30.0, 4.0, 7.0, 29.0, 10.0}
+[MSG] Total 3 Data movements are required using Strategy-1.
+[OUT] Capture-1 | Round-1 (Strategy-1)  :: Workload Details
+      WL-0 [2 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 1, 1, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 16(20.0%) | Total Transactions: 80 | DT Impact: 0.21
-      # Data Movements: 236(80.82%) | Total Data: 292
+      # Distributed Transactions: 2 (100.0% of Total 2 Workload Transactions)
+      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 3 (33.33% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 2 (22.22% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[650|R*51|F*44], P6[650|R*51|F*46]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[641|R*59|F*50], P5[662|R*39|F*46]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[7] Roaming[4]
+        P7[1] Roaming[1]
+      # Workload's Data-Node Details
+        N0[1]  Roaming[0]
+        N1[1]  Roaming[1]
+        N2[7]  Roaming[3]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
-[ACT] Strategy-1[Capture-4 | Round-3] :: One(Cluster)-to-One(Partition) [Column Max]
+[ACT] Strategy-1[Capture-2 | Round-2] :: One(Cluster)-to-One(Partition) [Column Max]
 [ACT] Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
 	X	0	1	2	3	4	5	6	7	
-	0	8	6	3	4	5	6	6	2	
-	1	5	6	2	5	7	3	2	2	
-	2	1	3	4	5	4	6	5	3	
-	3	3	2	4	6	7	2	3	4	
-	4	5	2	5	2	5	3	8	9	
-	5	4	6	5	1	3	6	5	3	
-	6	2	3	7	5	2	6	3	6	
-	7	1	1	3	0	1	1	0	1	
+	0	0	0	0	0	0	4	0	0	
+	1	0	0	0	0	0	0	0	0	
+	2	0	0	0	4	0	0	4	0	
+	3	0	0	0	0	0	0	2	0	
+	4	0	0	0	0	0	0	0	0	
+	5	0	0	0	0	0	0	2	0	
+	6	0	0	0	0	0	0	2	0	
+	7	0	0	0	0	0	0	0	0	
 
-[MSG] Total 191 Data movements are required using Strategy-1.
-[OUT] Capture-2 | Round-1 (Strategy-1)  :: Workload Details
-      WL-0 [55 Transactions (containing 240 Data) of 5 having a distribution of {11.0, 2.0, 4.0, 24.0, 14.0}
+[MSG] Total 6 Data movements are required using Strategy-1.
+[OUT] Capture-2 | Round-2 (Strategy-1)  :: Workload Details
+      WL-0 [4 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 2, 2, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 42(76.36%) | Total Transactions: 55 | DT Impact: 1.27
-      # Data Movements: 191(79.58%) | Total Data: 240
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[ACT] Strategy-1[Capture-4 | Round-3] :: One(Cluster)-to-One(Partition) [Column Max]
-[ACT] Generating Data Movement Mapping Matrix ...
-   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	0	1	2	3	4	5	6	7	
-	0	2	4	1	2	4	2	6	3	
-	1	4	5	1	4	4	1	6	1	
-	2	2	1	6	1	3	8	3	2	
-	3	6	4	3	3	1	3	0	5	
-	4	6	5	2	3	1	2	1	8	
-	5	3	10	3	3	2	5	4	2	
-	6	4	1	1	5	4	1	3	5	
-	7	0	1	3	1	0	1	1	0	
-
-[MSG] Total 139 Data movements are required using Strategy-1.
-[OUT] Capture-3 | Round-2 (Strategy-1)  :: Workload Details
-      WL-0 [44 Transactions (containing 167 Data) of 5 having a distribution of {11.0, 1.0, 3.0, 19.0, 10.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 34(77.27%) | Total Transactions: 44 | DT Impact: 0.91
-      # Data Movements: 139(83.23%) | Total Data: 167
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[ACT] Strategy-1[Capture-4 | Round-3] :: One(Cluster)-to-One(Partition) [Column Max]
-[ACT] Generating Data Movement Mapping Matrix ...
-   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	0	1	2	3	4	5	6	7	
-	0	4	2	1	7	4	7	5	2	
-	1	2	4	3	2	2	7	1	5	
-	2	4	3	3	2	5	4	5	5	
-	3	5	5	5	1	6	8	1	3	
-	4	4	3	3	4	12	2	5	6	
-	5	8	2	4	6	2	6	4	4	
-	6	3	6	4	2	2	1	6	1	
-	7	2	0	1	1	0	1	0	1	
-
-[MSG] Total 171 Data movements are required using Strategy-1.
-[OUT] Capture-4 | Round-3 (Strategy-1)  :: Workload Details
-      WL-0 [53 Transactions (containing 199 Data) of 5 having a distribution of {13.0, 2.0, 3.0, 25.0, 10.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 41(77.36%) | Total Transactions: 53 | DT Impact: 1.05
-      # Data Movements: 171(85.93%) | Total Data: 199
+      # Distributed Transactions: 4 (100.0% of Total 4 Workload Transactions)
+      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 6 (66.67% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 2 (22.22% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[651|R*50|F*46], P6[650|R*51|F*49]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[639|R*61|F*49], P5[663|R*38|F*47]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[2] Roaming[1]
+        P3[3] Roaming[2]
+        P5[2] Roaming[1]
+        P6[1] Roaming[1]
+      # Workload's Data-Node Details
+        N0[5]  Roaming[4]
+        N1[1]  Roaming[1]
+        N2[3]  Roaming[3]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
 [ACT] Replaying Workload Capture using Strategy-2 ...
 ***********************************************************************************************************************
-[ACT] Strategy-2[Capture-4 | Round-3] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
+[ACT] Strategy-2[Capture-2 | Round-2] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
 [ACT] Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
 	X	0	1	2	3	4	5	6	7	
-	0	10	10	2	8	6	5	9	8	
-	1	12	5	10	9	9	9	6	8	
-	2	4	9	6	12	9	3	7	7	
-	3	5	6	9	8	15	13	8	10	
-	4	8	8	9	6	10	10	10	13	
-	5	8	12	6	8	4	7	9	4	
-	6	8	7	10	10	7	7	7	7	
-	7	0	1	4	2	0	0	2	1	
+	0	2	5	9	8	9	4	6	13	
+	1	7	7	6	13	7	7	11	9	
+	2	15	9	6	8	5	9	10	7	
+	3	7	8	11	7	8	4	6	8	
+	4	8	9	10	8	9	9	7	5	
+	5	4	11	10	2	8	7	4	3	
+	6	6	7	7	8	7	11	8	7	
+	7	2	1	0	1	0	3	4	1	
 [ACT] Creating Movement Matrix after Sub Matrix Max calculation ...
-	X	4	7	1	3	0	2	6	5	
-	3	15	10	6	8	5	9	8	13	
-	4	10	13	8	6	8	9	10	10	
-	5	4	4	12	8	8	6	9	7	
-	2	9	7	9	12	4	6	7	3	
-	1	9	8	5	9	12	10	6	9	
-	6	7	7	7	10	8	10	7	7	
-	0	6	8	10	8	10	2	9	5	
-	7	0	1	1	2	0	4	2	0	
+	X	0	7	3	5	2	1	4	6	
+	2	15	7	8	9	6	9	5	10	
+	0	2	13	8	4	9	5	9	6	
+	1	7	9	13	7	6	7	7	11	
+	6	6	7	8	11	7	7	7	8	
+	3	7	8	7	4	11	8	8	6	
+	5	4	3	2	7	10	11	8	4	
+	4	8	5	8	9	10	9	9	7	
+	7	2	1	1	3	0	1	0	4	
 
-[MSG] Total 379 Data movements are required using Strategy-2.
+[MSG] Total 351 Data movements are required using Strategy-2.
 [OUT] Capture-0 | Round-0 (Strategy-2)  :: Workload Details
-      WL-0 [95 Transactions (containing 437 Data) of 5 having a distribution of {1.0, 6.0, 29.0, 28.0, 31.0}
+      WL-0 [92 Transactions (containing 413 Data) of 5 having a distribution of {3, 11, 31, 7, 40}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 0(0.0%) | Total Transactions: 95 | DT Impact: 0.0
-      # Data Movements: 379(86.73%) | Total Data: 437
+      # Distributed Transactions: 0 (0.0% of Total 92 Workload Transactions)
+      # Impact of Distributed Transactions: 0.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 351 (84.99% of Total 413 Workload Data)
+      # Inter-Node Data Movements: 265 (64.16% of Total 413 Workload Data)
+      # Database Partition Table Details
+        N0{P0[700|R*42|F*40], P3[700|R*47|F*48], P6[700|R*47|F*43]}
+        N1{P1[700|R*52|F*42], P4[700|R*53|F*44], P7[100|R*7|F*52]}
+        N2{P2[700|R*50|F*36], P5[700|R*34|F*46]}
+      # Workload's Data-Partition Details
+        P0[50] Roaming[38]
+        P1[51] Roaming[39]
+        P2[49] Roaming[35]
+        P3[52] Roaming[42]
+        P4[51] Roaming[43]
+        P5[54] Roaming[44]
+        P6[52] Roaming[41]
+        P7[54] Roaming[50]
+      # Workload's Data-Node Details
+        N0[154]  Roaming[84]
+        N1[156]  Roaming[100]
+        N2[103]  Roaming[67]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
-[ACT] Strategy-2[Capture-4 | Round-3] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
+[ACT] Strategy-2[Capture-2 | Round-2] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
 [ACT] Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
 	X	0	1	2	3	4	5	6	7	
-	0	5	8	5	9	4	4	3	3	
-	1	4	4	5	7	8	7	8	5	
-	2	8	7	7	3	3	5	4	5	
-	3	3	3	3	1	3	5	2	6	
-	4	4	6	5	5	5	5	7	4	
-	5	4	4	3	7	6	9	6	3	
-	6	5	10	10	5	9	4	7	5	
-	7	5	0	1	2	0	0	1	1	
+	0	0	0	0	0	0	2	0	0	
+	1	0	0	0	0	0	0	0	0	
+	2	0	0	0	2	0	0	2	0	
+	3	0	0	0	0	0	0	1	0	
+	4	0	0	0	0	0	0	0	0	
+	5	0	0	0	0	0	0	1	0	
+	6	0	0	0	0	0	0	1	0	
+	7	0	0	0	0	0	0	0	0	
 [ACT] Creating Movement Matrix after Sub Matrix Max calculation ...
-	X	2	3	5	6	0	7	1	4	
-	6	10	5	4	7	5	5	10	9	
-	0	5	9	4	3	5	3	8	4	
-	5	3	7	9	6	4	3	4	6	
-	1	5	7	7	8	4	5	4	8	
-	2	7	3	5	4	8	5	7	3	
-	3	3	1	5	2	3	6	3	3	
-	4	5	5	5	7	4	4	6	5	
-	7	1	2	0	1	5	1	0	0	
+	X	6	5	2	3	4	1	0	7	
+	2	2	0	0	2	0	0	0	0	
+	0	0	2	0	0	0	0	0	0	
+	1	0	0	0	0	0	0	0	0	
+	3	1	0	0	0	0	0	0	0	
+	4	0	0	0	0	0	0	0	0	
+	5	1	0	0	0	0	0	0	0	
+	6	1	0	0	0	0	0	0	0	
+	7	0	0	0	0	0	0	0	0	
 
-[MSG] Total 249 Data movements are required using Strategy-2.
-[OUT] Capture-1 | Round-0 (Strategy-2)  :: Workload Details
-      WL-0 [80 Transactions (containing 292 Data) of 5 having a distribution of {30.0, 4.0, 7.0, 29.0, 10.0}
+[MSG] Total 5 Data movements are required using Strategy-2.
+[OUT] Capture-1 | Round-1 (Strategy-2)  :: Workload Details
+      WL-0 [2 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 1, 1, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 17(21.25%) | Total Transactions: 80 | DT Impact: 0.23
-      # Data Movements: 249(85.27%) | Total Data: 292
+      # Distributed Transactions: 2 (100.0% of Total 2 Workload Transactions)
+      # Impact of Distributed Transactions: 1.5 (for a particular workload round)
+      # Inter-Partition Data Movements: 5 (55.56% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 4 (44.44% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[650|R*51|F*46], P6[650|R*51|F*46]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[641|R*61|F*50], P5[662|R*39|F*46]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[5] Roaming[4]
+        P3[2] Roaming[2]
+        P7[1] Roaming[1]
+      # Workload's Data-Node Details
+        N0[3]  Roaming[2]
+        N1[1]  Roaming[1]
+        N2[5]  Roaming[3]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
-[ACT] Strategy-2[Capture-4 | Round-3] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
+[ACT] Strategy-2[Capture-2 | Round-2] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
 [ACT] Generating Data Movement Mapping Matrix ...
    [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
 	X	0	1	2	3	4	5	6	7	
-	0	8	6	3	4	5	6	6	2	
-	1	5	6	2	5	7	3	2	2	
-	2	1	3	4	5	4	6	5	3	
-	3	3	2	4	6	7	2	3	4	
-	4	5	2	5	2	5	3	8	9	
-	5	4	6	5	1	3	6	5	3	
-	6	2	3	7	5	2	6	3	6	
-	7	1	1	3	0	1	1	0	1	
+	0	0	0	0	0	0	4	0	0	
+	1	0	0	0	0	0	0	0	0	
+	2	0	0	0	4	0	0	4	0	
+	3	0	0	0	0	0	0	2	0	
+	4	0	0	0	0	0	0	0	0	
+	5	0	0	0	0	0	0	2	0	
+	6	0	0	0	0	0	0	2	0	
+	7	0	0	0	0	0	0	0	0	
 [ACT] Creating Movement Matrix after Sub Matrix Max calculation ...
-	X	7	0	2	4	5	3	1	6	
-	4	9	5	5	5	3	2	2	8	
-	0	2	8	3	5	6	4	6	6	
-	6	6	2	7	2	6	5	3	3	
-	1	2	5	2	7	3	5	6	2	
-	2	3	1	4	4	6	5	3	5	
-	3	4	3	4	7	2	6	2	3	
-	5	3	4	5	3	6	1	6	5	
-	7	1	1	3	1	1	0	1	0	
+	X	6	5	2	3	4	1	0	7	
+	2	4	0	0	4	0	0	0	0	
+	0	0	4	0	0	0	0	0	0	
+	1	0	0	0	0	0	0	0	0	
+	3	2	0	0	0	0	0	0	0	
+	4	0	0	0	0	0	0	0	0	
+	5	2	0	0	0	0	0	0	0	
+	6	2	0	0	0	0	0	0	0	
+	7	0	0	0	0	0	0	0	0	
 
-[MSG] Total 199 Data movements are required using Strategy-2.
-[OUT] Capture-2 | Round-1 (Strategy-2)  :: Workload Details
-      WL-0 [55 Transactions (containing 240 Data) of 5 having a distribution of {11.0, 2.0, 4.0, 24.0, 14.0}
+[MSG] Total 10 Data movements are required using Strategy-2.
+[OUT] Capture-2 | Round-2 (Strategy-2)  :: Workload Details
+      WL-0 [4 Transactions (containing 9 Data) of 5 having a distribution of {0, 0, 2, 2, 0}
       -----------------------------------------------------------------------------------------------------------------
 
 
-      # Distributed Transactions: 40(72.73%) | Total Transactions: 55 | DT Impact: 1.28
-      # Data Movements: 199(82.92%) | Total Data: 240
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[ACT] Strategy-2[Capture-4 | Round-3] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
-[ACT] Generating Data Movement Mapping Matrix ...
-   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	0	1	2	3	4	5	6	7	
-	0	2	4	1	2	4	2	6	3	
-	1	4	5	1	4	4	1	6	1	
-	2	2	1	6	1	3	8	3	2	
-	3	6	4	3	3	1	3	0	5	
-	4	6	5	2	3	1	2	1	8	
-	5	3	10	3	3	2	5	4	2	
-	6	4	1	1	5	4	1	3	5	
-	7	0	1	3	1	0	1	1	0	
-[ACT] Creating Movement Matrix after Sub Matrix Max calculation ...
-	X	1	7	5	6	0	3	4	2	
-	5	10	2	5	4	3	3	2	3	
-	4	5	8	2	1	6	3	1	2	
-	2	1	2	8	3	2	1	3	6	
-	0	4	3	2	6	2	2	4	1	
-	3	4	5	3	0	6	3	1	3	
-	6	1	5	1	3	4	5	4	1	
-	1	5	1	1	6	4	4	4	1	
-	7	1	0	1	1	0	1	0	3	
-
-[MSG] Total 142 Data movements are required using Strategy-2.
-[OUT] Capture-3 | Round-2 (Strategy-2)  :: Workload Details
-      WL-0 [44 Transactions (containing 167 Data) of 5 having a distribution of {11.0, 1.0, 3.0, 19.0, 10.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 33(75.0%) | Total Transactions: 44 | DT Impact: 0.94
-      # Data Movements: 142(85.03%) | Total Data: 167
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[ACT] Strategy-2[Capture-4 | Round-3] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]
-[ACT] Generating Data Movement Mapping Matrix ...
-   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]
-	X	0	1	2	3	4	5	6	7	
-	0	4	2	1	7	4	7	5	2	
-	1	2	4	3	2	2	7	1	5	
-	2	4	3	3	2	5	4	5	5	
-	3	5	5	5	1	6	8	1	3	
-	4	4	3	3	4	12	2	5	6	
-	5	8	2	4	6	2	6	4	4	
-	6	3	6	4	2	2	1	6	1	
-	7	2	0	1	1	0	1	0	1	
-[ACT] Creating Movement Matrix after Sub Matrix Max calculation ...
-	X	4	0	5	3	6	7	1	2	
-	4	12	4	2	4	5	6	3	3	
-	5	2	8	6	6	4	4	2	4	
-	3	6	5	8	1	1	3	5	5	
-	0	4	4	7	7	5	2	2	1	
-	6	2	3	1	2	6	1	6	4	
-	2	5	4	4	2	5	5	3	3	
-	1	2	2	7	2	1	5	4	3	
-	7	0	2	1	1	0	1	0	1	
-
-[MSG] Total 178 Data movements are required using Strategy-2.
-[OUT] Capture-4 | Round-3 (Strategy-2)  :: Workload Details
-      WL-0 [53 Transactions (containing 199 Data) of 5 having a distribution of {13.0, 2.0, 3.0, 25.0, 10.0}
-      -----------------------------------------------------------------------------------------------------------------
-
-
-      # Distributed Transactions: 39(73.58%) | Total Transactions: 53 | DT Impact: 1.03
-      # Data Movements: 178(89.45%) | Total Data: 199
+      # Distributed Transactions: 4 (100.0% of Total 4 Workload Transactions)
+      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
+      # Inter-Partition Data Movements: 10 (111.11% of Total 9 Workload Data)
+      # Inter-Node Data Movements: 2 (22.22% of Total 9 Workload Data)
+      # Database Partition Table Details
+        N0{P0[648|R*52|F*47], P3[651|R*50|F*46], P6[650|R*51|F*49]}
+        N1{P1[643|R*57|F*47], P4[647|R*53|F*43], P7[90|R*10|F*49]}
+        N2{P2[643|R*59|F*49], P5[663|R*38|F*47]}
+      # Workload's Data-Partition Details
+        P0[1] Roaming[0]
+        P2[4] Roaming[1]
+        P3[1] Roaming[0]
+        P5[2] Roaming[1]
+        P6[1] Roaming[1]
+      # Workload's Data-Node Details
+        N0[5]  Roaming[4]
+        N1[1]  Roaming[1]
+        N2[3]  Roaming[3]
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************

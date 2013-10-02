@@ -17,6 +17,7 @@ public class Database {
 	private PartitioningModel db_partition_model; // Options: Range, Salting, Hash (Random), Consistent-Hash (Random)	
 	private PartitionTable db_partition_table;
 	private RoutingTable db_routing_table;
+	private String db_dmv_strategy;
 	
 	public Database(int id, String name, int tenant_id, String model) {
 		this.setDb_id(id);
@@ -26,6 +27,7 @@ public class Database {
 		this.setDb_partitions(new TreeSet<Partition>());
 		this.setDb_partition_table(new PartitionTable());
 		this.setDb_routing_table(new RoutingTable());
+		this.setDb_dmv_strategy("bs");
 		
 		if(model.equals("Range"))
 			this.setDb_partition_model(new RangePartition());
@@ -52,6 +54,7 @@ public class Database {
 		
 		this.db_partition_table = new PartitionTable(db.getDb_partition_table());
 		//this.db_routing_table = new RoutingTable(db.getDb_routing_table());
+		this.setDb_dmv_strategy(db.getDb_dmv_strategy());
 	}
 
 	public int getDb_id() {
@@ -117,6 +120,14 @@ public class Database {
 
 	public void setDb_routing_table(RoutingTable db_routing_table) {
 		this.db_routing_table = db_routing_table;
+	}
+
+	public String getDb_dmv_strategy() {
+		return db_dmv_strategy;
+	}
+
+	public void setDb_dmv_strategy(String db_dmv_strategy) {
+		this.db_dmv_strategy = db_dmv_strategy;
 	}
 
 	public void insert() {

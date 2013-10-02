@@ -9,21 +9,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.Map.Entry;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.db.Node;
 import jkamal.prototype.db.Partition;
-import jkamal.prototype.workload.Transaction;
 import jkamal.prototype.workload.Workload;
 
 public class OutputLogger {	
 	private String logger_file;
+	private boolean data_movement;
 	
 	public OutputLogger() {
 		this.setLogger_file("log.txt");
+		this.setData_movement(false);
 	}
 	
 	public String getLogger_file() {
@@ -32,6 +32,14 @@ public class OutputLogger {
 
 	public void setLogger_file(String logger_file) {
 		this.logger_file = logger_file;
+	}
+
+	public boolean isData_movement() {
+		return data_movement;
+	}
+
+	public void setData_movement(boolean data_movement) {
+		this.data_movement = data_movement;
 	}
 
 	public PrintWriter getWriter(String dir) {
@@ -102,21 +110,46 @@ public class OutputLogger {
 	public void log(Database db, Workload workload, PrintWriter prWriter) {
 		int space = 0;		
 		
-		try {
-			prWriter.print(workload.getWrl_capture()+" ");
-			prWriter.print(workload.getWrl_dt_nums()+" ");
-			prWriter.print(workload.getWrl_totalData()+" ");
-			prWriter.print(workload.getWrl_transactionTypes()+" ");
-			
-			space = workload.getWrl_transactionProp().length;				
-			for(double prop : workload.getWrl_transactionProp()) {
-				prWriter.print(prop);
-				--space;
+		try {	
+			if(!this.isData_movement()) {
+				//prWriter.print(db.getDb_dmv_strategy()+" ");
+				prWriter.print(workload.getWrl_capture()+" ");
+				prWriter.print(workload.getWrl_round()+" ");
 				
-				if(space != 0)
-					prWriter.print(" ");
+				prWriter.print(workload.getWrl_dt_nums()+" ");
+				prWriter.print(workload.getWrl_dt_impact()+" ");
+				
+				prWriter.print(workload.getWrl_totalData()+" ");
+				
+				prWriter.print(workload.getWrl_transactionTypes()+" ");
+				
+				space = workload.getWrl_transactionProp().length;				
+				for(double prop : workload.getWrl_transactionProp()) {
+					prWriter.print(Integer.toString((int)Math.round(prop)));
+					--space;
+					
+					if(space != 0)
+						prWriter.print(" ");
+				}
+				
+				prWriter.println();	
+			} else {
+				prWriter.print(db.getDb_dmv_strategy()+" ");
+				//prWriter.print(workload.getWrl_capture()+" ");
+				//prWriter.print(workload.getWrl_round()+" ");
+				
+				prWriter.print(workload.getWrl_dt_nums()+" ");
+				prWriter.print(workload.getWrl_dt_impact()+" ");								
+				
+				prWriter.print(workload.getWrl_interPartitionDataMovements()+" ");
+				prWriter.print(workload.getWrl_percentage_pdmv()+" ");
+				prWriter.print(workload.getWrl_interNodeDataMovements()+" ");
+				prWriter.print(workload.getWrl_percentage_ndmv());
+				
+				prWriter.println();
 			}
-			prWriter.println();	
+			
+			
 		} finally {
 			//prWriter.flush();
 			//prWriter.close();

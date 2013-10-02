@@ -79,7 +79,7 @@ public class Prototype {
 		System.out.println("***********************************************************************************************************************");
 		//============================================================================================== 		
 		// Prototype Run Rounds
-		while(basic_run_round != 5) {								
+		while(basic_run_round != 3) {								
 			// Generate Workload variations for successive rounds except the first run			
 			System.out.println("[RUN] Prototype Run ["+basic_run_round+"]");
 			if(workload_round != 0) {			
@@ -130,8 +130,8 @@ public class Prototype {
 				System.out.println();
 				System.out.println("[MSG] Capture-"+basic_run_round+" | Round-"+workload_round+" :: Workload generation completed !!!");	
 				
-				// Logging
-				logger.log(db, workload, prWriter);
+				// Logging				
+				logger.log(db, workload, prWriter);				
 				
 				//==============================================================================================
 				// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
@@ -167,10 +167,13 @@ public class Prototype {
 				//==============================================================================================
 				// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
 				System.out.println("[ACT] Base Strategy[Round-"+workload_round+"] :: One(Cluster)-to-One(Partition) Peer");
-				dataMovement.baseStrategy(db, workload);										
+				db.setDb_dmv_strategy("bs");
+				dataMovement.baseStrategy(db, workload);
+				logger.setData_movement(true);
 	
 				// Logging
 				logger.log(db, workload, prWriter);
+				logger.setData_movement(false);
 				
 				// Increase Workload Round by 1
 				++workload_round;
@@ -184,16 +187,18 @@ public class Prototype {
 		System.out.println("[ACT] Replaying Workload Capture using Strategy-1 ...");
 		System.out.println("***********************************************************************************************************************");
 		int strategy1_run_round = 0;
-		while(strategy1_run_round != 5) {					
+		while(strategy1_run_round != 3) {					
 			Database db1 = new Database(workloadReplay.getDb_replayMap().get(strategy1_run_round));
 			Workload workload1 = new Workload(workloadReplay.getWrl_ReplayMap().get(strategy1_run_round));
 			
 			System.out.println("[ACT] Strategy-1[Capture-"+workload.getWrl_capture()+" | Round-"+workload.getWrl_round()
 					+"] :: One(Cluster)-to-One(Partition) [Column Max]");
+			db1.setDb_dmv_strategy("s1");
 			dataMovement.strategy1(db1, workload1);
+			logger.setData_movement(true);
 			
 			// Logging
-			//logger.log(db, workload, prWriter);
+			logger.log(db1, workload1, prWriter);
 			
 			++strategy1_run_round;	
 			System.out.println("***********************************************************************************************************************");
@@ -203,16 +208,18 @@ public class Prototype {
 		System.out.println("[ACT] Replaying Workload Capture using Strategy-2 ...");
 		System.out.println("***********************************************************************************************************************");
 		int strategy2_run_round = 0;
-		while(strategy2_run_round != 5) {			
+		while(strategy2_run_round != 3) {			
 			Database db2 = new Database(workloadReplay.getDb_replayMap().get(strategy2_run_round));
 			Workload workload2 = new Workload(workloadReplay.getWrl_ReplayMap().get(strategy2_run_round));			
 			
 			System.out.println("[ACT] Strategy-2[Capture-"+workload.getWrl_capture()+" | Round-"+workload.getWrl_round()
 					+"] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]");
+			db2.setDb_dmv_strategy("s2");
 			dataMovement.strategy2(db2, workload2);
+			logger.setData_movement(true);
 			
 			// Logging
-			//logger.log(db, workload, prWriter);
+			logger.log(db2, workload2, prWriter);
 			
 			++strategy2_run_round;
 			System.out.println("***********************************************************************************************************************");
