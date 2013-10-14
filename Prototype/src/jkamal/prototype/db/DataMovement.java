@@ -160,7 +160,8 @@ public class DataMovement {
 					}
 					//System.out.print("\n-#"+wrlData.toString()+" || dst-P"+dst_partition_id);			
 				
-					if(old_partition_id != dst_partition_id) { // Data needs to be moved
+					//if(old_partition_id != dst_partition_id) { // Data needs to be moved
+					if(old_node_id != dst_node_id) { // Data needs to be moved	
 						wrlData.setData_hmetis_cluster_id(-1);
 						wrlData.setData_shadow_hmetis_id(-1);
 						wrlData.setData_hasShadowHMetisId(false);
