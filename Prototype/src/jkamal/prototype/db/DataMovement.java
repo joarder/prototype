@@ -59,7 +59,7 @@ public class DataMovement {
 		MappingTable mappingTable = new MappingTable();		
 		Matrix mapping = mappingTable.generateMappingTable(db, workload);
 		System.out.println("[ACT] Generating Data Movement Mapping Matrix ...\n   [First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts]");
-		mapping.print();
+		//mapping.print();
 		
 		// Create Key-Value (Destination PID-Cluster ID) Mappings from Mapping Matrix
 		Map<Integer, Integer> keyMap = new TreeMap<Integer, Integer>();

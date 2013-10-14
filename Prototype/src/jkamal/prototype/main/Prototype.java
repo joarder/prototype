@@ -91,7 +91,11 @@ public class Prototype {
 				rand = new Random();
 				time_variant = rangeMin + (rangeMax - rangeMin) * rand.nextDouble();
 				workload_variant = Math.round(time_variant * 100.0)/100.0;
-				totalTransaction = workload.getWrl_totalTransaction();												
+				
+				if(workload.getWrl_totalTransaction() != 0)
+					totalTransaction = workload.getWrl_totalTransaction();
+				else 
+					totalTransaction = TRANSACTION_NUMS;
 				
 				workload_mode= rand.nextBoolean();
 				workload.setWrl_mode(workload_mode);
@@ -99,6 +103,7 @@ public class Prototype {
 				workload.setWrl_transactionVariant((int)(totalTransaction * workload_variant));
 				workload.setWrl_percentageVariation(workload_variant * 100);
 				
+				System.out.println("[MSG] Total "+workload.getWrl_totalTransaction()+" transactions are carried forward to the current Workload");
 				System.out.println("[DBG] Workload variation: "+(workload_variant * 100)+"% | "+workload.isWrl_mode());
 				
 				if(workload_mode) {					

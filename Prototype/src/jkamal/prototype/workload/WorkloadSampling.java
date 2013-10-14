@@ -70,45 +70,50 @@ public class WorkloadSampling {
 
 	public void performSampling(Workload workload) {		
 		Set<Integer> trMarkers = new TreeSet<Integer>();		
-		//for(Transaction transaction : workload.getWrl_transactionSet()) {
+		//int i = 0;
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {
 				if(transaction.getTr_dtCost() == 0) { // Not DT
 					trMarkers.add(transaction.getTr_id());
-					//System.out.println("@debug >> Marking Tr("+transaction.getTr_id()+")");
+					//System.out.println("@debug >> Marking Tr("+transaction.getTr_id()+")-"+(++i));
 				}
 			} // end -- for()-Transaction
 		} // end -- for()-Transaction Types	
 				
-		// Remove the Transaction from the Transaction Map and add to Discarded Transaction Map
-		Transaction delTransaction = null;
-		Transaction cloneTransaction = null;
-		int trType = 0;
-		int discardedTransaction = 0;
-		ArrayList<Transaction> transactionList;
-		
-		for(Integer marker : trMarkers) {
-			delTransaction = workload.findWrl_transaction(marker);
-			trType = delTransaction.getTr_type();
+		if(trMarkers.size() != 0) {
+			// Remove the Transaction from the Transaction Map and add to Discarded Transaction Map
+			Transaction delTransaction = null;
+			Transaction cloneTransaction = null;
+			int trType = 0;
+			int discardedTransaction = 0;
+			ArrayList<Transaction> transactionList;
 			
-			//System.out.println("@debug >> Discarding Tr("+delTransaction.getTr_id()+") type"+trType);
-			
-			cloneTransaction = new Transaction(delTransaction);						
-			if(this.getDiscardedWorkload().containsKey(trType))
-				this.getDiscardedWorkload().get(trType).add(cloneTransaction);
-			else {
-				transactionList = new ArrayList<Transaction>();
-				transactionList.add(delTransaction);
-				this.getDiscardedWorkload().put(trType, transactionList);
-			}						
-			
-			workload.getWrl_transactionMap().get(trType).remove(delTransaction);
-			
-			++discardedTransaction;
-			this.setDiscardedTransaction(discardedTransaction);
-			
-			workload.decWrl_transactionPropVal(trType);						
-			workload.decWrl_totalTransaction();							
+			for(Integer marker : trMarkers) {
+				delTransaction = workload.findWrl_transaction(marker);
+				trType = delTransaction.getTr_type();
+				
+				//System.out.println("@debug >> Discarding Tr("+delTransaction.getTr_id()+") type"+trType);
+				
+				cloneTransaction = new Transaction(delTransaction);						
+				if(this.getDiscardedWorkload().containsKey(trType))
+					this.getDiscardedWorkload().get(trType).add(cloneTransaction);
+				else {
+					transactionList = new ArrayList<Transaction>();
+					transactionList.add(delTransaction);
+					this.getDiscardedWorkload().put(trType, transactionList);
+				}						
+				
+				workload.getWrl_transactionMap().get(trType).remove(delTransaction);
+				
+				++discardedTransaction;
+				this.setDiscardedTransaction(discardedTransaction);
+				
+				workload.decWrl_transactionPropVal(trType);						
+				workload.decWrl_totalTransaction();							
+			}
+		} else {
+			System.out.println("[MSG] No Distributed Transactions were found through Workload Sampling !!!");
+			this.setDiscardedTransaction(0);
 		}
 		
 		//@debug
@@ -137,23 +142,23 @@ public class WorkloadSampling {
 					this.setReseletedTransaction(reselectedTransactions);
 				} else {
 					// Not DT, therefore finally discarded
-					delMarkers.add(transaction.getTr_id());						
+					delMarkers.add(transaction.getTr_id());									
 				}
 			}
 		}				
 		
-		Transaction delTransaction;
-		int discardedTransaction = 0;
-		for(Integer marker : delMarkers) {
-			delTransaction = this.findTransaction(marker);
-			
-			//System.out.println("@debug >> Finally discarding Tr("+delTransaction.getTr_id()+")");
-			this.getDiscardedWorkload().get(trType).remove(delTransaction);
-			
-			discardedTransaction = this.getDiscardedTransaction();
-			--discardedTransaction;
-			this.setDiscardedTransaction(discardedTransaction);
-		}	
+		if(delMarkers.size() != 0) {
+			Transaction delTransaction;			
+			for(Integer marker : delMarkers) {
+				delTransaction = this.findTransaction(marker);
+				
+				//System.out.println("@debug >> Finally discarding Tr("+delTransaction.getTr_id()+")");
+				this.getDiscardedWorkload().get(trType).remove(delTransaction);				
+			}
+		} else {
+			System.out.println("[MSG] No Distributed Transactions were found through searching previously discarded Workload transactions !!!");
+			this.setReseletedTransaction(0);
+		}
 		
 		if(workload.getWrl_totalTransaction() <= 0) {
 			return true;

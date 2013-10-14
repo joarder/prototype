@@ -822,9 +822,9 @@ public class Workload implements Comparable<Workload> {
 					+"Total "+this.getWrl_totalData()+" Workload Data)");
 		}
 		
-		this.printPartitionTable(db);
-		this.printDataPartitionTable();
-		this.printDataNodeTable();
+		//this.printPartitionTable(db);
+		//this.printDataPartitionTable();
+		//this.printDataNodeTable();
 		//System.out.println();
 		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
 	}

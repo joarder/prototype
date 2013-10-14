@@ -44,29 +44,31 @@ public class WorkloadGeneration {
 			System.out.println();
 		}		
 		
-		if(workload.isWrl_mode()) {
-			// Generating Workload Transactions
-			TransactionGeneration trGen = new TransactionGeneration();
-			trGen.generateTransaction(db, workload);
-			if(workload.getWrl_round() != 0) {
-				System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" new transaction are added to the workload as a result of workload variation.");
-				WorkloadGeneration.print(workload);
+		//if(workload.getWrl_transactionVariant() != 0) {
+			if(workload.isWrl_mode()) {
+				// Generating Workload Transactions
+				TransactionGeneration trGen = new TransactionGeneration();
+				trGen.generateTransaction(db, workload);
+				if(workload.getWrl_round() != 0) {
+					System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" new transaction are added to the workload as a result of workload variation.");
+					WorkloadGeneration.print(workload);
+				}
+				
+				this.workloadEvaluation(db, workload);
+				this.assignHMetisId(workload);
+			} else {
+				// Reducing Workload Transactions
+				TransactionReduction trRed = new TransactionReduction();
+				trRed.reduceTransaction(db, workload);
+				if(workload.getWrl_round() != 0) {
+					System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" old transaction are removed from the workload as a result of workload variation.");
+					WorkloadGeneration.print(workload);			
+				}
+				
+				this.workloadEvaluation(db, workload);
+				this.assignHMetisId(workload);
 			}
-			
-			this.workloadEvaluation(db, workload);
-			this.assignHMetisId(workload);
-		} else {
-			// Reducing Workload Transactions
-			TransactionReduction trRed = new TransactionReduction();
-			trRed.reduceTransaction(db, workload);
-			if(workload.getWrl_round() != 0) {
-				System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" old transaction are removed from the workload as a result of workload variation.");
-				WorkloadGeneration.print(workload);			
-			}
-			
-			this.workloadEvaluation(db, workload);
-			this.assignHMetisId(workload);
-		}
+		//}
 		
 		if(!workload.isWorkloadEmpty()) {
 			// Generating Workload's Data Partition and Node Distribution Details
@@ -81,6 +83,7 @@ public class WorkloadGeneration {
 			workload.calculateDTPercentage();
 		} else {
 			// Workload is empty
+			System.out.println("[MSG] Workload is empty !!! Need regeneration.");
 		}
 				
 		return workload;
@@ -148,7 +151,8 @@ public class WorkloadGeneration {
 	        	rounding_result += array[i];        	
 		 }        
 		
-		//System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);
+		System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);
+		double difference = Math.abs((rounding_result - roundings));
 		 
 		 int trNums = 0;
 		 if(rounding_result > roundings) {
@@ -159,8 +163,15 @@ public class WorkloadGeneration {
 	        	
 	        	for(int i = 0; i < array_size; i++) {        		
 	        		trNums -= array[i];
-	        		if(trNums <= 1)
-	        			array[i] -= Math.abs((rounding_result - roundings));
+	        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+	        		
+	        		//if(trNums >= difference && array[i] != 0) {
+	        		if(array[i] >= difference) {
+	        			array[i] -= difference;
+	        			trNums -= difference;
+	        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+	        			break;
+	        		}
 	        	}
 		 }		 
 	        
@@ -171,9 +182,15 @@ public class WorkloadGeneration {
 	        		trNums = workload.getWrl_totalTransaction();
 	        	
 	        	for(int i = 0; i < array_size; i++) {        		
-	        		trNums -= array[i];        	        		
-	        		if(trNums <= 1)
-	        			array[i] += Math.abs((rounding_result - roundings));
+	        		trNums -= array[i]; 
+	        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+	        		
+	        		if(trNums <= 1) {
+	        			array[i] += difference;
+	        			trNums += difference;
+	        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+	        			break;
+	        		}
 	            }
 		 }   
 		 
@@ -204,8 +221,9 @@ public class WorkloadGeneration {
         	rounding_result += array[i];        	
         }       
                         
-        //System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);        
-                
+        System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);        
+        double difference = Math.abs((rounding_result - roundings));        
+        
         int trNums = 0;
         if(rounding_result > roundings) {
         	if(workload.getWrl_round() != 0)
@@ -215,8 +233,15 @@ public class WorkloadGeneration {
         	
         	for(int i = 0; i < array_size; i++) {        		
         		trNums -= array[i];
-        		if(trNums <= 1)
-        			array[i] -= Math.abs((rounding_result - roundings));
+        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+        		
+        		//if(trNums >= difference) {
+        		if(array[i] >= difference) {
+        			array[i] -= difference;
+        			trNums -= difference;
+        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+        			break;
+        		}
             }
         }
         
@@ -227,9 +252,15 @@ public class WorkloadGeneration {
         		trNums = workload.getWrl_initTotalTransactions();
         	
         	for(int i = 0; i < array_size; i++) {        		
-        		trNums -= array[i];        	        		
-        		if(trNums <= 1)
-        			array[i] += Math.abs((rounding_result - roundings));
+        		trNums -= array[i];
+        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+        		
+        		if(trNums <= 1) {
+        			array[i] += difference;
+        			trNums += difference;
+        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
+        			break;
+        		}
             }
         }        
         
@@ -267,12 +298,13 @@ public class WorkloadGeneration {
 		// Workload Sampling
 		System.out.println("[ACT] Sampling Workload ...");		
 		workloadSampling.performSampling(workload);
-		System.out.println("[MSG] Total "+workloadSampling.getDiscardedTransaction()+" non-distributed transactions are discarded from the workload.");
+		System.out.println("[MSG] Total "+workloadSampling.getDiscardedTransaction()+" non-distributed transactions are discarded from current workload" +
+				"and left for re-analysing for the next round.");
 		WorkloadGeneration.print(workload);
 						
 		// Re-evaluate Discarded Transactions
 		if(workload.getWrl_round() != 0) {
-			System.out.println("[ACT] Re-evaluating previously discarded workload ...");
+			System.out.println("[ACT] Re-analysing previously discarded workload ...");
 			emptyWorkload = workloadSampling.includeDiscardedWorkload(db, workload);
 			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()+" newly distributed transactions are included from the previously discarded workload.");
 			WorkloadGeneration.print(workload);
