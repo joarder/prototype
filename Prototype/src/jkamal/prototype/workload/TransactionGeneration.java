@@ -22,11 +22,11 @@ public class TransactionGeneration {
 		Transaction transaction;		
 		Set<Data> trDataSet;
 		Data data;
-		double[] prop;
+		int[] prop;
 		
 		//Selecting Transaction Prop
 		if(workload.getWrl_round() != 0)
-			prop = workload.getWrl_transactionVarProp();
+			prop = workload.getWrl_transactionBirthProp();
 		else 
 			prop = workload.getWrl_transactionProp();
 			
@@ -47,7 +47,7 @@ public class TransactionGeneration {
 			
 			int typedTransactions = 0;
 			// j -- a specific Transaction type in the Transaction proportion array
-			for(int j = 0; j < (int)prop[i]; j++) {				
+			for(int j = 0; j < prop[i]; j++) {				
 				trDataSet = new TreeSet<Data>();
 				
 				// k -- required numbers of Data items based on Transaction type

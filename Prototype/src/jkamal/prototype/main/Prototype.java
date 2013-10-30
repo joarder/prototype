@@ -26,7 +26,8 @@ public class Prototype {
 	public final static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
 	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "khmetis";
-	public final static int TRANSACTION_NUMS = 100;		
+	public final static int TRANSACTION_NUMS = 100;
+	public final static int SIMULATION_RUN_NUMBERS = 2;
 	
 	public static void main(String[] args) throws IOException {			
 		OutputLogger logger = new OutputLogger();
@@ -66,141 +67,120 @@ public class Prototype {
 		File dir = new File(DIR_LOCATION);
 		HGraphMinCut minCut;
 		HGraphClusters hGraphClusters = new HGraphClusters();
-		DataMovement dataMovement = new DataMovement();
+		DataMovement dataMovement = new DataMovement();		
 		
-		double time_variant = 0.0;
-		double workload_variant = 0.0;
-		int totalTransaction = 0;
-		boolean workload_mode = true; // positive
-		int workload_round = 0;
-		int basic_run_round = 0;
-		Random rand;
-		double rangeMin = 0.1;
-		double rangeMax = 0.9;
+		double transaction_birth_rate = 0.0;
+		double bRangeMin = 0.45;
+		double bRangeMax = 0.55;
+		int transaction_borning = 0;
+		
+		double transaction_death_rate = 0.0;		
+		double dRangeMin = 0.45;
+		double dRangeMax = 0.55;
+		int transaction_dying = 0;		
+		int simulation_round = 0;
+		Random bRand, dRand;
 		
 		System.out.println("***********************************************************************************************************************");
 		//============================================================================================== 		
 		// Prototype Run Rounds
-		while(basic_run_round != 10) {								
-			// Generate Workload variations for successive rounds except the first run			
-			System.out.println("[RUN] Prototype Run ["+basic_run_round+"]");
-			if(workload_round != 0) {			
-				workload.setWrl_capture(basic_run_round);
-				workload.setWrl_round(workload_round);								
+		while(simulation_round != SIMULATION_RUN_NUMBERS) {								
+			System.out.println("[RUN] Running Simulation Round-"+simulation_round+" ...");
+			
+			if(simulation_round != 0) {			
+				workload.setWrl_round(simulation_round);				
+				System.out.println("[MSG] Total "+workload.getWrl_totalTransaction()+" previous transactions have been carried forward to the current Workload");
+
+				// Generating Random Death Rate within a range of (0.45 ~ 0.55)
+				dRand = new Random();
+				transaction_death_rate = Math.round((dRangeMin + (dRangeMax - dRangeMin) * dRand.nextDouble()) * 100.0) / 100.0;				
+				transaction_dying = (int) ((int) workload.getWrl_totalTransaction() * transaction_death_rate);				
+				workload.setWrl_transactionDeathRate(transaction_death_rate);
+				workload.setWrl_transactionDying(transaction_dying);
 				
-				rand = new Random();
-				time_variant = rangeMin + (rangeMax - rangeMin) * rand.nextDouble();
-				workload_variant = Math.round(time_variant * 100.0)/100.0;
-				
-				if(workload.getWrl_totalTransaction() != 0)
-					totalTransaction = workload.getWrl_totalTransaction();
-				else 
-					totalTransaction = TRANSACTION_NUMS;
-				
-				workload_mode= rand.nextBoolean();
-				workload.setWrl_mode(workload_mode);
-					
-				workload.setWrl_transactionVariant((int)(totalTransaction * workload_variant));
-				workload.setWrl_percentageVariation(workload_variant * 100);
-				
-				System.out.println("[MSG] Total "+workload.getWrl_totalTransaction()+" transactions are carried forward to the current Workload");
-				System.out.println("[DBG] Workload variation: "+(workload_variant * 100)+"% | "+workload.isWrl_mode());
-				
-				if(workload_mode) {					
-					totalTransaction += workload.getWrl_transactionVariant();
-					System.out.print("[ACT] Round-"+workload.getWrl_round()+" :: " +
-							"Varying the workload by increasing "+ workload.getWrl_transactionVariant()
-							+" transactions of "+workload.getWrl_transactionTypes()+" types having a proportion of ");
-				} else { 										
-					totalTransaction -= workload.getWrl_transactionVariant();
-					System.out.print("[ACT] Round-"+workload.getWrl_round()+" :: " +
-							"Varying the workload by reducing "+ workload.getWrl_transactionVariant()
-							+" transactions of "+workload.getWrl_transactionTypes()+" types having a proportion of ");
-				} // end -- if-else()								
+				// Generating Random Birth Rate within a range of (0.45 ~ 0.55)
+				bRand = new Random();
+				transaction_birth_rate = Math.round((bRangeMin + (bRangeMax - bRangeMin) * bRand.nextDouble()) * 100.0) / 100.0;				
+				transaction_borning = (int) ((int) workload.getWrl_totalTransaction() * transaction_birth_rate);
+				workload.setWrl_transactionBirthRate(transaction_birth_rate);
+				workload.setWrl_transactionBorning(transaction_borning);
 			} else {	
+				// Initial
 				workload = workloadGen.init(db, "TPC-C", 0);
-				//workload.setWrl_totalTransaction(TRANSACTION_NUMS);
 				workload.setWrl_initTotalTransactions(TRANSACTION_NUMS);
-				workload.setWrl_capture(basic_run_round);
 				
-				System.out.print("[ACT] Capture-"+basic_run_round+" | Round-"+workload.getWrl_round()+" :: " +
+				// Printing Output Messages
+				System.out.print("[ACT] Simulation Round-"+workload.getWrl_round()+" :: " +
 						"Generating an initial workload with "+ TRANSACTION_NUMS
 						+" transactions of "+workload.getWrl_transactionTypes()+" types having a proportion of ");				
 			}  // end -- if-else()
-												
+			
+			// Generate Synthetic Workload
 			workload = workloadGen.generateWorkload(dbs, db, workload, DIR_LOCATION);
 			
-			if(workload.isWorkloadEmpty()) {
-				// Workload is empty
-				workload_mode = true; // positive
-				workload_round = 0;	
-				workload.setWorkloadEmpty(false);									
-			} else {			
-				workload.setMessage(" (Initial) ");
-				workload.print(db);
-				System.out.println();
-				System.out.println("[MSG] Capture-"+basic_run_round+" | Round-"+workload_round+" :: Workload generation completed !!!");	
-				
-				//==============================================================================================
-				// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
-				// distributed transactions as well as maintain the load balance among the data partitions				
-				System.out.println("[ACT] Run HyperGraph Partitioning on the Workload ...");
-				// Sleep for 5sec to ensure the files are generated		
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-	
-				//==============================================================================================
-				// Run hMetis HyperGraph Partitioning							
-				minCut = new HGraphMinCut(db, workload, dir, HMETIS); 		
-				minCut.runHMetis();
-	
-				// Sleep for 5sec to ensure the files are generated
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}		
-				
-				//==============================================================================================
-				// Read Part file and assign corresponding Data cluster Id			
-				hGraphClusters.readPartFile(db, workload);		
-	
-				//==============================================================================================
-				// Capture Database and Workload states for replaying					
-				workloadReplay.captureWorkload(basic_run_round, db, workload);
-								
-				// Logging Before Data Movement				
-				logger.logWorkload(db, workload, workloadWriter);
-				logger.logPartition(db, workload, partitionWriter);
-				
-				//==============================================================================================
-				// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
-				System.out.println("[ACT] Base Strategy[Round-"+workload_round+"] :: One(Cluster)-to-One(Partition) Peer");
-				db.setDb_dmv_strategy("bs");
-				dataMovement.baseStrategy(db, workload);				
-	
-				// Logging After Data Movement
-				logger.setData_movement(true);
-				logger.logWorkload(db, workload, workloadWriter);
-				logger.logPartition(db, workload, partitionWriter);
-				logger.setData_movement(false);
-				
-				// Increase Workload Round by 1
-				++workload_round;
-				++basic_run_round;
-				
-				System.out.println("***********************************************************************************************************************");
-			} // end -- if-else()
+			workload.setMessage(" (Initial) ");
+			workload.print(db);
+			System.out.println();
+			System.out.println("[MSG] Simulation Round-"+simulation_round+" :: Workload generation completed !!!");	
+			
+			//==============================================================================================
+			// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
+			// distributed transactions as well as maintain the load balance among the data partitions				
+			System.out.println("[ACT] Run HyperGraph Partitioning on the Workload ...");
+			
+			// Sleep for 5sec to ensure the files are generated		
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			//==============================================================================================
+			// Run hMetis HyperGraph Partitioning							
+			minCut = new HGraphMinCut(db, workload, dir, HMETIS); 		
+			minCut.runHMetis();
+
+			// Sleep for 5sec to ensure the files are generated
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}		
+			
+			//==============================================================================================
+			// Read Part file and assign corresponding Data cluster Id			
+			hGraphClusters.readPartFile(db, workload);		
+
+			//==============================================================================================
+			// Capture Database and Workload states for replaying					
+			workloadReplay.captureWorkload(simulation_round, db, workload);
+							
+			// Logging Before Data Movement				
+			logger.logWorkload(db, workload, workloadWriter);
+			logger.logPartition(db, workload, partitionWriter);
+			
+			//==============================================================================================
+			// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
+			System.out.println("[ACT] Base Strategy[Simulation Round-"+simulation_round+"] :: One(Cluster)-to-One(Partition) Peer");
+			db.setDb_dmv_strategy("bs");
+			dataMovement.baseStrategy(db, workload);
+
+			// Logging After Data Movement
+			logger.setData_movement(true);
+			logger.logWorkload(db, workload, workloadWriter);
+			logger.logPartition(db, workload, partitionWriter);
+			logger.setData_movement(false);
+			
+			// Increase Simulation Round by 1
+			++simulation_round;			
+			System.out.println("***********************************************************************************************************************");
 		}
 		
 		// Evaluating Strategy-1
 		System.out.println("[ACT] Replaying Workload Capture using Strategy-1 ...");
 		System.out.println("***********************************************************************************************************************");
 		int strategy1_run_round = 0;
-		while(strategy1_run_round != 10) {					
+		while(strategy1_run_round != SIMULATION_RUN_NUMBERS) {					
 			Database db1 = new Database(workloadReplay.getDb_replayMap().get(strategy1_run_round));
 			Workload workload1 = new Workload(workloadReplay.getWrl_ReplayMap().get(strategy1_run_round));
 			
@@ -227,7 +207,7 @@ public class Prototype {
 		System.out.println("[ACT] Replaying Workload Capture using Strategy-2 ...");
 		System.out.println("***********************************************************************************************************************");
 		int strategy2_run_round = 0;
-		while(strategy2_run_round != 10) {			
+		while(strategy2_run_round != SIMULATION_RUN_NUMBERS) {			
 			Database db2 = new Database(workloadReplay.getDb_replayMap().get(strategy2_run_round));
 			Workload workload2 = new Workload(workloadReplay.getWrl_ReplayMap().get(strategy2_run_round));
 			
@@ -253,6 +233,7 @@ public class Prototype {
 		// End Logging
 		workloadWriter.flush();
 		partitionWriter.flush();
+		
 		workloadWriter.close();
 		partitionWriter.close();
 	}

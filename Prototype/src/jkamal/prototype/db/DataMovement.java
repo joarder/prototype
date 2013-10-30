@@ -140,10 +140,8 @@ public class DataMovement {
 		int inter_partition_movements = 0;
 		int inter_node_movements = 0;
 		
-		//for(Entry<Integer, Set<Data[ACT] entry : workload.getWrl_trDataMap().entrySet()) {
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
-			for(Transaction transaction : entry.getValue()) {
-			//for(Data wrlData : entry.getValue()) {
+			for(Transaction transaction : entry.getValue()) {		
 				for(Data wrlData : transaction.getTr_dataSet()) {			
 					home_partition = db.getDb_partition_table().getPartition(wrlData.getData_home_partition_id());
 				

@@ -15,7 +15,8 @@ import jkamal.prototype.db.Partition;
 public class Transaction implements Comparable<Transaction> {
 	private int tr_id;
 	private String tr_label;
-	private int tr_type;	
+	private int tr_type;
+	private int tr_popularity_rank; // 1 = Highest Popularity
 	private int tr_weight;
 	private Set<Data> tr_dataSet;
 	private int tr_dtCost; // Node Span Cost or, Distributed Transaction Cost
@@ -25,6 +26,7 @@ public class Transaction implements Comparable<Transaction> {
 		this.setTr_id(id);
 		this.setTr_label("TR-"+Integer.toString(this.getTr_id()));
 		this.setTr_type(-1);
+		this.setTr_popularity_rank(1); // By default every transaction is highly popular
 		this.setTr_weight(1); // 1 means that the transaction has occurred for a single time in the Workload
 		this.setTr_dataSet(dataSet);
 		this.setTr_dtCost(0);
@@ -36,6 +38,7 @@ public class Transaction implements Comparable<Transaction> {
 		this.tr_id = transaction.getTr_id();
 		this.tr_label = transaction.getTr_label();
 		this.tr_type = transaction.getTr_type();
+		this.setTr_popularity_rank(transaction.getTr_popularity_rank());
 		this.tr_weight = transaction.getTr_weight();		
 		
 		Data cloneData;
@@ -72,6 +75,14 @@ public class Transaction implements Comparable<Transaction> {
 
 	public void setTr_type(int tr_type) {
 		this.tr_type = tr_type;
+	}
+
+	public int getTr_popularity_rank() {
+		return tr_popularity_rank;
+	}
+
+	public void setTr_popularity_rank(int tr_popularity_rank) {
+		this.tr_popularity_rank = tr_popularity_rank;
 	}
 
 	public int getTr_weight() {

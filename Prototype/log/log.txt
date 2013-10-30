@@ -35,250 +35,76 @@
       N1 {P1(0.0%)[H*700], P4(0.0%)[H*700], P7(0.0%)[H*700], P10(0.0%)[H*700], P13(0.0%)[H*700]}
       N2 {P2(0.0%)[H*700], P5(0.0%)[H*700], P8(0.0%)[H*700], P11(0.0%)[H*700], P14(0.0%)[H*200]}
 ***********************************************************************************************************************
-[RUN] Prototype Run [0]
-[ACT] Capture-0 | Round-0 :: Generating an initial workload with 100 transactions of 5 types having a proportion of @debug >> Rounding Result = 101.0 | Roundings = 100.0
-@debug >> trNums = 88|array[i] = 12.0|diff = 1.0
-@debug2 >> trNums = 87|array[i] = 11.0|diff = 1.0
-{11, 14, 35, 21, 19}
-[ACT] Sampling Workload ...
-[MSG] Total 7 non-distributed transactions are discarded from current workloadand left for re-analysing for the next round.
-[MSG] Total 93 transactions of 5 types having a distribution of {6, 13, 34, 21, 19} are currently in the workload.
-[OUT] Capture-0 | Round-0 ( (Initial) ) :: Workload Details
-      WL-0 [93 Transactions (containing 398 Data) of 5 having a distribution of {6, 13, 34, 21, 19}
+[RUN] Running Simulation Round-0 ...
+[ACT] Simulation Round-0 :: Generating an initial workload with 100 transactions of 5 types having a proportion of {8, 10, 47, 21, 14}
+[OUT] Simulation Round-0 ( (Initial) ) :: Workload Details
+      WL-0 [100 Transactions (containing 415 Data) of 5 having a distribution of {8, 10, 47, 21, 14}
       -----------------------------------------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-      # Distributed Transactions: 93 (100.0% of Total 93 Workload Transactions)
-      # Impact of Distributed Transactions: 1.6 (for a particular workload round)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+      # Distributed Transactions: 96 (96.0% of Total 100 Workload Transactions)
+      # Impact of Distributed Transactions: 1.41 (for a particular workload round)
+
       -----------------------------------------------------------------------------------------------------------------
 
-[MSG] Capture-0 | Round-0 :: Workload generation completed !!!
+[MSG] Simulation Round-0 :: Workload generation completed !!!
 [ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Round-0] :: One(Cluster)-to-One(Partition) Peer
+[ACT] Base Strategy[Simulation Round-0] :: One(Cluster)-to-One(Partition) Peer
 [ACT] Generating Data Movement Mapping Matrix ...
       (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
 	X	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	
-	0	4	0	1	2	1	1	1	2	5	3	1	0	3	0	0	
-	1	0	2	3	2	2	2	1	2	1	0	1	1	6	1	2	
-	2	1	1	4	1	2	0	0	3	1	3	5	1	0	2	0	
-	3	3	0	5	1	3	2	4	2	2	2	1	2	3	2	0	
-	4	4	3	2	0	0	3	1	1	2	2	2	0	1	4	2	
-	5	3	2	2	5	1	4	1	1	3	1	0	0	2	2	4	
-	6	3	5	2	1	1	0	2	2	1	2	3	3	3	3	2	
-	7	5	2	5	2	1	1	1	4	2	3	2	3	1	1	0	
-	8	0	1	2	1	1	2	5	3	0	1	2	1	0	0	3	
-	9	1	0	1	4	1	1	4	0	1	3	3	3	1	3	1	
-	10	1	3	3	1	1	2	3	2	1	1	1	5	0	1	2	
-	11	3	6	2	3	4	1	1	1	4	0	0	2	1	2	3	
-	12	1	5	0	1	4	3	2	0	2	3	2	3	2	0	4	
-	13	1	2	0	4	2	4	1	2	1	0	3	0	1	1	4	
-	14	0	1	0	0	1	0	0	0	1	1	0	2	2	1	0	
+	0	2	2	3	4	3	3	2	1	3	3	2	3	4	2	0	
+	1	2	4	3	2	1	4	1	1	3	1	2	2	1	6	4	
+	2	1	1	0	1	3	1	3	2	2	2	2	2	0	1	4	
+	3	3	3	3	1	0	1	2	3	2	1	3	1	2	5	3	
+	4	5	2	3	2	2	1	1	3	0	4	3	3	1	2	1	
+	5	1	4	1	1	4	3	3	1	2	0	1	3	1	1	3	
+	6	2	3	1	0	4	3	2	1	2	1	2	3	4	1	0	
+	7	3	2	1	5	1	1	0	0	3	3	2	1	4	1	1	
+	8	3	2	2	4	3	0	4	0	0	3	0	3	2	1	1	
+	9	2	3	3	2	1	0	3	1	2	4	1	1	2	2	5	
+	10	1	0	4	4	0	3	3	4	1	2	2	1	1	0	2	
+	11	2	1	2	1	2	1	2	2	2	2	4	1	3	2	0	
+	12	4	1	3	1	1	1	2	4	2	1	1	1	1	0	1	
+	13	2	3	3	0	1	3	1	2	2	0	1	1	1	2	3	
+	14	1	1	0	0	1	0	0	0	1	0	1	0	2	1	0	
 
-[MSG] Total 259 Data movements are required using Base Strategy.
-[OUT] Capture-0 | Round-0 (Base Strategy) :: Workload Details
-      WL-0 [93 Transactions (containing 398 Data) of 5 having a distribution of {6, 13, 34, 21, 19}
+[MSG] Total 287 Data movements are required using Base Strategy.
+[OUT] Simulation Round-0 (Base Strategy) :: Workload Details
+      WL-0 [100 Transactions (containing 415 Data) of 5 having a distribution of {8, 10, 47, 21, 14}
       -----------------------------------------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-      # Distributed Transactions: 9 (9.68% of Total 93 Workload Transactions)
-      # Impact of Distributed Transactions: 0.11 (for a particular workload round)
-      # Inter-Partition Data Movements: 259 (65.08% of Total 398 Workload Data)
-      # Inter-Node Data Movements: 259 (65.08% of Total 398 Workload Data)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+      # Distributed Transactions: 10 (10.0% of Total 100 Workload Transactions)
+      # Impact of Distributed Transactions: 0.1 (for a particular workload round)
+      # Inter-Partition Data Movements: 287 (69.16% of Total 415 Workload Data)
+      # Inter-Node Data Movements: 287 (69.16% of Total 415 Workload Data)
+
       -----------------------------------------------------------------------------------------------------------------
 ***********************************************************************************************************************
-[RUN] Prototype Run [1]
-[MSG] Total 93 transactions are carried forward to the current Workload
-[DBG] Workload variation: 72.0% | false
-[ACT] Round-1 :: Varying the workload by reducing 66 transactions of 5 types having a proportion of @debug >> Rounding Result = 66 | Roundings = 66
-{1, 9, 19, 20, 17}
-[MSG] 66 old transaction are removed from the workload as a result of workload variation.
-[MSG] Total 27 transactions of 5 types having a distribution of {5, 4, 15, 1, 2} are currently in the workload.
+[RUN] Running Simulation Round-1 ...
+[MSG] Total 100 previous transactions have been carried forward to the current Workload
+[MSG] Old Transaction Death Rate: 0.47
+[ACT] Killing 47 old transactions with a distribution of {4, 4, 23, 10, 6}
+[MSG] Total 100 transactions of 5 types having a distribution of {8, 10, 47, 21, 14} are currently in the workload.
+[MSG] Total 53 transactions of 5 types having a distribution of {4, 6, 24, 11, 8} are currently in the workload.
+[MSG] New Transaction Birth Rate: 0.52
+[ACT] Creating 52 new transactions with a distribution of {4, 5, 25, 11, 7}
+[MSG] Total 105 transactions of 5 types having a distribution of {8, 11, 49, 22, 15} are currently in the workload.
 [ACT] Sampling Workload ...
-[MSG] Total 25 non-distributed transactions are discarded from current workloadand left for re-analysing for the next round.
-[MSG] Total 2 transactions of 5 types having a distribution of {0, 1, 1, 0, 0} are currently in the workload.
+[MSG] Total 51 non-distributed transactions are discarded from current workloadand left for re-analysing for the next round.
+[MSG] Total 54 transactions of 5 types having a distribution of {3, 4, 24, 13, 10} are currently in the workload.
 [ACT] Re-analysing previously discarded workload ...
-[MSG] Total 1 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 3 transactions of 5 types having a distribution of {1, 1, 1, 0, 0} are currently in the workload.
-[OUT] Capture-1 | Round-1 ( (Initial) ) :: Workload Details
-      WL-0 [3 Transactions (containing 9 Data) of 5 having a distribution of {1, 1, 1, 0, 0}
+[MSG] Total 0 newly distributed transactions are included from the previously discarded workload.
+[MSG] Total 54 transactions of 5 types having a distribution of {3, 4, 24, 13, 10} are currently in the workload.
+[OUT] Simulation Round-1 ( (Initial) ) :: Workload Details
+      WL-0 [54 Transactions (containing 235 Data) of 5 having a distribution of {3, 4, 24, 13, 10}
       -----------------------------------------------------------------------------------------------------------------
-               
-      # Distributed Transactions: 3 (100.0% of Total 3 Workload Transactions)
-      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
-      # Inter-Partition Data Movements: 259 (65.08% of Total 9 Workload Data)
-      # Inter-Node Data Movements: 259 (65.08% of Total 9 Workload Data)
+                                                                                                                                                                                                                                                                              
+      # Distributed Transactions: 54 (100.0% of Total 54 Workload Transactions)
+      # Impact of Distributed Transactions: 1.43 (for a particular workload round)
+      # Inter-Partition Data Movements: 287 (69.16% of Total 235 Workload Data)
+      # Inter-Node Data Movements: 287 (69.16% of Total 235 Workload Data)
+
       -----------------------------------------------------------------------------------------------------------------
 
-[MSG] Capture-1 | Round-1 :: Workload generation completed !!!
-[ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Round-1] :: One(Cluster)-to-One(Partition) Peer
-[ACT] Generating Data Movement Mapping Matrix ...
-      (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
-	X	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	
-	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	2	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	4	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	6	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	7	1	1	0	0	1	0	0	0	0	0	0	0	0	0	0	
-	8	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	10	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	13	0	0	2	0	0	0	0	0	0	0	0	0	0	0	0	
-	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-
-[MSG] Total 6 Data movements are required using Base Strategy.
-[OUT] Capture-1 | Round-1 (Base Strategy) :: Workload Details
-      WL-0 [3 Transactions (containing 9 Data) of 5 having a distribution of {1, 1, 1, 0, 0}
-      -----------------------------------------------------------------------------------------------------------------
-               
-      # Distributed Transactions: 3 (100.0% of Total 3 Workload Transactions)
-      # Impact of Distributed Transactions: 1.4 (for a particular workload round)
-      # Inter-Partition Data Movements: 6 (66.67% of Total 9 Workload Data)
-      # Inter-Node Data Movements: 3 (33.33% of Total 9 Workload Data)
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[RUN] Prototype Run [2]
-[MSG] Total 3 transactions are carried forward to the current Workload
-[DBG] Workload variation: 86.0% | true
-[ACT] Round-2 :: Varying the workload by increasing 2 transactions of 5 types having a proportion of @debug >> Rounding Result = 3 | Roundings = 2
-@debug >> trNums = 1|array[i] = 1.0|diff = 1.0
-@debug2 >> trNums = 0|array[i] = 0.0|diff = 1.0
-{0, 1, 1, 0, 0}
-[MSG] 2 new transaction are added to the workload as a result of workload variation.
-[MSG] Total 5 transactions of 5 types having a distribution of {1, 2, 2, 0, 0} are currently in the workload.
-[ACT] Sampling Workload ...
-[MSG] No Distributed Transactions were found through Workload Sampling !!!
-[MSG] Total 0 non-distributed transactions are discarded from current workloadand left for re-analysing for the next round.
-[MSG] Total 5 transactions of 5 types having a distribution of {1, 2, 2, 0, 0} are currently in the workload.
-[ACT] Re-analysing previously discarded workload ...
-[MSG] Total 1 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 6 transactions of 5 types having a distribution of {2, 2, 2, 0, 0} are currently in the workload.
-[OUT] Capture-2 | Round-2 ( (Initial) ) :: Workload Details
-      WL-0 [6 Transactions (containing 16 Data) of 5 having a distribution of {2, 2, 2, 0, 0}
-      -----------------------------------------------------------------------------------------------------------------
-                              
-      # Distributed Transactions: 6 (100.0% of Total 6 Workload Transactions)
-      # Impact of Distributed Transactions: 1.42 (for a particular workload round)
-      # Inter-Partition Data Movements: 6 (66.67% of Total 16 Workload Data)
-      # Inter-Node Data Movements: 3 (33.33% of Total 16 Workload Data)
-      -----------------------------------------------------------------------------------------------------------------
-
-[MSG] Capture-2 | Round-2 :: Workload generation completed !!!
-[ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Round-2] :: One(Cluster)-to-One(Partition) Peer
-[ACT] Generating Data Movement Mapping Matrix ...
-      (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
-	X	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	
-	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
-	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	2	1	0	0	0	1	0	0	1	0	0	0	0	0	0	0	
-	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	4	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
-	5	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	
-	6	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	
-	7	1	3	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	8	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	10	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	11	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	12	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	13	0	0	4	0	0	0	0	0	0	0	0	0	0	0	0	
-	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-
-[MSG] Total 12 Data movements are required using Base Strategy.
-[OUT] Capture-2 | Round-2 (Base Strategy) :: Workload Details
-      WL-0 [6 Transactions (containing 16 Data) of 5 having a distribution of {2, 2, 2, 0, 0}
-      -----------------------------------------------------------------------------------------------------------------
-                              
-      # Distributed Transactions: 3 (50.0% of Total 6 Workload Transactions)
-      # Impact of Distributed Transactions: 0.83 (for a particular workload round)
-      # Inter-Partition Data Movements: 12 (75.0% of Total 16 Workload Data)
-      # Inter-Node Data Movements: 8 (50.0% of Total 16 Workload Data)
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[RUN] Prototype Run [3]
-[MSG] Total 6 transactions are carried forward to the current Workload
-[DBG] Workload variation: 44.0% | true
-[ACT] Round-3 :: Varying the workload by increasing 2 transactions of 5 types having a proportion of @debug >> Rounding Result = 3 | Roundings = 2
-@debug >> trNums = 1|array[i] = 1.0|diff = 1.0
-@debug2 >> trNums = 0|array[i] = 0.0|diff = 1.0
-{0, 1, 1, 0, 0}
-[MSG] 2 new transaction are added to the workload as a result of workload variation.
-[MSG] Total 8 transactions of 5 types having a distribution of {2, 3, 3, 0, 0} are currently in the workload.
-[ACT] Sampling Workload ...
-[MSG] Total 3 non-distributed transactions are discarded from current workloadand left for re-analysing for the next round.
-[MSG] Total 5 transactions of 5 types having a distribution of {1, 1, 3, 0, 0} are currently in the workload.
-[ACT] Re-analysing previously discarded workload ...
-[MSG] Total 1 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 5 transactions of 5 types having a distribution of {1, 1, 3, 0, 0} are currently in the workload.
-[OUT] Capture-3 | Round-3 ( (Initial) ) :: Workload Details
-      WL-0 [5 Transactions (containing 17 Data) of 5 having a distribution of {1, 1, 3, 0, 0}
-      -----------------------------------------------------------------------------------------------------------------
-                         
-      # Distributed Transactions: 4 (80.0% of Total 5 Workload Transactions)
-      # Impact of Distributed Transactions: 1.07 (for a particular workload round)
-      # Inter-Partition Data Movements: 12 (75.0% of Total 17 Workload Data)
-      # Inter-Node Data Movements: 8 (50.0% of Total 17 Workload Data)
-      -----------------------------------------------------------------------------------------------------------------
-
-[MSG] Capture-3 | Round-3 :: Workload generation completed !!!
-[ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Round-3] :: One(Cluster)-to-One(Partition) Peer
-[ACT] Generating Data Movement Mapping Matrix ...
-      (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
-	X	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	
-	0	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	
-	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	2	0	0	0	0	0	1	0	0	0	0	0	1	0	0	0	
-	3	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	4	0	0	1	0	0	0	0	0	0	1	0	0	0	0	0	
-	5	1	0	0	0	0	0	0	0	0	1	0	0	0	0	0	
-	6	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	
-	7	0	0	0	1	1	0	0	1	0	0	0	0	0	0	0	
-	8	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	
-	9	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	10	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	
-	11	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	12	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-	13	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	
-	14	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-
-[MSG] Total 11 Data movements are required using Base Strategy.
-[OUT] Capture-3 | Round-3 (Base Strategy) :: Workload Details
-      WL-0 [5 Transactions (containing 17 Data) of 5 having a distribution of {1, 1, 3, 0, 0}
-      -----------------------------------------------------------------------------------------------------------------
-                         
-      # Distributed Transactions: 4 (80.0% of Total 5 Workload Transactions)
-      # Impact of Distributed Transactions: 1.0 (for a particular workload round)
-      # Inter-Partition Data Movements: 11 (64.71% of Total 17 Workload Data)
-      # Inter-Node Data Movements: 8 (47.06% of Total 17 Workload Data)
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[RUN] Prototype Run [4]
-[MSG] Total 5 transactions are carried forward to the current Workload
-[DBG] Workload variation: 26.0% | false
-[ACT] Round-4 :: Varying the workload by reducing 1 transactions of 5 types having a proportion of @debug >> Rounding Result = 1 | Roundings = 1
-{0, 0, 1, 0, 0}
-[MSG] 1 old transaction are removed from the workload as a result of workload variation.
-[MSG] Total 4 transactions of 5 types having a distribution of {1, 1, 2, 0, 0} are currently in the workload.
-[ACT] Sampling Workload ...
-[MSG] Total 1 non-distributed transactions are discarded from current workloadand left for re-analysing for the next round.
-[MSG] Total 3 transactions of 5 types having a distribution of {0, 1, 2, 0, 0} are currently in the workload.
-[ACT] Re-analysing previously discarded workload ...
-[MSG] Total 1 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 3 transactions of 5 types having a distribution of {0, 1, 2, 0, 0} are currently in the workload.
-[OUT] Capture-4 | Round-4 ( (Initial) ) :: Workload Details
-      WL-0 [3 Transactions (containing 11 Data) of 5 having a distribution of {0, 1, 2, 0, 0}
-      -----------------------------------------------------------------------------------------------------------------
-               
-      # Distributed Transactions: 3 (100.0% of Total 3 Workload Transactions)
-      # Impact of Distributed Transactions: 1.38 (for a particular workload round)
-      # Inter-Partition Data Movements: 11 (64.71% of Total 11 Workload Data)
-      # Inter-Node Data Movements: 8 (47.06% of Total 11 Workload Data)
-      -----------------------------------------------------------------------------------------------------------------
-
-[MSG] Capture-4 | Round-4 :: Workload generation completed !!!
+[MSG] Simulation Round-1 :: Workload generation completed !!!
 [ACT] Run HyperGraph Partitioning on the Workload ...

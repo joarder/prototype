@@ -41,11 +41,10 @@ public class MappingTable {
 		
 		int partition_id = -1;
 		int cluster_id = -1;
-		MatrixElement e;				
-		//for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
+		MatrixElement e;
+		
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {							
-				//for(Data d1 : entry.getValue()) {
 				for(Data d1 : transaction.getTr_dataSet()) {
 					partition_id = d1.getData_partition_id();
 					cluster_id = d1.getData_hmetis_cluster_id();			

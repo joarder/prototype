@@ -5,9 +5,7 @@
 package jkamal.prototype.workload;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Map.Entry;
-
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
@@ -31,60 +29,69 @@ public class WorkloadGeneration {
 		return null;
 	}
 	
-	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {								
+	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {
+		int transaction_types = workload.getWrl_transactionTypes();
+		
 		if(workload.getWrl_round() != 0) {
-			//workload.setWrl_transactionVarProp(generateTransactionProp(workload));
-			workload.setWrl_transactionVarProp(generateWorkloadVar(workload));
+			// === Death Management
+			System.out.println("[MSG] Old Transaction Death Rate: "+workload.getWrl_transactionDeathRate());
+			System.out.print("[ACT] Killing "+workload.getWrl_transactionDying()+" old transactions with a distribution of ");			
+			
+			int[] deathArray = transactionPropGen(transaction_types, workload.getWrl_transactionDying());
+			workload.setWrl_transactionDeathProp(deathArray);
+			
+			workload.printWrl_transactionProp(workload.getWrl_transactionDeathProp());
+			System.out.println();																		
+			
+			// Reducing Old Workload Transactions			
+			WorkloadGeneration.print(workload);
+			TransactionReduction trRed = new TransactionReduction();
+			trRed.reduceTransaction(db, workload);
+			
+			WorkloadGeneration.print(workload);			
+			
+			// === Birth Management
+			System.out.println("[MSG] New Transaction Birth Rate: "+workload.getWrl_transactionBirthRate());
+			System.out.print("[ACT] Creating "+workload.getWrl_transactionBorning()+" new transactions with a distribution of ");																	
+			
+			int[] birthArray = transactionPropGen(transaction_types, workload.getWrl_transactionBorning());
+			workload.setWrl_transactionBirthProp(birthArray);
+			
+			workload.printWrl_transactionProp(workload.getWrl_transactionBirthProp());			
+			System.out.println();
+			
+			// Generating New Workload Transactions						
+			TransactionGeneration trGen = new TransactionGeneration();
+			trGen.generateTransaction(db, workload);			
+			
+			WorkloadGeneration.print(workload);						
+			
+			// Other Stuffs
 			this.incrTransactionWeights(workload);
-			workload.printWrl_transactionVarProp();
-			System.out.println();
-		} else {			
-			workload.setWrl_transactionProp(generateTransactionProp(workload));
-			workload.printWrl_transactionProp();
-			System.out.println();
-		}		
-		
-		//if(workload.getWrl_transactionVariant() != 0) {
-			if(workload.isWrl_mode()) {
-				// Generating Workload Transactions
-				TransactionGeneration trGen = new TransactionGeneration();
-				trGen.generateTransaction(db, workload);
-				if(workload.getWrl_round() != 0) {
-					System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" new transaction are added to the workload as a result of workload variation.");
-					WorkloadGeneration.print(workload);
-				}
-				
-				this.workloadEvaluation(db, workload);
-				this.assignHMetisId(workload);
-			} else {
-				// Reducing Workload Transactions
-				TransactionReduction trRed = new TransactionReduction();
-				trRed.reduceTransaction(db, workload);
-				if(workload.getWrl_round() != 0) {
-					System.out.println("[MSG] "+workload.getWrl_transactionVariant()+" old transaction are removed from the workload as a result of workload variation.");
-					WorkloadGeneration.print(workload);			
-				}
-				
-				this.workloadEvaluation(db, workload);
-				this.assignHMetisId(workload);
-			}
-		//}
-		
-		if(!workload.isWorkloadEmpty()) {
-			// Generating Workload's Data Partition and Node Distribution Details
-			workload.generateDataPartitionTable();
-			workload.generateDataNodeTable();		
-			
-			// Generating Workload and FixFile for HyperGraph Partitioning			
-			workload.generateWorkloadFile(dbs, workload, DIR_LOCATION);
-			workload.generateFixFile(DIR_LOCATION);				
-			
-			// Calculate the percentage of DT
-			workload.calculateDTPercentage();
+			this.workloadEvaluation(db, workload);
+			this.assignHMetisId(workload);
 		} else {
-			// Workload is empty
-			System.out.println("[MSG] Workload is empty !!! Need regeneration.");
-		}
+			// Initial Round			
+			workload.setWrl_transactionProp(transactionPropGen(transaction_types, workload.getWrl_initTotalTransactions()));			
+			workload.printWrl_transactionProp(workload.getWrl_transactionProp());
+			System.out.println();
+			
+			// Generating New Workload Transactions
+			TransactionGeneration trGen = new TransactionGeneration();
+			trGen.generateTransaction(db, workload);
+			this.assignHMetisId(workload);		
+		}																		
+		
+		// Generating Workload's Data Partition and Node Distribution Details
+		workload.generateDataPartitionTable();
+		workload.generateDataNodeTable();		
+		
+		// Generating Workload and FixFile for HyperGraph Partitioning			
+		workload.generateWorkloadFile(dbs, workload, DIR_LOCATION);
+		workload.generateFixFile(DIR_LOCATION);				
+		
+		// Calculate the percentage of DT
+		workload.calculateDTPercentage();			
 				
 		return workload;
 	}
@@ -99,172 +106,58 @@ public class WorkloadGeneration {
 		}
 	}
 	
-	public static int randInt(int min, int max) {
-	    Random rand = new Random();
-	    int randomNumber = rand.nextInt((max - min) + 1) + min;	    
-
-	    return randomNumber;
-	}
-	
-	public double[] generateWorkloadVar(Workload workload) {
-		int array_size = workload.getWrl_transactionTypes();
-		double array[] = new double[array_size];
-		int maxRange = 0;
-		int minRange = 1;		
-		int sum = 0;
+	// new
+	public int[] transactionPropGen(int ranks, int elements) {		
+		int propArray[] = new int[ranks];
+		int rankArray[] = zipfLawProportionGen(ranks, elements);
 		
-		for(int i = 0; i < array_size; i++) {
-			maxRange = (int)workload.getWrl_transactionProp()[i];
-			if(maxRange == 0) {
-				maxRange = 0;
-				minRange = 0;
+		// TR Rankings {T1, T2, T3, T4, T5} = {4, 5, 1, 2, 3}; 1 = Higher, 5 = Lower
+		int begin = 0;
+		int end = rankArray.length-1;
+		for(int i = 0; i < propArray.length; i++) {
+			if(i < 2) {
+				propArray[i] = rankArray[end];
+				-- end;
 			} else {
-				minRange = 1;
-			}
-			
-			array[i] = (int)WorkloadGeneration.randInt(minRange, maxRange);
-			//System.out.println("Max = "+maxRange+" | array[i]="+array[i]);
-			sum += array[i];
+				propArray[i] = rankArray[begin];
+				++ begin;
+			}			
+			//System.out.println("@debug >> TR-"+(i+1)+" | Counts = "+propArray[i]);
 		}
 		
-		 int roundings = 0;
-		 int rounding_result = 0;
-		 
-		 if(workload.getWrl_round() != 0)
-			 roundings = workload.getWrl_transactionVariant();
-		 else
-			 roundings = workload.getWrl_totalTransaction();
-	        
-		 int val = 0;
-		 int remain = 0;
-		 for (int i = 0; i < array_size; i++) {
-	        	val = (int)Math.round((array[i] / sum) * roundings);
-	        	val += remain;
-	        	
-	        	if(val >= workload.getWrl_transactionProp()[i]) {
-	        		array[i] = workload.getWrl_transactionProp()[i];
-	        		remain = val - (int)workload.getWrl_transactionProp()[i];
-	        	} else {
-	        		array[i] = val;
-	        	}
-	        	
-	        	rounding_result += array[i];        	
-		 }        
-		
-		System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);
-		double difference = Math.abs((rounding_result - roundings));
-		 
-		 int trNums = 0;
-		 if(rounding_result > roundings) {
-	        	if(workload.getWrl_round() != 0)
-	        		trNums = workload.getWrl_transactionVariant();
-	        	else
-	        		trNums = workload.getWrl_totalTransaction();
-	        	
-	        	for(int i = 0; i < array_size; i++) {        		
-	        		trNums -= array[i];
-	        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-	        		
-	        		//if(trNums >= difference && array[i] != 0) {
-	        		if(array[i] >= difference) {
-	        			array[i] -= difference;
-	        			trNums -= difference;
-	        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-	        			break;
-	        		}
-	        	}
-		 }		 
-	        
-		 if(rounding_result < roundings) {
-	        	if(workload.getWrl_round() != 0)
-	        		trNums = workload.getWrl_transactionVariant();
-	        	else
-	        		trNums = workload.getWrl_totalTransaction();
-	        	
-	        	for(int i = 0; i < array_size; i++) {        		
-	        		trNums -= array[i]; 
-	        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-	        		
-	        		if(trNums <= 1) {
-	        			array[i] += difference;
-	        			trNums += difference;
-	        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-	        			break;
-	        		}
-	            }
-		 }   
-		 
-		 return array;
-	}
+		return propArray;
+	}	
 	
-	public double[] generateTransactionProp(Workload workload) {
-		int array_size = workload.getWrl_transactionTypes();
-		double array[] = new double[array_size];
-        double sum = 0.0d;
-        double rounding_result = 0.0d;
-        Random random = new Random();
-        
-        
-        for (int i = 0; i < array_size; i++) {
-        	array[i] = random.nextDouble();        
-        	sum += array[i];
-        }        
-            
-        double roundings = 0.0d;
-        if(workload.getWrl_round() != 0)
-        	roundings = workload.getWrl_transactionVariant();
-        else
-        	roundings = workload.getWrl_initTotalTransactions();
-        
-        for (int i = 0; i < array_size; i++) {
-        	array[i] = (double)Math.round((array[i] / sum) * roundings);        
-        	rounding_result += array[i];        	
-        }       
-                        
-        System.out.println("@debug >> Rounding Result = "+rounding_result+" | Roundings = "+roundings);        
-        double difference = Math.abs((rounding_result - roundings));        
-        
-        int trNums = 0;
-        if(rounding_result > roundings) {
-        	if(workload.getWrl_round() != 0)
-        		trNums = workload.getWrl_transactionVariant();
-        	else
-        		trNums = workload.getWrl_initTotalTransactions();
-        	
-        	for(int i = 0; i < array_size; i++) {        		
-        		trNums -= array[i];
-        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-        		
-        		//if(trNums >= difference) {
-        		if(array[i] >= difference) {
-        			array[i] -= difference;
-        			trNums -= difference;
-        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-        			break;
-        		}
-            }
-        }
-        
-        if(rounding_result < roundings) {
-        	if(workload.getWrl_round() != 0)
-        		trNums = workload.getWrl_transactionVariant();
-        	else
-        		trNums = workload.getWrl_initTotalTransactions();
-        	
-        	for(int i = 0; i < array_size; i++) {        		
-        		trNums -= array[i];
-        		System.out.println("@debug >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-        		
-        		if(trNums <= 1) {
-        			array[i] += difference;
-        			trNums += difference;
-        			System.out.println("@debug2 >> trNums = "+trNums+"|array[i] = "+array[i]+"|diff = "+difference);
-        			break;
-        		}
-            }
-        }        
-        
-        return array;
+	//new
+	public int[] zipfLawProportionGen(int ranks, int elements) {
+		double prop[] = new double[ranks];
+		int finalProp[] = new int[ranks];
+		
+		double sum = 0.0d;
+		for(int rank = 0; rank < ranks; rank++) {
+			prop[rank] = elements / (rank+1); // exponent value is always 1
+			sum += prop[rank];
+		}
+		
+		//System.out.println();		
+		double amplification = elements/sum;		
+		int finalSum = 0;
+		for(int rank = 0; rank < ranks; rank++) {
+			finalProp[rank] = (int) (prop[rank] * amplification);
+			finalSum += finalProp[rank];
+			
+			//System.out.println("@debug >> Rank-"+(rank+1)+" | Counts = "+finalProp[rank]);
+		}		
+		
+		//System.out.println("@debug >> Sum = "+finalSum+" | Difference = "+(elements - finalSum));
+		
+		finalProp[0] += (elements - finalSum); // Adjusting the difference by adding it to the highest rank proportion
+		finalSum += (elements - finalSum);
+		
+		//System.out.println("@debug >> * Rank-1 | Counts = "+finalProp[0]);
+		//System.out.println("@debug >> Sum = "+finalSum+" | Difference = "+(elements - finalSum));
+		
+		return finalProp;
 	}
 	
 	public void assignHMetisId(Workload workload) {
@@ -317,9 +210,9 @@ public class WorkloadGeneration {
 	}
 	
 	public static void print(Workload workload) {
-		System.out.print("[MSG] Total "+workload.getWrl_totalTransaction()+" transactions of "
-				+workload.getWrl_transactionTypes()+" types having a distribution of ");										
-				workload.printWrl_transactionProp();
-				System.out.println(" are currently in the workload.");
+		System.out.print("[MSG] Total "+workload.getWrl_totalTransaction()+" transactions of "+workload.getWrl_transactionTypes()
+				+" types having a distribution of ");										
+		workload.printWrl_transactionProp(workload.getWrl_transactionProp());
+		System.out.println(" are currently in the workload.");
 	}	
 }

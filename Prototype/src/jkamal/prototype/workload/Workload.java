@@ -36,12 +36,20 @@ public class Workload implements Comparable<Workload> {
 	private double wrl_percentageVariation;
 	
 	private int wrl_transactionTypes; // Represents the number of Transaction types. e.g. for AuctionMark it is 10
-	private double[] wrl_transactionProp;
-	private double[] wrl_transactionVarProp;
+	private int[] wrl_transactionProp;
+	
 	private Map<Integer, ArrayList<Transaction>> wrl_transactionMap;
 	private int wrl_initTotalTransactions;
 	private int wrl_totalTransaction;
-		
+	
+	private int wrl_transactionBorning;
+	private int wrl_transactionDying;
+	private double wrl_transactionBirthRate;
+	private double wrl_transactionDeathRate;
+	private int[] wrl_transactionBirthProp;
+	private int[] wrl_transactionDeathProp;
+	private int[] wrl_transactionVarProp;	
+	
 	private int wrl_totalData;	
 	private int wrl_interPartitionDataMovements;
 	private int wrl_interNodeDataMovements;
@@ -75,11 +83,18 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_percentageVariation(0.0d);
 		
 		this.setWrl_transactionTypes(trTypes);
-		this.setWrl_transactionProp(new double[this.getWrl_transactionTypes()]);
-		this.setWrl_transactionVarProp(new double[this.getWrl_transactionTypes()]);
+		this.setWrl_transactionProp(new int[this.getWrl_transactionTypes()]);		
 		this.setWrl_transactionMap(new TreeMap<Integer, ArrayList<Transaction>>());
 		this.setWrl_initTotalTransactions(0);
 		this.setWrl_totalTransaction(0);
+		
+		this.setWrl_transactionBorning(0);
+		this.setWrl_transactionDying(0);
+		this.setWrl_transactionBirthRate(0.0d);
+		this.setWrl_transactionDeathRate(0.0d);
+		this.setWrl_transactionBirthProp(new int[this.getWrl_transactionTypes()]);
+		this.setWrl_transactionDeathProp(new int[this.getWrl_transactionTypes()]);
+		this.setWrl_transactionVarProp(new int[this.getWrl_transactionTypes()]);
 		
 		this.setWrl_totalData(0);
 		this.setWrl_interPartitionDataMovements(0);
@@ -114,11 +129,24 @@ public class Workload implements Comparable<Workload> {
 		
 		this.setWrl_transactionTypes(workload.getWrl_transactionTypes());
 		
-		double[] cloneTransactionProp = new double[this.wrl_transactionTypes];		
+		int[] cloneTransactionProp = new int[this.wrl_transactionTypes];		
 		System.arraycopy(workload.getWrl_transactionProp(), 0, cloneTransactionProp, 0, workload.getWrl_transactionProp().length);
 		this.setWrl_transactionProp(cloneTransactionProp);
 		
-		double[] cloneTransactionVarProp = new double[this.wrl_transactionTypes];		
+		this.setWrl_transactionBorning(workload.getWrl_transactionBorning());
+		this.setWrl_transactionDying(workload.getWrl_transactionDying());		
+		this.setWrl_transactionBirthRate(workload.getWrl_transactionBirthRate());
+		this.setWrl_transactionDeathRate(workload.getWrl_transactionDeathRate());
+		
+		int[] cloneTransactionBirthProp = new int[this.wrl_transactionTypes];		
+		System.arraycopy(workload.getWrl_transactionBirthProp(), 0, cloneTransactionBirthProp, 0, workload.getWrl_transactionBirthProp().length);
+		this.setWrl_transactionBirthProp(cloneTransactionBirthProp);				
+		
+		int[] cloneTransactionDeathProp = new int[this.wrl_transactionTypes];		
+		System.arraycopy(workload.getWrl_transactionDeathProp(), 0, cloneTransactionDeathProp, 0, workload.getWrl_transactionDeathProp().length);
+		this.setWrl_transactionDeathProp(cloneTransactionDeathProp);
+		
+		int[] cloneTransactionVarProp = new int[this.wrl_transactionTypes];		
 		System.arraycopy(workload.getWrl_transactionVarProp(), 0, cloneTransactionVarProp, 0, workload.getWrl_transactionVarProp().length);
 		this.setWrl_transactionVarProp(cloneTransactionVarProp);
 		
@@ -260,19 +288,19 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_transactionMap = wrl_transactionMap;
 	}
 
-	public double[] getWrl_transactionProp() {
+	public int[] getWrl_transactionProp() {
 		return wrl_transactionProp;
 	}
 
-	public void setWrl_transactionProp(double[] wrl_transactionProp) {
+	public void setWrl_transactionProp(int[] wrl_transactionProp) {
 		this.wrl_transactionProp = wrl_transactionProp;
 	}
 	
-	public double[] getWrl_transactionVarProp() {
+	public int[] getWrl_transactionVarProp() {
 		return wrl_transactionVarProp;
 	}
 
-	public void setWrl_transactionVarProp(double[] wrl_transactionVarProp) {
+	public void setWrl_transactionVarProp(int[] wrl_transactionVarProp) {
 		this.wrl_transactionVarProp = wrl_transactionVarProp;
 	}
 
@@ -281,7 +309,7 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void incWrl_transactionPropVal(int pos, int val) {
-		Double value = this.getWrl_transactionProp()[pos];
+		int value = this.getWrl_transactionProp()[pos];
 		value += val;
 		this.getWrl_transactionProp()[pos] = value;
 	}
@@ -291,9 +319,57 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void decWrl_transactionPropVal(int pos, int val) {
-		Double value = this.getWrl_transactionProp()[pos];
+		int value = this.getWrl_transactionProp()[pos];
 		value -= val;
 		this.getWrl_transactionProp()[pos] = value;
+	}
+
+	public int getWrl_transactionBorning() {
+		return wrl_transactionBorning;
+	}
+
+	public void setWrl_transactionBorning(int wrl_transactionBorning) {
+		this.wrl_transactionBorning = wrl_transactionBorning;
+	}
+
+	public int getWrl_transactionDying() {
+		return wrl_transactionDying;
+	}
+
+	public void setWrl_transactionDying(int wrl_transactionDying) {
+		this.wrl_transactionDying = wrl_transactionDying;
+	}
+
+	public double getWrl_transactionBirthRate() {
+		return wrl_transactionBirthRate;
+	}
+
+	public void setWrl_transactionBirthRate(double wrl_transactionBirthRate) {
+		this.wrl_transactionBirthRate = wrl_transactionBirthRate;
+	}
+
+	public double getWrl_transactionDeathRate() {
+		return wrl_transactionDeathRate;
+	}
+
+	public void setWrl_transactionDeathRate(double wrl_transactionDeathRate) {
+		this.wrl_transactionDeathRate = wrl_transactionDeathRate;
+	}
+
+	public int[] getWrl_transactionBirthProp() {
+		return wrl_transactionBirthProp;
+	}
+
+	public void setWrl_transactionBirthProp(int[] wrl_transactionBirthProp) {
+		this.wrl_transactionBirthProp = wrl_transactionBirthProp;
+	}
+
+	public int[] getWrl_transactionDeathProp() {
+		return wrl_transactionDeathProp;
+	}
+
+	public void setWrl_transactionDeathProp(int[] wrl_transactionDeathProp) {
+		this.wrl_transactionDeathProp = wrl_transactionDeathProp;
 	}
 
 	public int getWrl_totalTransaction() {
@@ -663,34 +739,18 @@ public class Workload implements Comparable<Workload> {
 		} // end -- for()-Transaction Types
 	}
 	
-	public void printWrl_transactionProp() {
-		int size = this.getWrl_transactionProp().length;
+	public void printWrl_transactionProp(int[] array) {
+		int size = array.length;
 		
 		System.out.print("{");
-		for(double prop : this.getWrl_transactionProp()) {			
-			//System.out.print(prop+"|");
-			System.out.print(Integer.toString((int)Math.round(prop)));
+		for(int val : array) {			
+			System.out.print(Integer.toString(val));
 			
 			--size;			
 			if(size != 0)
 				System.out.print(", ");
 		}		
-		System.out.print("}");
-	}
-		
-	public void printWrl_transactionVarProp() {
-		int size = this.getWrl_transactionVarProp().length;
-		
-		System.out.print("{");
-		for(double prop : this.getWrl_transactionVarProp()) {
-			//System.out.print(prop+"|");
-			System.out.print(Integer.toString((int)Math.round(prop)));
-			
-			--size;			
-			if(size != 0)
-				System.out.print(", ");
-		}		
-		System.out.print("}");
+		System.out.print("}");		
 	}
 	
 	public void printDataPartitionTable() {
@@ -790,9 +850,9 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void print(Database db) {				
-		System.out.println("[OUT] Capture-"+this.getWrl_capture()+" | Round-"+this.getWrl_round()+" ("+this.getMessage()+") :: Workload Details");
+		System.out.println("[OUT] Simulation Round-"+this.getWrl_round()+" ("+this.getMessage()+") :: Workload Details");
 		System.out.print("      "+this.toString() +" having a distribution of ");				
-		this.printWrl_transactionProp();
+		this.printWrl_transactionProp(this.getWrl_transactionProp());
 				
 		System.out.println("\n      -----------------------------------------------------------------------------------------------------------------");
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
@@ -825,7 +885,7 @@ public class Workload implements Comparable<Workload> {
 		//this.printPartitionTable(db);
 		//this.printDataPartitionTable();
 		//this.printDataNodeTable();
-		//System.out.println();
+		System.out.println();
 		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
 	}
 	
