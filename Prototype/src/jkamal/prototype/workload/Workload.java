@@ -48,10 +48,10 @@ public class Workload implements Comparable<Workload> {
 	private double wrl_transactionDeathRate;
 	private int[] wrl_transactionBirthProp;
 	private int[] wrl_transactionDeathProp;
-	private int[] wrl_transactionVarProp;	
+	//private int[] wrl_transactionVarProp;	
 	
 	private int wrl_totalData;	
-	private int wrl_interPartitionDataMovements;
+	private int wrl_intraNodeDataMovements;
 	private int wrl_interNodeDataMovements;
 	
 	private Map<Integer, Set<Data>> dataPartitionTable;
@@ -94,10 +94,10 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_transactionDeathRate(0.0d);
 		this.setWrl_transactionBirthProp(new int[this.getWrl_transactionTypes()]);
 		this.setWrl_transactionDeathProp(new int[this.getWrl_transactionTypes()]);
-		this.setWrl_transactionVarProp(new int[this.getWrl_transactionTypes()]);
+		//this.setWrl_transactionVarProp(new int[this.getWrl_transactionTypes()]);
 		
 		this.setWrl_totalData(0);
-		this.setWrl_interPartitionDataMovements(0);
+		this.setWrl_intraNodeDataMovements(0);
 		this.setWrl_interNodeDataMovements(0);
 		
 		this.setWrl_workload_file("jk-workload.txt");
@@ -106,8 +106,8 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_dt_impact(0.0);
 		this.setWrl_dt_nums(0);
 		this.setWrl_percentage_dt(0.0);
-		this.setWrl_percentage_pdmv(0.0);
-		this.setWrl_percentage_ndmv(0.0);
+		this.setWrl_percentage_intra_ndmv(0.0);
+		this.setWrl_percentage_inter_ndmv(0.0);
 		
 		this.setWrl_hasDataMoved(false);
 		this.setMessage(" (Initial Stage) ");
@@ -117,7 +117,7 @@ public class Workload implements Comparable<Workload> {
 	public Workload(Workload workload) {
 		this.setWrl_id(workload.getWrl_id());
 		this.setWrl_label(workload.getWrl_label());
-		this.setWrl_round(workload.getWrl_round());
+		this.setWrl_round(workload.getWrl_simulationRound());
 		this.setWrl_capture(workload.getWrl_capture());
 		this.setWrl_mode(workload.isWrl_mode());
 		this.setWrl_transactionVariant(workload.getWrl_transactionVariant());
@@ -130,7 +130,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_transactionTypes(workload.getWrl_transactionTypes());
 		
 		int[] cloneTransactionProp = new int[this.wrl_transactionTypes];		
-		System.arraycopy(workload.getWrl_transactionProp(), 0, cloneTransactionProp, 0, workload.getWrl_transactionProp().length);
+		System.arraycopy(workload.getWrl_transactionProportions(), 0, cloneTransactionProp, 0, workload.getWrl_transactionProportions().length);
 		this.setWrl_transactionProp(cloneTransactionProp);
 		
 		this.setWrl_transactionBorning(workload.getWrl_transactionBorning());
@@ -143,12 +143,12 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_transactionBirthProp(cloneTransactionBirthProp);				
 		
 		int[] cloneTransactionDeathProp = new int[this.wrl_transactionTypes];		
-		System.arraycopy(workload.getWrl_transactionDeathProp(), 0, cloneTransactionDeathProp, 0, workload.getWrl_transactionDeathProp().length);
+		System.arraycopy(workload.getWrl_transactionDeathProportions(), 0, cloneTransactionDeathProp, 0, workload.getWrl_transactionDeathProportions().length);
 		this.setWrl_transactionDeathProp(cloneTransactionDeathProp);
 		
-		int[] cloneTransactionVarProp = new int[this.wrl_transactionTypes];		
+		/*int[] cloneTransactionVarProp = new int[this.wrl_transactionTypes];		
 		System.arraycopy(workload.getWrl_transactionVarProp(), 0, cloneTransactionVarProp, 0, workload.getWrl_transactionVarProp().length);
-		this.setWrl_transactionVarProp(cloneTransactionVarProp);
+		this.setWrl_transactionVarProp(cloneTransactionVarProp);*/
 		
 		Map<Integer, ArrayList<Transaction>> cloneTransactionMap = new TreeMap<Integer, ArrayList<Transaction>>();
 		int cloneTransactionType;		
@@ -165,20 +165,20 @@ public class Workload implements Comparable<Workload> {
 		}
 		this.setWrl_transactionMap(cloneTransactionMap);
 		this.setWrl_initTotalTransactions(workload.getWrl_initTotalTransactions());
-		this.setWrl_totalTransaction(workload.getWrl_totalTransaction());
+		this.setWrl_totalTransaction(workload.getWrl_totalTransactions());
 						
-		this.setWrl_totalData(workload.getWrl_totalData());
-		this.setWrl_interPartitionDataMovements(workload.getWrl_interPartitionDataMovements());
+		this.setWrl_totalData(workload.getWrl_totalDataObjects());
+		this.setWrl_intraNodeDataMovements(workload.getWrl_intraNodeDataMovements());
 		this.setWrl_interNodeDataMovements(workload.getWrl_interNodeDataMovements());
 				
 		this.setWrl_workload_file(workload.getWrl_workload_file());
 		this.setWrl_fixfile(workload.getWrl_fixfile());
 		
-		this.setWrl_dt_impact(workload.getWrl_dt_impact());
-		this.setWrl_dt_nums(workload.getWrl_dt_nums());
-		this.setWrl_percentage_dt(workload.getWrl_percentage_dt());
-		this.setWrl_percentage_pdmv(workload.getWrl_percentage_pdmv());
-		this.setWrl_percentage_ndmv(workload.getWrl_percentage_ndmv());
+		this.setWrl_dt_impact(workload.getWrl_DtImpact());
+		this.setWrl_dt_nums(workload.getWrl_DtNumbers());
+		this.setWrl_percentage_dt(workload.getWrl_percentageDistributedTransactions());
+		this.setWrl_percentage_intra_ndmv(workload.getWrl_percentageIntraNodeDataMovement());
+		this.setWrl_percentage_inter_ndmv(workload.getWrl_percentageInterNodeDataMovement());
 		
 		this.setWrl_hasDataMoved(workload.isWrl_hasDataMoved());
 		this.setMessage(workload.getMessage());
@@ -192,7 +192,7 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_id = id;
 	}
 
-	public int getWrl_round() {
+	public int getWrl_simulationRound() {
 		return wrl_round;
 	}
 
@@ -288,7 +288,7 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_transactionMap = wrl_transactionMap;
 	}
 
-	public int[] getWrl_transactionProp() {
+	public int[] getWrl_transactionProportions() {
 		return wrl_transactionProp;
 	}
 
@@ -296,32 +296,32 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_transactionProp = wrl_transactionProp;
 	}
 	
-	public int[] getWrl_transactionVarProp() {
+/*	public int[] getWrl_transactionVarProp() {
 		return wrl_transactionVarProp;
 	}
 
 	public void setWrl_transactionVarProp(int[] wrl_transactionVarProp) {
 		this.wrl_transactionVarProp = wrl_transactionVarProp;
-	}
+	}*/
 
-	public void incWrl_transactionPropVal(int pos) {
-		++this.getWrl_transactionProp()[pos];
+	public void incWrl_transactionProportions(int pos) {
+		++this.getWrl_transactionProportions()[pos];
 	}
 	
-	public void incWrl_transactionPropVal(int pos, int val) {
-		int value = this.getWrl_transactionProp()[pos];
+	public void incWrl_transactionProportions(int pos, int val) {
+		int value = this.getWrl_transactionProportions()[pos];
 		value += val;
-		this.getWrl_transactionProp()[pos] = value;
+		this.getWrl_transactionProportions()[pos] = value;
 	}
 	
-	public void decWrl_transactionPropVal(int pos) {		
-		--this.getWrl_transactionProp()[pos];		
+	public void decWrl_transactionProportions(int pos) {		
+		--this.getWrl_transactionProportions()[pos];		
 	}
 	
-	public void decWrl_transactionPropVal(int pos, int val) {
-		int value = this.getWrl_transactionProp()[pos];
+	public void decWrl_transactionProportions(int pos, int val) {
+		int value = this.getWrl_transactionProportions()[pos];
 		value -= val;
-		this.getWrl_transactionProp()[pos] = value;
+		this.getWrl_transactionProportions()[pos] = value;
 	}
 
 	public int getWrl_transactionBorning() {
@@ -364,7 +364,7 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_transactionBirthProp = wrl_transactionBirthProp;
 	}
 
-	public int[] getWrl_transactionDeathProp() {
+	public int[] getWrl_transactionDeathProportions() {
 		return wrl_transactionDeathProp;
 	}
 
@@ -372,7 +372,7 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_transactionDeathProp = wrl_transactionDeathProp;
 	}
 
-	public int getWrl_totalTransaction() {
+	public int getWrl_totalTransactions() {
 		return wrl_totalTransaction;
 	}
 
@@ -389,18 +389,18 @@ public class Workload implements Comparable<Workload> {
 	}
 
 	public void incWrl_totalTransaction() {
-		int totalTransaction = this.getWrl_totalTransaction();		
+		int totalTransaction = this.getWrl_totalTransactions();		
 		++totalTransaction;
 		this.setWrl_totalTransaction(totalTransaction);
 	}
 	
-	public void decWrl_totalTransaction() {
-		int totalTransaction = this.getWrl_totalTransaction();		
+	public void decWrl_totalTransactions() {
+		int totalTransaction = this.getWrl_totalTransactions();		
 		--totalTransaction;
 		this.setWrl_totalTransaction(totalTransaction);
 	}
 
-	public int getWrl_totalData() {
+	public int getWrl_totalDataObjects() {
 		return wrl_totalData;
 	}
 
@@ -408,12 +408,12 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_totalData = wrl_totalData;
 	}
 
-	public int getWrl_interPartitionDataMovements() {
-		return wrl_interPartitionDataMovements;
+	public int getWrl_intraNodeDataMovements() {
+		return wrl_intraNodeDataMovements;
 	}
 
-	public void setWrl_interPartitionDataMovements(int wrl_interPartitionDataMovements) {
-		this.wrl_interPartitionDataMovements = wrl_interPartitionDataMovements;
+	public void setWrl_intraNodeDataMovements(int wrl_intraNodeDataMovements) {
+		this.wrl_intraNodeDataMovements = wrl_intraNodeDataMovements;
 	}
 
 	public int getWrl_interNodeDataMovements() {
@@ -440,7 +440,7 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_fixfile = wrl_fixfile;
 	}
 	
-	public double getWrl_dt_impact() {
+	public double getWrl_DtImpact() {
 		return wrl_dt_impact;
 	}
 
@@ -490,8 +490,8 @@ public class Workload implements Comparable<Workload> {
 	public void generateWorkloadFile(DatabaseServer dbs, Workload workload, String dir) {
 		File workloadFile = new File(dir+"\\"+this.getWrl_workload_file());
 		Data trData;
-		int totalHyperEdges = this.getWrl_totalTransaction() + dbs.getDbs_nodes().size();
-		int totalDataItems = this.getWrl_totalData();
+		int totalHyperEdges = this.getWrl_totalTransactions() + dbs.getDbs_nodes().size();
+		int totalDataItems = this.getWrl_totalDataObjects();
 		int hasTransactionWeight = 1;
 		int hasDataWeight = 1;						
 		
@@ -510,7 +510,7 @@ public class Workload implements Comparable<Workload> {
 						while(data.hasNext()) {
 							trData = data.next();
 							//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
-							writer.write(Integer.toString(trData.getData_shadow_hmetis_id()));							
+							writer.write(Integer.toString(trData.getData_shadowHMetisId()));							
 							
 							if(data.hasNext())
 								writer.write(" "); 
@@ -524,7 +524,7 @@ public class Workload implements Comparable<Workload> {
 					writer.write("1"+" "); // 1 = Node HyperEdge Weight will be always equals to 1
 					Iterator<Data> itr_node = entry.getValue().iterator();
 					while(itr_node.hasNext()) {
-						writer.write(Integer.toString(itr_node.next().getData_shadow_hmetis_id()));
+						writer.write(Integer.toString(itr_node.next().getData_shadowHMetisId()));
 						
 						if(itr_node.hasNext())
 							writer.write(" ");
@@ -565,7 +565,7 @@ public class Workload implements Comparable<Workload> {
 					for(Transaction transaction : entry.getValue()) {			
 						for(Data data : transaction.getTr_dataSet()) {						
 							if(data.isData_isMoveable())
-								writer.write(Integer.toString(data.getData_partition_id()));
+								writer.write(Integer.toString(data.getData_partitionId()));
 							else
 								writer.write(Integer.toString(-1));
 							
@@ -583,7 +583,7 @@ public class Workload implements Comparable<Workload> {
 		}		
 	}
 
-	public int getWrl_dt_nums() {
+	public int getWrl_DtNumbers() {
 		return wrl_dt_nums;
 	}
 
@@ -591,7 +591,7 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_dt_nums = wrl_dt_nums;
 	}
 
-	public double getWrl_percentage_dt() {
+	public double getWrl_percentageDistributedTransactions() {
 		return wrl_percentage_dt;
 	}
 
@@ -599,19 +599,19 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_percentage_dt = wrl_percentage_dt;
 	}
 
-	public double getWrl_percentage_pdmv() {
+	public double getWrl_percentageIntraNodeDataMovement() {
 		return wrl_percentage_pdmv;
 	}
 
-	public void setWrl_percentage_pdmv(double wrl_percentage_pdmv) {
+	public void setWrl_percentage_intra_ndmv(double wrl_percentage_pdmv) {
 		this.wrl_percentage_pdmv = wrl_percentage_pdmv;
 	}
 		
-	public double getWrl_percentage_ndmv() {
+	public double getWrl_percentageInterNodeDataMovement() {
 		return wrl_percentage_ndmv;
 	}
 
-	public void setWrl_percentage_ndmv(double wrl_percentage_ndmv) {
+	public void setWrl_percentage_inter_ndmv(double wrl_percentage_ndmv) {
 		this.wrl_percentage_ndmv = wrl_percentage_ndmv;
 	}
 
@@ -651,24 +651,24 @@ public class Workload implements Comparable<Workload> {
 			} // end -- for()-Transaction		
 		} // end -- for()-
 				
-		double percentage = ((double)counts/(double)this.getWrl_totalTransaction())*100.0;
+		double percentage = ((double)counts/(double)this.getWrl_totalTransactions())*100.0;
 		percentage = Math.round(percentage * 100.0)/100.0;
 		this.setWrl_dt_nums(counts);
 		this.setWrl_percentage_dt(percentage);	
 	}
 	
 	// Calculate the percentage of Data movements within the Workload (after running Strategy-1 and 2)
-	public void calculatePDMVPercentage(int inter_partition_movements) {
-		double percentage = ((double)inter_partition_movements/this.getWrl_totalData())*100.0;
+	public void calculateIntraNodeDataMovementPercentage(int intra_node_movements) {
+		double percentage = ((double)intra_node_movements/this.getWrl_totalDataObjects())*100.0;
 		percentage = Math.round(percentage*100.0)/100.0;
-		this.setWrl_percentage_pdmv(percentage);
+		this.setWrl_percentage_intra_ndmv(percentage);
 	}
 	
-	public void calculateNDMVPercentage(int inter_node_movements) {
-		int counts = this.getWrl_totalData();		
+	public void calculateInterNodeDataMovementPercentage(int inter_node_movements) {
+		int counts = this.getWrl_totalDataObjects();		
 		double percentage = ((double)inter_node_movements/counts)*100.0;
 		percentage = Math.round(percentage*100.0)/100.0;
-		this.setWrl_percentage_ndmv(percentage);
+		this.setWrl_percentage_inter_ndmv(percentage);
 	}
 
 	public String getMessage() {
@@ -687,21 +687,21 @@ public class Workload implements Comparable<Workload> {
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {
 				for(Data data : transaction.getTr_dataSet()) {
-					if(!data.isData_isPartitionRoaming()) {			
-						if(this.getDataPartitionTable().containsKey(data.getData_partition_id())) {
-							this.getDataPartitionTable().get(data.getData_partition_id()).add(data);
+					if(!data.isData_isRoaming()) {			
+						if(this.getDataPartitionTable().containsKey(data.getData_homePartitionId())) {
+							this.getDataPartitionTable().get(data.getData_homePartitionId()).add(data);
 						} else {
 							dataSet = new TreeSet<Data>();
 							dataSet.add(data);
-							this.getDataPartitionTable().put(data.getData_partition_id(), dataSet);
+							this.getDataPartitionTable().put(data.getData_homePartitionId(), dataSet);
 						}
 					} else {
-						if(this.getDataPartitionTable().containsKey(data.getData_roaming_partition_id())) {
-							this.getDataPartitionTable().get(data.getData_roaming_partition_id()).add(data);
+						if(this.getDataPartitionTable().containsKey(data.getData_partitionId())) {
+							this.getDataPartitionTable().get(data.getData_partitionId()).add(data);
 						} else {
 							dataSet = new TreeSet<Data>();
 							dataSet.add(data);
-							this.getDataPartitionTable().put(data.getData_roaming_partition_id(), dataSet);
+							this.getDataPartitionTable().put(data.getData_partitionId(), dataSet);
 						}
 					}
 				} // end -- for()-Data
@@ -717,21 +717,21 @@ public class Workload implements Comparable<Workload> {
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {	
 				for(Data data : transaction.getTr_dataSet()) {
-					if(!data.isData_isNodeRoaming()) {
-						if(this.getDataNodeTable().containsKey(data.getData_node_id())) {
-							this.getDataNodeTable().get(data.getData_node_id()).add(data);
+					if(!data.isData_isRoaming()) {
+						if(this.getDataNodeTable().containsKey(data.getData_homeNodeId())) {
+							this.getDataNodeTable().get(data.getData_homeNodeId()).add(data);
 						} else {
 							dataSet = new TreeSet<Data>();
 							dataSet.add(data);
-							this.getDataNodeTable().put(data.getData_node_id(), dataSet);
+							this.getDataNodeTable().put(data.getData_homeNodeId(), dataSet);
 						}
 					} else {
-						if(this.getDataNodeTable().containsKey(data.getData_roaming_node_id())) {
-							this.getDataNodeTable().get(data.getData_roaming_node_id()).add(data);
+						if(this.getDataNodeTable().containsKey(data.getData_nodeId())) {
+							this.getDataNodeTable().get(data.getData_nodeId()).add(data);
 						} else {
 							dataSet = new TreeSet<Data>();
 							dataSet.add(data);
-							this.getDataNodeTable().put(data.getData_roaming_node_id(), dataSet);
+							this.getDataNodeTable().put(data.getData_nodeId(), dataSet);
 						}
 					}
 				} // end -- for()-Data
@@ -767,7 +767,7 @@ public class Workload implements Comparable<Workload> {
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
 				//System.out.print(data.toString());
-				if(data.isData_isPartitionRoaming())
+				if(data.isData_isRoaming())
 					++roaming_data;
 				
 				if(comma != 1)
@@ -795,7 +795,7 @@ public class Workload implements Comparable<Workload> {
 			comma = entry.getValue().size();
 			for(Data data : entry.getValue()) {
 				//System.out.print(data.toString());
-				if(data.isData_isNodeRoaming())
+				if(data.isData_isRoaming())
 					++roaming_data;
 				
 				if(comma != 1)
@@ -815,27 +815,22 @@ public class Workload implements Comparable<Workload> {
 		ArrayList<Integer> overloadedPartition = new ArrayList<Integer>();
 		
 		int comma = -1;
-		for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {
-			System.out.print("        N"+entry.getKey()+"{");
-			
-			comma = entry.getValue().size();
+		for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {
+			System.out.println("      --N"+entry.getKey());//+"{");
+						
 			for(Partition partition : entry.getValue()) {				
-				System.out.print(partition.toString());
+				System.out.println("       -"+partition.toString());				
+				//System.out.print("       ");	
+				//partition.printContents();
 				
 				if(partition.isPartition_overloaded())
-					overloadedPartition.add(partition.getPartition_id());
-				
-				if(comma != 1)
-					System.out.print(", ");
-			
-				--comma;
-			}
-			
-			System.out.print("}\n");			
+					overloadedPartition.add(partition.getPartition_id());															
+			}			
 		}
 		
 		if(overloadedPartition.size() != 0) {
-			System.out.print("        [ALM] Overloaded Partition: ");
+			System.out.println();
+			System.out.print("[ALM] Overloaded Partition: ");
 			comma = overloadedPartition.size();
 			for(Integer pid : overloadedPartition) {
 				System.out.print("P"+pid);
@@ -850,9 +845,9 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void print(Database db) {				
-		System.out.println("[OUT] Simulation Round-"+this.getWrl_round()+" ("+this.getMessage()+") :: Workload Details");
+		System.out.println("[OUT] "+this.getMessage()+" Workload Details for Simulation Round-"+this.getWrl_simulationRound());
 		System.out.print("      "+this.toString() +" having a distribution of ");				
-		this.printWrl_transactionProp(this.getWrl_transactionProp());
+		this.printWrl_transactionProp(this.getWrl_transactionProportions());
 				
 		System.out.println("\n      -----------------------------------------------------------------------------------------------------------------");
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
@@ -867,32 +862,31 @@ public class Workload implements Comparable<Workload> {
 		this.calculateDTImapct();
 		
 		System.out.println();
-		System.out.println("      # Distributed Transactions: "+this.getWrl_dt_nums()
-				+" ("+this.getWrl_percentage_dt()+"% of " 
-				+"Total "+this.getWrl_totalTransaction()+" Workload Transactions)");
-		System.out.println("      # Impact of Distributed Transactions: "+this.getWrl_dt_impact()
+		System.out.println("      # Distributed Transactions: "+this.getWrl_DtNumbers()
+				+" ("+this.getWrl_percentageDistributedTransactions()+"% of " 
+				+"Total "+this.getWrl_totalTransactions()+" Workload Transactions)");
+		System.out.println("      # Impact of Distributed Transactions: "+this.getWrl_DtImpact()
 				+" (for a particular workload round)");
 		
 		if(this.isWrl_hasDataMoved()) {
-			System.out.println("      # Inter-Partition Data Movements: "+this.getWrl_interPartitionDataMovements()
-					+" ("+this.getWrl_percentage_pdmv()+"% of "
-					+"Total "+this.getWrl_totalData()+" Workload Data)");
-			System.out.println("      # Inter-Node Data Movements: "+this.getWrl_interNodeDataMovements()
-					+" ("+this.getWrl_percentage_ndmv()+"% of "
-					+"Total "+this.getWrl_totalData()+" Workload Data)");
+			System.out.println("      # Intra-Node Data Movements (Avoided): "+this.getWrl_intraNodeDataMovements()
+					+" ("+this.getWrl_percentageIntraNodeDataMovement()+"% of "
+					+"Total "+this.getWrl_totalDataObjects()+" Workload Data)");
+			System.out.println("      # Inter-Node Data Movements (Performed): "+this.getWrl_interNodeDataMovements()
+					+" ("+this.getWrl_percentageInterNodeDataMovement()+"% of "
+					+"Total "+this.getWrl_totalDataObjects()+" Workload Data)");
 		}
 		
-		//this.printPartitionTable(db);
+		this.printPartitionTable(db);
 		//this.printDataPartitionTable();
 		//this.printDataNodeTable();
-		System.out.println();
 		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
 	}
 	
 	@Override
 	public String toString() {	
-		return (this.wrl_label+" ["+this.getWrl_totalTransaction()+" Transactions (containing "+this.getWrl_totalData()
-				+" Data) of "+this.getWrl_transactionTypes());//+" types having a distribution of ");//+this.printWrl_transactionProp()+"]");
+		return (this.wrl_label+" ["+this.getWrl_totalTransactions()+" Transactions (containing "+this.getWrl_totalDataObjects()
+				+" Data) ");//+this.getWrl_transactionTypes());//+" types having a distribution of ");//+this.printWrl_transactionProp()+"]");
 	}
 
 	@Override

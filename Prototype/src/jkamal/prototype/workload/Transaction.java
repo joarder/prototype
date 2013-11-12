@@ -128,13 +128,13 @@ public class Transaction implements Comparable<Transaction> {
 		Iterator<Data> ns = dataSet.iterator();
 		while(ns.hasNext()) {
 			data = ns.next();
-			if(data.isData_isPartitionRoaming())
-				pid = data.getData_roaming_partition_id();				
+			if(data.isData_isRoaming())
+				pid = data.getData_partitionId();				
 			else 
-				pid = data.getData_partition_id();
+				pid = data.getData_homePartitionId();
 				
-			partition = db.getDb_partition_table().getPartition(pid);
-			nsCost.add(partition.getPartition_node_id());
+			partition = db.getDb_partitionTable().getPartition(pid);
+			nsCost.add(partition.getPartition_nodeId());
 		}
 		
 		this.setTr_dtCost(nsCost.size()-1);
@@ -146,10 +146,10 @@ public class Transaction implements Comparable<Transaction> {
 		Iterator<Data> ps = dataSet.iterator();
 		while(ps.hasNext()) {
 			data = ps.next();
-			if(data.isData_isPartitionRoaming())
-				pid = data.getData_roaming_partition_id();
+			if(data.isData_isRoaming())
+				pid = data.getData_partitionId();
 			else 
-				pid = data.getData_partition_id();				
+				pid = data.getData_homePartitionId();				
 			
 			psCost.add(pid);
 		}

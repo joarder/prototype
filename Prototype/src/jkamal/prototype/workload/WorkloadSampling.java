@@ -108,8 +108,8 @@ public class WorkloadSampling {
 				++discardedTransaction;
 				this.setDiscardedTransaction(discardedTransaction);
 				
-				workload.decWrl_transactionPropVal(trType);						
-				workload.decWrl_totalTransaction();							
+				workload.decWrl_transactionProportions(trType);						
+				workload.decWrl_totalTransactions();							
 			}
 		} else {
 			System.out.println("[MSG] No Distributed Transactions were found through Workload Sampling !!!");
@@ -135,7 +135,7 @@ public class WorkloadSampling {
 				if(transaction.getTr_dtCost() != 0) { // DT
 					workload.getWrl_transactionMap().get(trType).add(transaction);
 					
-					workload.incWrl_transactionPropVal(trType);					
+					workload.incWrl_transactionProportions(trType);					
 					workload.incWrl_totalTransaction();
 										
 					++reselectedTransactions;										
@@ -160,7 +160,7 @@ public class WorkloadSampling {
 			this.setReseletedTransaction(0);
 		}
 		
-		if(workload.getWrl_totalTransaction() <= 0) {
+		if(workload.getWrl_totalTransactions() <= 0) {
 			return true;
 		}
 		

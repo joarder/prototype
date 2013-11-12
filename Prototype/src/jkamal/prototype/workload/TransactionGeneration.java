@@ -8,15 +8,19 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.commons.math3.random.RandomDataGenerator;
+
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.GlobalDataMap;
+import jkamal.prototype.main.DBMSSimulator;
 
 public class TransactionGeneration {
 	public TransactionGeneration(){}
 	
 	// This function will generate the required number of Transactions for a specific Workload with a specific Database
-	public void generateTransaction(Database db, Workload workload) {
+	public void generateTransaction(RandomDataGenerator rand, Database db, Workload workload) {
 		GlobalDataMap dataMap = db.getDb_dataMap();						
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
@@ -25,22 +29,22 @@ public class TransactionGeneration {
 		int[] prop;
 		
 		//Selecting Transaction Prop
-		if(workload.getWrl_round() != 0)
+		if(workload.getWrl_simulationRound() != 0)
 			prop = workload.getWrl_transactionBirthProp();
 		else 
-			prop = workload.getWrl_transactionProp();
+			prop = workload.getWrl_transactionProportions();
 			
 		// Creating required local variables
 		int data_id = 0;
 		int data_weight = 0;
 				
 		int tr_id = 0; 
-		if(workload.getWrl_round() != 0)
+		if(workload.getWrl_simulationRound() != 0)
 			//tr_id = workload.getWrl_totalTransaction();
 			tr_id = workload.getWrl_globalTrId();
 		
 		// Creating a Random Object for randomly chosen Data items
-		Random random = new Random();
+		//Random random = new Random(DBMSSimulator.DATA_OBJECTS);
 		// i -- Transaction types
 		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {	
 			transactionList = new ArrayList<Transaction>();
@@ -52,7 +56,8 @@ public class TransactionGeneration {
 				
 				// k -- required numbers of Data items based on Transaction type
 				for(int k = 0; k < i+2; k++) {
-					data_id = random.nextInt(dataMap.getData_items().size());								
+					//data_id = random.nextInt(dataMap.getData_items().size());
+					data_id = (int) rand.nextUniform(0.0, DBMSSimulator.DATA_OBJECTS, false);
 					data = dataMap.getData_items().get(data_id);
 					data_weight = data.getData_weight();
 					data.setData_weight(++data_weight);					
@@ -72,10 +77,10 @@ public class TransactionGeneration {
 					transactionList.add(transaction);
 			} // end--j for() loop
 										
-			if(workload.getWrl_round() == 0)
+			if(workload.getWrl_simulationRound() == 0)
 				workload.getWrl_transactionMap().put(i, transactionList);
 			else
-				workload.incWrl_transactionPropVal(i, typedTransactions);			
+				workload.incWrl_transactionProportions(i, typedTransactions);			
 		} // end--i for() loop
 		
 		workload.setWrl_globalTrId(tr_id);

@@ -34,24 +34,28 @@ public class HGraphClusters {
 				cluster_id = Integer.valueOf(scanner.nextLine());				
 				++key;				
 				keyMap.put(key, cluster_id);
-				//System.out.println("@debug >> key:"+key+" | Cluster: "+cluster_id);
+				//System.out.println("@debug >> key: "+key+" | Cluster: "+cluster_id);
 			}						
 		} finally {
 			scanner.close();
 		}	
-		
-		//for(Entry<Integer, Set<Data>> entry : workload.getWrl_trDataMap().entrySet()) {
+				
+		//int d = 0;
+		//int r = 0;
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
-			for(Transaction transaction : entry.getValue()) {
-			//for(Data data : entry.getValue()) {
+			for(Transaction transaction : entry.getValue()) {		
 				for(Data data : transaction.getTr_dataSet()) {
-					if(data.isData_hasShadowHMetisId()) {					
-						data.setData_hmetis_cluster_id(keyMap.get(data.getData_shadow_hmetis_id()));
-						//System.out.println("@debug >> Data ("+data.toString()+") | hkey: "+data.getData_shadow_hmetis_id()+" | Cluster: "+data.getData_hmetis_cluster_id());
-						data.setData_shadow_hmetis_id(-1);
+					if(data.isData_hasShadowHMetisId()) {
+						//System.out.println("@debug >> d = "+d+"| key: "+keyMap.get(data.getData_shadowHMetisId())+" | "+data.toString());
+						data.setData_hmetisClusterId(keyMap.get(data.getData_shadowHMetisId()));
+						//System.out.println("@debug >> Data ("+data.toString()+") | hkey: "+data.getData_shadowHMetisId()+" | Cluster: "+data.getData_hmetisClusterId());
+						data.setData_shadowHMetisId(-1);
 						data.setData_hasShadowHMetisId(false);
+						//d++;
 					} else {
 						//System.out.println("@debug >> *Repeated Data ("+data.toString()+") | hkey: "+data.getData_shadow_hmetis_id());
+						//r++;
+						//System.out.println("@debug >> *r = "+r);
 					}
 				} // end -- for()-Data
 			} // end -- for()-Transaction

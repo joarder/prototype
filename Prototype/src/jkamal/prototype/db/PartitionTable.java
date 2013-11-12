@@ -62,7 +62,7 @@ public class PartitionTable {
 		Partition partition = this.getPartition(partition_id);
 		
 		if(partition.getPartition_id() == partition_id)
-			return partition.getPartition_node_id();
+			return partition.getPartition_nodeId();
 		
 		return node_id;
 	}

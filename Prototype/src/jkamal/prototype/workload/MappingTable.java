@@ -45,9 +45,11 @@ public class MappingTable {
 		
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {							
-				for(Data d1 : transaction.getTr_dataSet()) {
-					partition_id = d1.getData_partition_id();
-					cluster_id = d1.getData_hmetis_cluster_id();			
+				for(Data data : transaction.getTr_dataSet()) {
+					//System.out.println("--> "+data.toString());
+					
+					partition_id = data.getData_partitionId();
+					cluster_id = data.getData_hmetisClusterId();			
 					
 					e = mapping[partition_id+1][cluster_id+1];
 					e.setCounts(e.getCounts()+1);

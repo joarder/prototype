@@ -6,6 +6,9 @@ package jkamal.prototype.workload;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
+
+import org.apache.commons.math3.random.RandomDataGenerator;
+
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
@@ -29,10 +32,10 @@ public class WorkloadGeneration {
 		return null;
 	}
 	
-	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {
+	public Workload generateWorkload(RandomDataGenerator rand, DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {
 		int transaction_types = workload.getWrl_transactionTypes();
 		
-		if(workload.getWrl_round() != 0) {
+		if(workload.getWrl_simulationRound() != 0) {
 			// === Death Management
 			System.out.println("[MSG] Old Transaction Death Rate: "+workload.getWrl_transactionDeathRate());
 			System.out.print("[ACT] Killing "+workload.getWrl_transactionDying()+" old transactions with a distribution of ");			
@@ -40,11 +43,10 @@ public class WorkloadGeneration {
 			int[] deathArray = transactionPropGen(transaction_types, workload.getWrl_transactionDying());
 			workload.setWrl_transactionDeathProp(deathArray);
 			
-			workload.printWrl_transactionProp(workload.getWrl_transactionDeathProp());
+			workload.printWrl_transactionProp(workload.getWrl_transactionDeathProportions());
 			System.out.println();																		
 			
 			// Reducing Old Workload Transactions			
-			WorkloadGeneration.print(workload);
 			TransactionReduction trRed = new TransactionReduction();
 			trRed.reduceTransaction(db, workload);
 			
@@ -62,24 +64,24 @@ public class WorkloadGeneration {
 			
 			// Generating New Workload Transactions						
 			TransactionGeneration trGen = new TransactionGeneration();
-			trGen.generateTransaction(db, workload);			
+			trGen.generateTransaction(rand, db, workload);			
 			
 			WorkloadGeneration.print(workload);						
 			
 			// Other Stuffs
 			this.incrTransactionWeights(workload);
-			this.workloadEvaluation(db, workload);
-			this.assignHMetisId(workload);
+			//this.workloadEvaluation(db, workload);
+			this.assignShadowHMetisDataId(workload);
 		} else {
 			// Initial Round			
 			workload.setWrl_transactionProp(transactionPropGen(transaction_types, workload.getWrl_initTotalTransactions()));			
-			workload.printWrl_transactionProp(workload.getWrl_transactionProp());
+			workload.printWrl_transactionProp(workload.getWrl_transactionProportions());
 			System.out.println();
 			
 			// Generating New Workload Transactions
 			TransactionGeneration trGen = new TransactionGeneration();
-			trGen.generateTransaction(db, workload);
-			this.assignHMetisId(workload);		
+			trGen.generateTransaction(rand, db, workload);
+			this.assignShadowHMetisDataId(workload);		
 		}																		
 		
 		// Generating Workload's Data Partition and Node Distribution Details
@@ -109,9 +111,9 @@ public class WorkloadGeneration {
 	// new
 	public int[] transactionPropGen(int ranks, int elements) {		
 		int propArray[] = new int[ranks];
-		int rankArray[] = zipfLawProportionGen(ranks, elements);
+		int rankArray[] = zipfLawDistributionGeneration(ranks, elements);
 		
-		// TR Rankings {T1, T2, T3, T4, T5} = {4, 5, 1, 2, 3}; 1 = Higher, 5 = Lower
+		// TR Rankings {T1, T2, T3, T4, T5} = {5, 4, 1, 2, 3}; 1 = Higher, 5 = Lower
 		int begin = 0;
 		int end = rankArray.length-1;
 		for(int i = 0; i < propArray.length; i++) {
@@ -129,7 +131,7 @@ public class WorkloadGeneration {
 	}	
 	
 	//new
-	public int[] zipfLawProportionGen(int ranks, int elements) {
+	public int[] zipfLawDistributionGeneration(int ranks, int elements) {
 		double prop[] = new double[ranks];
 		int finalProp[] = new int[ranks];
 		
@@ -160,22 +162,26 @@ public class WorkloadGeneration {
 		return finalProp;
 	}
 	
-	public void assignHMetisId(Workload workload) {
+	public void assignShadowHMetisDataId(Workload workload) {
 		int total_dataItems = 0;
-		int hmetis_shadow_data_id = 1;
+		int shadow_hmetis_data_id = 1;
+		//int r = 0;
 		
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {
-				for(Data trData : transaction.getTr_dataSet()) {
-					if(!trData.isData_hasShadowHMetisId()) {					
-						trData.setData_shadow_hmetis_id(hmetis_shadow_data_id);
-						trData.setData_hasShadowHMetisId(true);
-						//System.out.println("@debug >> hData("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
+				for(Data data : transaction.getTr_dataSet()) {
+					if(!data.isData_hasShadowHMetisId()) {					
+						data.setData_shadowHMetisId(shadow_hmetis_data_id);
+						data.setData_hasShadowHMetisId(true);
+						//System.out.println("@debug >> hData("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());						
 						
 						++total_dataItems;
-						++hmetis_shadow_data_id;					
+						++shadow_hmetis_data_id;					
+						//System.out.println("@debug >> Total Data Tagged: "+total_dataItems);
 					} else {
-						//System.out.println("@debug >> *Repeated Data ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());					
+						//System.out.println("@debug >> *Repeated Data ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
+						//r++;
+						//System.out.println("@debug >> *r(before) = "+r);
 					}
 				} // end -- for()-Data
 			} // end -- for()-Transaction
@@ -196,7 +202,7 @@ public class WorkloadGeneration {
 		WorkloadGeneration.print(workload);
 						
 		// Re-evaluate Discarded Transactions
-		if(workload.getWrl_round() != 0) {
+		if(workload.getWrl_simulationRound() != 0) {
 			System.out.println("[ACT] Re-analysing previously discarded workload ...");
 			emptyWorkload = workloadSampling.includeDiscardedWorkload(db, workload);
 			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()+" newly distributed transactions are included from the previously discarded workload.");
@@ -210,9 +216,9 @@ public class WorkloadGeneration {
 	}
 	
 	public static void print(Workload workload) {
-		System.out.print("[MSG] Total "+workload.getWrl_totalTransaction()+" transactions of "+workload.getWrl_transactionTypes()
+		System.out.print("[MSG] Total "+workload.getWrl_totalTransactions()+" transactions of "+workload.getWrl_transactionTypes()
 				+" types having a distribution of ");										
-		workload.printWrl_transactionProp(workload.getWrl_transactionProp());
+		workload.printWrl_transactionProp(workload.getWrl_transactionProportions());
 		System.out.println(" are currently in the workload.");
 	}	
 }

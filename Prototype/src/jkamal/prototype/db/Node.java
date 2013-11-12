@@ -13,13 +13,13 @@ public class Node implements Comparable<Node> {
 	private int node_id;
 	private String node_label;				
 	private Set<Partition> node_partitions;
-	private static int NODE_MAX_CAPACITY;
+	private static int NODE_MAX_CAPACITY = 10; // 1000GB = 1TB -- 1000 Partitions // 1TB Data (in Size) Or, equivalently 1000 Partitions can be stored in a single node.
 	
 	public Node(int id, int label) {
 		this.setNode_id(id);
 		this.setNode_label("N"+label);		
 		this.setNode_partitions(new TreeSet<Partition>());
-		Node.setNODE_MAX_CAPACITY(10); // 10GB -- 10 Partitions // 1TB Data (in Size) Or, equivalently 1000 Partitions can be stored in a single node.		
+		//Node.setNODE_MAX_CAPACITY(10); 		
 	}
 
 	public int getNode_id() {

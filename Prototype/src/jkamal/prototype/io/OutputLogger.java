@@ -133,12 +133,12 @@ public class OutputLogger {
 			
 			prWriter.println();			
 			
-			for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {				
+			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {				
 				space = entry.getValue().size();
 				for(Partition partition : entry.getValue()) {
-					prWriter.print(Integer.toString(partition.getPartition_data_items().size())+" ");
-					prWriter.print(Integer.toString(partition.getRoaming_data_items().size())+" ");
-					prWriter.print(Integer.toString(partition.getForeign_data_items().size()));
+					prWriter.print(Integer.toString(partition.getPartition_dataObjects().size())+" ");
+					prWriter.print(Integer.toString(partition.getRoaming_dataObjects().size())+" ");
+					prWriter.print(Integer.toString(partition.getForeign_dataObjects().size()));
 					
 					if(space != 1)
 						prWriter.print(" ");
@@ -155,24 +155,24 @@ public class OutputLogger {
 	
 	public void logWorkload(Database db, Workload workload, PrintWriter prWriter) {		
 		if(!this.isData_movement()) {									
-			prWriter.print(workload.getWrl_capture()+" ");
-			prWriter.print(workload.getWrl_round()+" ");
-			prWriter.print(workload.getWrl_percentageVariation()+" ");
+			//prWriter.print(workload.getWrl_capture()+" ");
+			prWriter.print(workload.getWrl_simulationRound()+" ");
+			//prWriter.print(workload.getWrl_percentageVariation()+" ");
 			prWriter.print("in ");
 			
-			prWriter.print(workload.getWrl_dt_nums()+" ");
-			prWriter.print(workload.getWrl_dt_impact()+" ");																		
+			prWriter.print(workload.getWrl_DtNumbers()+" ");
+			prWriter.print(workload.getWrl_DtImpact()+" ");																		
 		} else {					
 			prWriter.print(db.getDb_dmv_strategy()+" ");
 			
-			prWriter.print(workload.getWrl_dt_nums()+" ");
-			prWriter.print(workload.getWrl_dt_impact()+" ");								
+			prWriter.print(workload.getWrl_DtNumbers()+" ");
+			prWriter.print(workload.getWrl_DtImpact()+" ");								
 			
-			prWriter.print(workload.getWrl_totalData()+" ");
-			prWriter.print(workload.getWrl_interPartitionDataMovements()+" ");
-			prWriter.print(workload.getWrl_percentage_pdmv()+" ");
+			prWriter.print(workload.getWrl_totalDataObjects()+" ");
+			prWriter.print(workload.getWrl_intraNodeDataMovements()+" ");
+			prWriter.print(workload.getWrl_percentageIntraNodeDataMovement()+" ");
 			prWriter.print(workload.getWrl_interNodeDataMovements()+" ");
-			prWriter.print(workload.getWrl_percentage_ndmv());
+			prWriter.print(workload.getWrl_percentageInterNodeDataMovement());
 			
 			prWriter.println();			
 		}				
@@ -180,14 +180,14 @@ public class OutputLogger {
 	
 	public void logPartition(Database db, Workload workload, PrintWriter prWriter) {						
 		if(!this.isData_movement()) {
-			for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {
+			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {
 				for(Partition partition : entry.getValue()) {
 					this.getPartitionsBeforeDM().put(partition.getPartition_id(), 
 							entry.getKey()+" "+partition.getPartition_id()+" "+this.logPartitionDetails(partition)+" ");
 				}						
 			}						
 		} else {			
-			for(Entry<Integer, Set<Partition>> entry : db.getDb_partition_table().getPartition_table().entrySet()) {							
+			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {							
 				for(Partition partition : entry.getValue()) {
 					prWriter.print(this.getPartitionsBeforeDM().get(partition.getPartition_id()));					
 					prWriter.println(this.logPartitionDetails(partition));
@@ -198,16 +198,16 @@ public class OutputLogger {
 	
 	private String logPartitionDetails(Partition partition) {
 		return (partition.getPartition_current_load()+" "
-				+partition.getPartition_data_items().size()+" "+partition.getPartition_percentage_main()+" "
-				+partition.getRoaming_data_items().size()+" "+partition.getPartition_percentage_roaming()+" "
-				+partition.getForeign_data_items().size()+" "+partition.getPartition_percentage_foreign());	
+				+partition.getPartition_dataObjects().size()+" "+partition.getPartition_percentageMain()+" "
+				+partition.getRoaming_dataObjects().size()+" "+partition.getPartition_percentageRoaming()+" "
+				+partition.getForeign_dataObjects().size()+" "+partition.getPartition_percentageForeign());	
 	}
 	
 	public void logTransactionProp(Workload workload, PrintWriter prWriter) {
 		prWriter.print(workload.getWrl_transactionTypes()+" ");
 		
-		int space = workload.getWrl_transactionProp().length;
-		for(double prop : workload.getWrl_transactionProp()) {
+		int space = workload.getWrl_transactionProportions().length;
+		for(double prop : workload.getWrl_transactionProportions()) {
 			prWriter.print(Integer.toString((int)Math.round(prop)));
 			--space;
 			

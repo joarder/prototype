@@ -23,7 +23,7 @@ public class PrintWorkloadDetails {
 		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {
 			System.out.println("===Type["+i+"] Transactions===");
 			
-			if(workload.getWrl_transactionProp()[i] == 0)
+			if(workload.getWrl_transactionProportions()[i] == 0)
 				System.out.println("! No Transactions");
 						
 			//for(int j = 0; j < workload.getWrl_transactionProp()[i]; j++) {

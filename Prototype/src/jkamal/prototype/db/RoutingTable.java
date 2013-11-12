@@ -60,10 +60,10 @@ public class RoutingTable {
 		Data data = db.getDb_routing_table().getData(db, data_id);
 				
 		// if the Data has been moved to (Roaming) another Partition
-		if(data.isData_isPartitionRoaming())
-			partition_id = data.getData_roaming_partition_id();
+		if(data.isData_isRoaming())
+			partition_id = data.getData_partitionId();
 		else
-			partition_id = data.getData_partition_id();
+			partition_id = data.getData_homePartitionId();
 		
 		return partition_id;
 	}
