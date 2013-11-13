@@ -25,7 +25,7 @@ import jkamal.prototype.workload.WorkloadVariation;
 public class DBMSSimulator {	
 	public final static int DB_SERVERS = 3;
 	public final static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
-	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
+	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "khmetis";
 	public final static int TRANSACTION_NUMS = 1000;
 	public final static int SIMULATION_RUN_NUMBERS = 28;
@@ -92,10 +92,10 @@ public class DBMSSimulator {
 			System.out.println("[RUN] Running Simulation Round-"+simulation_round+" ...");
 			
 			if(simulation_round != 0) {		
-				/*if(simulation_round > 1) {
+				if(simulation_round > 1) {
 					workloadGen.workloadRestoration(db, workload);
 					workload.setWrl_restoredTransactions(0);
-				}*/
+				}
 				
 				workload.setWrl_round(simulation_round);				
 				System.out.println("[MSG] Total "+workload.getWrl_totalTransactions()+" previous transactions have been carried forward to the current Workload");

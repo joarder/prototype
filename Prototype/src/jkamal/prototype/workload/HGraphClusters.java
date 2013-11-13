@@ -16,7 +16,7 @@ import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 
 public class HGraphClusters {
-	private String part_dir = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";
+	private String part_dir = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";
 	
 	public HGraphClusters() { }
 	

@@ -67,7 +67,7 @@ public class WorkloadGeneration {
 			
 			// Other Stuffs
 			this.incrTransactionWeights(workload);
-			//this.workloadEvaluation(db, workload);
+			this.workloadEvaluation(db, workload);
 			this.assignShadowHMetisDataId(workload);
 		} else {
 			// Initial Round			

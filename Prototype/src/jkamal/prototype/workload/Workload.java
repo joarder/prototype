@@ -49,8 +49,7 @@ public class Workload implements Comparable<Workload> {
 	private double wrl_transactionBirthRate;
 	private double wrl_transactionDeathRate;
 	private int[] wrl_transactionBirthProp;
-	private int[] wrl_transactionDeathProp;
-	//private int[] wrl_transactionVarProp;	
+	private int[] wrl_transactionDeathProp;		
 	
 	private int wrl_totalData;	
 	private int wrl_intraNodeDataMovements;
@@ -95,8 +94,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_transactionBirthRate(0.0d);
 		this.setWrl_transactionDeathRate(0.0d);
 		this.setWrl_transactionBirthProp(new int[this.getWrl_transactionTypes()]);
-		this.setWrl_transactionDeathProp(new int[this.getWrl_transactionTypes()]);
-		//this.setWrl_transactionVarProp(new int[this.getWrl_transactionTypes()]);
+		this.setWrl_transactionDeathProp(new int[this.getWrl_transactionTypes()]);		
 		
 		this.setWrl_totalData(0);
 		this.setWrl_intraNodeDataMovements(0);
@@ -147,10 +145,6 @@ public class Workload implements Comparable<Workload> {
 		int[] cloneTransactionDeathProp = new int[this.wrl_transactionTypes];		
 		System.arraycopy(workload.getWrl_transactionDeathProportions(), 0, cloneTransactionDeathProp, 0, workload.getWrl_transactionDeathProportions().length);
 		this.setWrl_transactionDeathProp(cloneTransactionDeathProp);
-		
-		/*int[] cloneTransactionVarProp = new int[this.wrl_transactionTypes];		
-		System.arraycopy(workload.getWrl_transactionVarProp(), 0, cloneTransactionVarProp, 0, workload.getWrl_transactionVarProp().length);
-		this.setWrl_transactionVarProp(cloneTransactionVarProp);*/
 		
 		Map<Integer, ArrayList<Transaction>> cloneTransactionMap = new TreeMap<Integer, ArrayList<Transaction>>();
 		int cloneTransactionType;		
@@ -297,14 +291,6 @@ public class Workload implements Comparable<Workload> {
 	public void setWrl_transactionProp(int[] wrl_transactionProp) {
 		this.wrl_transactionProp = wrl_transactionProp;
 	}
-	
-/*	public int[] getWrl_transactionVarProp() {
-		return wrl_transactionVarProp;
-	}
-
-	public void setWrl_transactionVarProp(int[] wrl_transactionVarProp) {
-		this.wrl_transactionVarProp = wrl_transactionVarProp;
-	}*/
 
 	public void incWrl_transactionProportions(int pos) {
 		++this.getWrl_transactionProportions()[pos];
@@ -646,8 +632,7 @@ public class Workload implements Comparable<Workload> {
 				
 		//double dt_impact = (double) total_impact/this.getWrl_totalTransaction();
 		double dt_impact = (double) total_impact/total_trFreq;
-		dt_impact = Math.round(dt_impact * 100.0)/100.0;		
-		//System.out.println("@debug >> DT Impact = "+dt_impact);
+		dt_impact = Math.round(dt_impact * 100.0)/100.0;
 		this.setWrl_dt_impact(dt_impact);
 	}
 
