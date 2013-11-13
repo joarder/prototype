@@ -5,12 +5,8 @@
 package jkamal.prototype.workload;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.apache.commons.math3.random.RandomDataGenerator;
-
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.GlobalDataMap;
@@ -20,7 +16,7 @@ public class TransactionGeneration {
 	public TransactionGeneration(){}
 	
 	// This function will generate the required number of Transactions for a specific Workload with a specific Database
-	public void generateTransaction(RandomDataGenerator rand, Database db, Workload workload) {
+	public void generateTransaction(Database db, Workload workload) {
 		GlobalDataMap dataMap = db.getDb_dataMap();						
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
@@ -57,7 +53,7 @@ public class TransactionGeneration {
 				// k -- required numbers of Data items based on Transaction type
 				for(int k = 0; k < i+2; k++) {
 					//data_id = random.nextInt(dataMap.getData_items().size());
-					data_id = (int) rand.nextUniform(0.0, DBMSSimulator.DATA_OBJECTS, false);
+					data_id = (int) DBMSSimulator.dataRand.nextUniform(0, DBMSSimulator.DATA_OBJECTS, false);
 					data = dataMap.getData_items().get(data_id);
 					data_weight = data.getData_weight();
 					data.setData_weight(++data_weight);					

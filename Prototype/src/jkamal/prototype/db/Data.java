@@ -204,9 +204,9 @@ public class Data implements Comparable<Data> {
 		//return (this.data_label+"[N"+this.data_node_id+"]");
 		
 		if(this.isData_isRoaming())
-			return (this.data_label+"[P"+this.data_partition_id+"((H)P"+this.data_home_partition_id+")|N"+this.data_node_id+"((H)N"+this.data_home_node_id+")] @C("+this.data_hmetis_cluster_id+") @h("+this.data_shadow_hmetis_id+")");
+			return (this.data_label+"[P"+this.data_partition_id+"((H)P"+this.data_home_partition_id+")|N"+this.data_node_id+"((H)N"+this.data_home_node_id+")]");// @C("+this.data_hmetis_cluster_id+") @h("+this.data_shadow_hmetis_id+")");
 		else
-			return (this.data_label+"[P"+this.data_partition_id+"|N"+this.data_node_id+"] @C("+this.data_hmetis_cluster_id+") //@h("+this.data_shadow_hmetis_id+")");
+			return (this.data_label+"[P"+this.data_partition_id+"|N"+this.data_node_id+"]");// @C("+this.data_hmetis_cluster_id+") //@h("+this.data_shadow_hmetis_id+")");
 		//return (this.data_label+"["+this.data_current_trId+"]");
 	}
 

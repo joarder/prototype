@@ -6,18 +6,17 @@ package jkamal.prototype.workload;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.math3.random.RandomDataGenerator;
+import jkamal.prototype.main.DBMSSimulator;
 
 public class WorkloadVariation {
 	private List<Double> transaction_birth_rate_list = new ArrayList<Double>();
 	private List<Double> transaction_death_rate_list = new ArrayList<Double>();
     private double transaction_birth_rate = 0.0;
-	private double bRangeMin = 0.0;
-	private double bRangeMax = 1.0;	
+	private double bRangeMin = 0.1;
+	private double bRangeMax = 0.9;	
 	private double transaction_death_rate = 0.0;		
-	private double dRangeMin = 0.0;
-	private double dRangeMax = 1.0;	
+	private double dRangeMin = 0.1;
+	private double dRangeMax = 0.9;	
 	
 	public WorkloadVariation() {
 		
@@ -97,9 +96,10 @@ public class WorkloadVariation {
 		return this.transaction_death_rate_list.get(simulation_round-1);
 	}
 	
-	public void generateVariation(RandomDataGenerator rand, int simulation_run_numbers) {		
+	public void generateVariation(int simulation_run_numbers) {		
 		for(int i = 0; i < simulation_run_numbers; i++) {
-			this.setTransaction_birth_rate(Math.round((this.getbRangeMin() + (this.getbRangeMax() - this.getbRangeMin()) * rand.nextWeibull(1, 0.5)) * 100.0) / 100.0);			
+			this.setTransaction_birth_rate(Math.round((this.getbRangeMin() + (this.getbRangeMax() - this.getbRangeMin()) * DBMSSimulator.bRand.nextWeibull(1, 1)) 
+					* 100.0) / 100.0);			
 					
 			if(this.getTransaction_birth_rate() >= 1) {
 				if(this.getTransaction_birth_rate() >= 2) {
@@ -119,13 +119,11 @@ public class WorkloadVariation {
 				// Nothing to do
 			}
 			
-			//this.setTransaction_death_rate(Math.round((this.getdRangeMin() + (this.getdRangeMax() - this.getdRangeMin()) * rand.nextWeibull(1, 1.0)) * 100.0) / 100.0);
-			this.setTransaction_death_rate(1-this.getTransaction_birth_rate());
+			this.setTransaction_death_rate(Math.round((this.getdRangeMin() + (this.getdRangeMax() - this.getdRangeMin()) * DBMSSimulator.dRand.nextWeibull(1, 1))
+					* 100.0) / 100.0);
+			//this.setTransaction_death_rate(1-this.getTransaction_birth_rate());						
 			
-			this.getTransaction_birth_rate_list().add(this.getTransaction_birth_rate());
-			this.getTransaction_death_rate_list().add(this.getTransaction_death_rate());
-			
-			/*if(this.getTransaction_death_rate() >= 1) {
+			if(this.getTransaction_death_rate() >= 1) {
 				if(this.getTransaction_death_rate() >= 2) {
 					if(this.getTransaction_death_rate() >= 3) {
 						if(this.getTransaction_death_rate() >= 4) {
@@ -141,8 +139,10 @@ public class WorkloadVariation {
 				}
 			} else {
 				// Nothing to do
-			}*/			
+			}			
 			
+			this.getTransaction_birth_rate_list().add(this.getTransaction_birth_rate());
+			this.getTransaction_death_rate_list().add(this.getTransaction_death_rate());
 	    }			
 	}
 }

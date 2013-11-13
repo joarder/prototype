@@ -29,6 +29,9 @@ public class DBMSSimulator {
 	public final static String HMETIS = "khmetis";
 	public final static int TRANSACTION_NUMS = 1000;
 	public final static int SIMULATION_RUN_NUMBERS = 28;
+	public static RandomDataGenerator bRand;
+	public static RandomDataGenerator dRand;
+	public static RandomDataGenerator dataRand;
 	
 	public static void main(String[] args) throws IOException {			
 		OutputLogger logger = new OutputLogger();
@@ -73,9 +76,14 @@ public class DBMSSimulator {
 		DataMovement dataMovement = new DataMovement();	
 		int simulation_round = 0;
 				
-		RandomDataGenerator rand = new RandomDataGenerator(); 
-	    rand.reSeed(0);
-	    workloadVariation.generateVariation(rand, SIMULATION_RUN_NUMBERS);	    
+		bRand = new RandomDataGenerator();
+		dRand = new RandomDataGenerator();
+		dataRand = new RandomDataGenerator();
+	    bRand.reSeed(0);
+	    dRand.reSeed(1);
+	    dataRand.reSeed(0);
+	    
+	    workloadVariation.generateVariation(SIMULATION_RUN_NUMBERS);	    
 	    		
 		System.out.println("***********************************************************************************************************************");
 		//============================================================================================== 		
@@ -83,7 +91,12 @@ public class DBMSSimulator {
 		while(simulation_round != SIMULATION_RUN_NUMBERS) {								
 			System.out.println("[RUN] Running Simulation Round-"+simulation_round+" ...");
 			
-			if(simulation_round != 0) {			
+			if(simulation_round != 0) {		
+				/*if(simulation_round > 1) {
+					workloadGen.workloadRestoration(db, workload);
+					workload.setWrl_restoredTransactions(0);
+				}*/
+				
 				workload.setWrl_round(simulation_round);				
 				System.out.println("[MSG] Total "+workload.getWrl_totalTransactions()+" previous transactions have been carried forward to the current Workload");
 
@@ -108,7 +121,7 @@ public class DBMSSimulator {
 			}  // end -- if-else()
 			
 			// Generate Synthetic Workload
-			workload = workloadGen.generateWorkload(rand, dbs, db, workload, DIR_LOCATION);
+			workload = workloadGen.generateWorkload(dbs, db, workload, DIR_LOCATION);
 			
 			workload.setMessage("Initial");
 			workload.print(db);

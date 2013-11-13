@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -41,6 +42,7 @@ public class Workload implements Comparable<Workload> {
 	private Map<Integer, ArrayList<Transaction>> wrl_transactionMap;
 	private int wrl_initTotalTransactions;
 	private int wrl_totalTransaction;
+	private int wrl_restoredTransactions;
 	
 	private int wrl_transactionBorning;
 	private int wrl_transactionDying;
@@ -623,6 +625,14 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_hasDataMoved = wrl_hasDataMoved;
 	}
 
+	public int getWrl_restoredTransactions() {
+		return wrl_restoredTransactions;
+	}
+
+	public void setWrl_restoredTransactions(int wrl_restoredTransactions) {
+		this.wrl_restoredTransactions = wrl_restoredTransactions;
+	}
+
 	// Calculate DT Impacts for the Workload
 	public void calculateDTImapct() {
 		int total_impact = 0;
@@ -630,13 +640,14 @@ public class Workload implements Comparable<Workload> {
 		
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) 
 			for(Transaction transaction : entry.getValue()) {
-				total_impact += transaction.getTr_dtCost()*transaction.getTr_weight();
+				total_impact += transaction.getTr_dtCost() * transaction.getTr_weight();
 				total_trFreq += transaction.getTr_weight();
 			}
 				
 		//double dt_impact = (double) total_impact/this.getWrl_totalTransaction();
 		double dt_impact = (double) total_impact/total_trFreq;
 		dt_impact = Math.round(dt_impact * 100.0)/100.0;		
+		//System.out.println("@debug >> DT Impact = "+dt_impact);
 		this.setWrl_dt_impact(dt_impact);
 	}
 
@@ -881,6 +892,35 @@ public class Workload implements Comparable<Workload> {
 		//this.printDataPartitionTable();
 		//this.printDataNodeTable();
 		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
+	}
+	
+	public void removeDuplicates() {
+		List<Transaction> duplicates = new ArrayList<Transaction>();
+		int duplicate = 0;
+		int trType = 0;
+				
+		System.out.println("[ACT] Searching for duplicates in the workload ..."); 
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				int tr_id = transaction.getTr_id();
+				
+				if(this.getWrl_transactionMap().entrySet().contains(tr_id)) {
+					duplicates.add(transaction);
+					++duplicate;
+				}
+			}
+		}
+		
+		System.out.println("[OUT] Total "+duplicate+" were transactions found in the workload !!!");
+		
+		int removed = 0;
+		for(Transaction transaction : duplicates) {
+			trType = transaction.getTr_type();
+			this.getWrl_transactionMap().get(trType).remove(transaction);
+			++removed;
+		}
+		
+		System.out.println("[OUT] Total "+removed+" duplicate transactions have been removed from the workload.");
 	}
 	
 	@Override

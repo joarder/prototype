@@ -79,13 +79,14 @@ public class WorkloadSampling {
 				}
 			} // end -- for()-Transaction
 		} // end -- for()-Transaction Types	
-				
+			
+		
+		int discardedTransaction = 0;
 		if(trMarkers.size() != 0) {
 			// Remove the Transaction from the Transaction Map and add to Discarded Transaction Map
 			Transaction delTransaction = null;
 			Transaction cloneTransaction = null;
-			int trType = 0;
-			int discardedTransaction = 0;
+			int trType = 0;			
 			ArrayList<Transaction> transactionList;
 			
 			for(Integer marker : trMarkers) {
@@ -94,32 +95,54 @@ public class WorkloadSampling {
 				
 				//System.out.println("@debug >> Discarding Tr("+delTransaction.getTr_id()+") type"+trType);
 				
-				cloneTransaction = new Transaction(delTransaction);						
-				if(this.getDiscardedWorkload().containsKey(trType))
-					this.getDiscardedWorkload().get(trType).add(cloneTransaction);
-				else {
+				//cloneTransaction = new Transaction(delTransaction);						
+				if(this.getDiscardedWorkload().containsKey(trType)) {
+					this.getDiscardedWorkload().get(trType).add(delTransaction);
+					++discardedTransaction;
+				} else {
 					transactionList = new ArrayList<Transaction>();
 					transactionList.add(delTransaction);
 					this.getDiscardedWorkload().put(trType, transactionList);
+					++discardedTransaction;
 				}						
 				
-				workload.getWrl_transactionMap().get(trType).remove(delTransaction);
-				
-				++discardedTransaction;
-				this.setDiscardedTransaction(discardedTransaction);
+				workload.getWrl_transactionMap().get(trType).remove(delTransaction);												
 				
 				workload.decWrl_transactionProportions(trType);						
 				workload.decWrl_totalTransactions();							
 			}
 		} else {
 			System.out.println("[MSG] No Distributed Transactions were found through Workload Sampling !!!");
-			this.setDiscardedTransaction(0);
+			//this.setDiscardedTransaction(0);
 		}
+		
+		this.setDiscardedTransaction(discardedTransaction);
+		//print();
 		
 		//@debug
 		//System.out.print("*");
 		//workload.printWrl_transactionProp();
 		//System.out.println("");
+	}
+	
+	public void restoreDiscardedWorkload(Database db, Workload workload) {
+		int trType = 0;
+		int restoredTransactions = 0;
+				
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getDiscardedWorkload().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {				
+				trType = transaction.getTr_type();				
+				workload.getWrl_transactionMap().get(trType).add(transaction);
+				++restoredTransactions;
+				
+				workload.incWrl_transactionProportions(trType);					
+				workload.incWrl_totalTransaction();																		
+			}
+		}
+		
+		//print();
+		workload.setWrl_restoredTransactions(restoredTransactions);
+		//this.setDiscardedWorkload(new TreeMap<Integer, ArrayList<Transaction>>());
 	}
 	
 	public boolean includeDiscardedWorkload(Database db, Workload workload) {
@@ -153,7 +176,7 @@ public class WorkloadSampling {
 				delTransaction = this.findTransaction(marker);
 				
 				//System.out.println("@debug >> Finally discarding Tr("+delTransaction.getTr_id()+")");
-				this.getDiscardedWorkload().get(trType).remove(delTransaction);				
+				//this.getDiscardedWorkload().get(trType).remove(delTransaction);				
 			}
 		} else {
 			System.out.println("[MSG] No Distributed Transactions were found through searching previously discarded Workload transactions !!!");
@@ -163,6 +186,8 @@ public class WorkloadSampling {
 		if(workload.getWrl_totalTransactions() <= 0) {
 			return true;
 		}
+		
+		this.setDiscardedWorkload(new TreeMap<Integer, ArrayList<Transaction>>());
 		
 		//@debug		
 		//System.out.print("*[");
@@ -182,5 +207,18 @@ public class WorkloadSampling {
 		}
 		
 		return null;
+	}
+	
+	public void print() {
+		int count = 0;
+		for(Entry<Integer, ArrayList<Transaction>> entry : this.getDiscardedWorkload().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {				
+				System.out.print("     ");
+				transaction.print();
+				++count;
+			}
+		}
+		
+		System.out.println("@debug >> Total "+count+" discarded transactions !!");
 	}
 }

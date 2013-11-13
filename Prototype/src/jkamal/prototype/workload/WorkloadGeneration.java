@@ -6,9 +6,6 @@ package jkamal.prototype.workload;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
-
-import org.apache.commons.math3.random.RandomDataGenerator;
-
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
@@ -32,7 +29,7 @@ public class WorkloadGeneration {
 		return null;
 	}
 	
-	public Workload generateWorkload(RandomDataGenerator rand, DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {
+	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {
 		int transaction_types = workload.getWrl_transactionTypes();
 		
 		if(workload.getWrl_simulationRound() != 0) {
@@ -64,7 +61,7 @@ public class WorkloadGeneration {
 			
 			// Generating New Workload Transactions						
 			TransactionGeneration trGen = new TransactionGeneration();
-			trGen.generateTransaction(rand, db, workload);			
+			trGen.generateTransaction(db, workload);			
 			
 			WorkloadGeneration.print(workload);						
 			
@@ -80,7 +77,7 @@ public class WorkloadGeneration {
 			
 			// Generating New Workload Transactions
 			TransactionGeneration trGen = new TransactionGeneration();
-			trGen.generateTransaction(rand, db, workload);
+			trGen.generateTransaction(db, workload);
 			this.assignShadowHMetisDataId(workload);		
 		}																		
 		
@@ -194,18 +191,12 @@ public class WorkloadGeneration {
 		WorkloadSampling workloadSampling = workload.getWorkloadSampling();
 		boolean emptyWorkload = false;
 		
-		// Workload Sampling
-		System.out.println("[ACT] Sampling Workload ...");		
-		workloadSampling.performSampling(workload);
-		System.out.println("[MSG] Total "+workloadSampling.getDiscardedTransaction()+" non-distributed transactions are discarded from current workload" +
-				"and left for re-analysing for the next round.");
-		WorkloadGeneration.print(workload);
-						
 		// Re-evaluate Discarded Transactions
-		if(workload.getWrl_simulationRound() != 0) {
+		if(workload.getWrl_simulationRound() > 1) {
 			System.out.println("[ACT] Re-analysing previously discarded workload ...");
 			emptyWorkload = workloadSampling.includeDiscardedWorkload(db, workload);
-			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()+" newly distributed transactions are included from the previously discarded workload.");
+			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()
+					+" newly distributed transactions are included from the previously discarded workload.");
 			WorkloadGeneration.print(workload);
 		}
 		
@@ -213,6 +204,24 @@ public class WorkloadGeneration {
 			System.out.println("[ALM] Empty workload !!! No transactions included !!!");
 			workload.setWorkloadEmpty(true);
 		}
+		
+		workload.removeDuplicates();
+		
+		// Workload Sampling
+		System.out.println("[ACT] Sampling Workload ...");		
+		workloadSampling.performSampling(workload);
+		System.out.println("[MSG] Total "+workloadSampling.getDiscardedTransaction()
+				+" non-distributed transactions are discarded from current workload and left for re-analysing for the next round.");
+		WorkloadGeneration.print(workload);						
+	}
+	
+	public void workloadRestoration(Database db, Workload workload) {
+		WorkloadSampling workloadSampling = workload.getWorkloadSampling();		
+		
+		System.out.println("[ACT] Restoring previously discarded transactions from last simulation round ...");
+		workloadSampling.restoreDiscardedWorkload(db, workload);
+		System.out.println("[OUT] Total "+workload.getWrl_restoredTransactions()+" transactions have been restored from last simulation round."); 
+		WorkloadGeneration.print(workload);
 	}
 	
 	public static void print(Workload workload) {
