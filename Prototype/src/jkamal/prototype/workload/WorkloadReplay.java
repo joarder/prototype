@@ -15,7 +15,7 @@ public class WorkloadReplay {
 	
 	public WorkloadReplay() {
 		this.setDb_replayMap(new TreeMap<Integer, Database>());
-		this.setWrl_ReplayMap(new TreeMap<Integer, Workload>());
+		this.setWrl_replayMap(new TreeMap<Integer, Workload>());
 	}
 
 	public Map<Integer, Database> getDb_replayMap() {
@@ -26,11 +26,11 @@ public class WorkloadReplay {
 		this.db_replayMap = db_replayMap;
 	}
 
-	public Map<Integer, Workload> getWrl_ReplayMap() {
+	public Map<Integer, Workload> getWrl_replayMap() {
 		return wrl_replayMap;
 	}
 
-	public void setWrl_ReplayMap(Map<Integer, Workload> workloadReplay) {
+	public void setWrl_replayMap(Map<Integer, Workload> workloadReplay) {
 		this.wrl_replayMap = workloadReplay;
 	}
 	
@@ -40,6 +40,6 @@ public class WorkloadReplay {
 		Workload cloneWorkload = new Workload(workload);
 
 		this.getDb_replayMap().put(simulation_round, cloneDb);
-		this.getWrl_ReplayMap().put(simulation_round, cloneWorkload);
+		this.getWrl_replayMap().put(simulation_round, cloneWorkload);
 	}
 }

@@ -187,7 +187,7 @@ public class DBMSSimulator {
 		int strategy1_run_round = 0;
 		while(strategy1_run_round != SIMULATION_RUN_NUMBERS) {					
 			Database db1 = new Database(workloadReplay.getDb_replayMap().get(strategy1_run_round));
-			Workload workload1 = new Workload(workloadReplay.getWrl_ReplayMap().get(strategy1_run_round));
+			Workload workload1 = new Workload(workloadReplay.getWrl_replayMap().get(strategy1_run_round));
 			//workload1.print(db1);
 			//System.out.println();
 			
@@ -216,7 +216,7 @@ public class DBMSSimulator {
 		int strategy2_run_round = 0;
 		while(strategy2_run_round != SIMULATION_RUN_NUMBERS) {			
 			Database db2 = new Database(workloadReplay.getDb_replayMap().get(strategy2_run_round));
-			Workload workload2 = new Workload(workloadReplay.getWrl_ReplayMap().get(strategy2_run_round));
+			Workload workload2 = new Workload(workloadReplay.getWrl_replayMap().get(strategy2_run_round));
 			//workload2.print(db2);
 			//System.out.println();
 			

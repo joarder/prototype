@@ -121,9 +121,9 @@ public class WorkloadVariation {
 			
 			this.setTransaction_death_rate(Math.round((this.getdRangeMin() + (this.getdRangeMax() - this.getdRangeMin()) * DBMSSimulator.dRand.nextWeibull(1, 1))
 					* 100.0) / 100.0);
-			//this.setTransaction_death_rate(1-this.getTransaction_birth_rate());						
+			this.setTransaction_death_rate(1-this.getTransaction_birth_rate());						
 			
-			if(this.getTransaction_death_rate() >= 1) {
+			/*if(this.getTransaction_death_rate() >= 1) {
 				if(this.getTransaction_death_rate() >= 2) {
 					if(this.getTransaction_death_rate() >= 3) {
 						if(this.getTransaction_death_rate() >= 4) {
@@ -139,7 +139,7 @@ public class WorkloadVariation {
 				}
 			} else {
 				// Nothing to do
-			}			
+			}*/			
 			
 			this.getTransaction_birth_rate_list().add(this.getTransaction_birth_rate());
 			this.getTransaction_death_rate_list().add(this.getTransaction_death_rate());
