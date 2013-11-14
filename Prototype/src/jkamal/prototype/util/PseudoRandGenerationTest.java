@@ -24,18 +24,27 @@ public class PseudoRandGenerationTest {
 	    RandomDataGenerator randData = new RandomDataGenerator(); 
 	    randData.reSeed(0);
 	    
-	    for (int i = 0; i < 168; i++) {
+	    RandomDataGenerator wData = new RandomDataGenerator(); 
+	    wData.reSeed(0);
+	    
+	    RandomDataGenerator w1Data = new RandomDataGenerator(); 
+	    w1Data.reSeed(1);
+	    
+	    for (int i = 0; i < 1000000; i++) {
 	        //z = randData.nextZipf(24, 0.5);
 	        //w = randData.nextWeibull(1, 0.5);
-	        w1 = randData.nextWeibull(1, 0.5);
+	        //w = wData.nextWeibull(1, 1);
+	        //w1 = w1Data.nextWeibull(1, 1);
 	        //p = randData.nextPoisson(0.5);
 	        //b = randData.nextBeta(2, 5);
-	    	//value = (int) randData.nextUniform(0.0, 10000.0, false);
+	    	value = (int) randData.nextUniform(0.0, 10000.0, false);
 	        
-	    	//System.out.print(value);
+	    	System.out.println(value);
 	        //System.out.print(" | "+Math.round((0.0 + (1.0 - 0.0) * w) * 100.0) / 100.0);
-	        System.out.println(Math.round((0.0 + (1.0 - 0.0) * w1) * 100.0) / 100.0);
-	        //System.out.println();
+	        /*System.out.print(Math.round((0.1 + (0.9 - 0.1) * w) * 100.0) / 100.0);
+	        System.out.print(" | ");
+	        System.out.print(Math.round((0.1 + (0.9 - 0.1) * w1) * 100.0) / 100.0);
+	        System.out.println();*/
 	    }	    	    
 	    
 	    
