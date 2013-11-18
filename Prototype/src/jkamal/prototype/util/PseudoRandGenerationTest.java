@@ -1,52 +1,41 @@
+/**
+ * @author Joarder Kamal
+ */
+
 package jkamal.prototype.util;
 
-import jkamal.prototype.main.DBMSSimulator;
-
 import org.apache.commons.math3.distribution.ZipfDistribution;
-import org.apache.commons.math3.random.RandomData;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import org.apache.commons.math3.random.RandomDataImpl;
 
 public class PseudoRandGenerationTest {
-	public static void main(String[] args) {   
-		int x, value;
-	    double p, z, w, w1, b;	    	    
-	    
-	    ZipfDistribution zipf = new ZipfDistribution(10, 1);
-
-	    /*for(int i = 0; i < 10; i++) {
-	    	x = randGen.rangeIntRandom();
-	    	z = zipf.probability(x);
-	    	
-	    	System.out.println("x = "+x+"| z = "+z+", ");
-	    }*/
-	    	    
+	public static void main(String[] args) {
+		int d_total = 10000;
+		int p_numbers = 2; // Partition Numbers
+	    int p_size = 800;
+	    int z_exponent = 1;	   	    	    	    
+	    int d = 0;
+	    int d_start = 0;
+	    int d_end = p_size;
+	    double z, c;
+		
 	    RandomDataGenerator randData = new RandomDataGenerator(); 
 	    randData.reSeed(0);
 	    
-	    RandomDataGenerator wData = new RandomDataGenerator(); 
-	    wData.reSeed(0);
+	    ZipfDistribution zipf = new ZipfDistribution(d_total, z_exponent); // Parameters = Number of Elements, Exponent
+    	zipf.reseedRandomGenerator(0);	    	    	    	    	    	    
 	    
-	    RandomDataGenerator w1Data = new RandomDataGenerator(); 
-	    w1Data.reSeed(1);
-	    
-	    for (int i = 0; i < 1000000; i++) {
-	        //z = randData.nextZipf(24, 0.5);
-	        //w = randData.nextWeibull(1, 0.5);
-	        //w = wData.nextWeibull(1, 1);
-	        //w1 = w1Data.nextWeibull(1, 1);
-	        //p = randData.nextPoisson(0.5);
-	        //b = randData.nextBeta(2, 5);
-	    	value = (int) randData.nextUniform(0.0, 10000.0, false);
-	        
-	    	System.out.println(value);
-	        //System.out.print(" | "+Math.round((0.0 + (1.0 - 0.0) * w) * 100.0) / 100.0);
-	        /*System.out.print(Math.round((0.1 + (0.9 - 0.1) * w) * 100.0) / 100.0);
-	        System.out.print(" | ");
-	        System.out.print(Math.round((0.1 + (0.9 - 0.1) * w1) * 100.0) / 100.0);
-	        System.out.println();*/
-	    }	    	    
-	    
-	    
+	    for(int p = 0; p < p_numbers; p++) {	    		    	
+	    	for(d = d_start; d < d_end; d++) {
+	    		z = randData.nextZipf(p_size, z_exponent);
+	    		z += d_start;
+	    		
+	    		c = zipf.cumulativeProbability(d);
+		        
+		    	System.out.println(p+" "+d+" "+(int)z+" "+c);
+	    	}
+	    	
+	    	d_start = d_end;
+	    	d_end = (d + p_size);	    	
+	    }	    
 	}
 }
