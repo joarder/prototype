@@ -1,246 +1,52 @@
-[ACT] Creating Database Server #testdbs# with 3 Nodes ...
-[ACT] Creating Database #testdb# within testdbs Database Server ...
+[ACT] Creating Database Server #test-dbs# with 3 Nodes ...
+[ACT] Creating Database #test-db# within test-dbs Database Server ...
 [ACT] Started Bootstrapping Process ...
-[ACT] Generating 10000 synthetic data items ...
-[ACT] Creating Partition P0[Capacity/Size: 1000] and placing it into N0
-[ACT] Creating Partition P1[Capacity/Size: 1000] and placing it into N1
-[ACT] Creating Partition P2[Capacity/Size: 1000] and placing it into N2
-[ACT] Creating Partition P3[Capacity/Size: 1000] and placing it into N0
-[ACT] Creating Partition P4[Capacity/Size: 1000] and placing it into N1
-[ACT] Creating Partition P5[Capacity/Size: 1000] and placing it into N2
-[ACT] Creating Partition P6[Capacity/Size: 1000] and placing it into N0
-[ACT] Creating Partition P7[Capacity/Size: 1000] and placing it into N1
-[ACT] Creating Partition P8[Capacity/Size: 1000] and placing it into N2
-[ACT] Creating Partition P9[Capacity/Size: 1000] and placing it into N0
-[ACT] Creating Partition P10[Capacity/Size: 1000] and placing it into N1
-[ACT] Creating Partition P11[Capacity/Size: 1000] and placing it into N2
-[ACT] Creating Partition P12[Capacity/Size: 1000] and placing it into N0
-[MSG] Total Data Items: 10000
-[MSG] Total Partitions: 13
+[ACT] Generating 10 synthetic data items ...
+[ACT] Creating Partition P1[Capacity/Size: 10] and placing it into N1
+[ACT] Creating Partition P2[Capacity/Size: 10] and placing it into N2
+[MSG] Total Data Items: 10
+[MSG] Total Partitions: 2
 [MSG] Data creation and placement into partitions done.
 [OUT] Database Server Details===
-      Database Server: testdbs
+      Database Server: test-dbs
       Number of Nodes: 3
 [OUT] Node Details===
-      N0 with 5 Partitions. Current Load 50.0%
-      N1 with 4 Partitions. Current Load 40.0%
-      N2 with 4 Partitions. Current Load 40.0%
+      N1 with 1 Partitions. Current Load 10.0%
+      N2 with 1 Partitions. Current Load 10.0%
+      N3 with 0 Partitions. Current Load 0.0%
 [OUT] Database Details====
-      Database: testdb
-      Number of Partitions: 13
+      Database: test-db
+      Number of Partitions: 2
 [OUT] Partition Table Details====
-      N0 {P0[Capacity: 1000|Load: 80.0%] >> [H(800)], P3[Capacity: 1000|Load: 80.0%] >> [H(800)], P6[Capacity: 1000|Load: 80.0%] >> [H(800)], P9[Capacity: 1000|Load: 80.0%] >> [H(800)], P12[Capacity: 1000|Load: 40.0%] >> [H(400)]}
-      N1 {P1[Capacity: 1000|Load: 80.0%] >> [H(800)], P4[Capacity: 1000|Load: 80.0%] >> [H(800)], P7[Capacity: 1000|Load: 80.0%] >> [H(800)], P10[Capacity: 1000|Load: 80.0%] >> [H(800)]}
-      N2 {P2[Capacity: 1000|Load: 80.0%] >> [H(800)], P5[Capacity: 1000|Load: 80.0%] >> [H(800)], P8[Capacity: 1000|Load: 80.0%] >> [H(800)], P11[Capacity: 1000|Load: 80.0%] >> [H(800)]}
+      N1 {P1[Capacity: 10|Load: 80.0%] >> [H(8)]}
+      N2 {P2[Capacity: 10|Load: 20.0%] >> [H(2)]}
+      N3 {}
 ***********************************************************************************************************************
 [RUN] Running Simulation Round-0 ...
-[ACT] Generating an initial workload with 1000 transactions of 5 types having a proportion of {87, 109, 440, 219, 145}
+[ACT] Generating an initial workload with 10 transactions of 5 types having a proportion of {0, 0, 7, 2, 1}
 [OUT] Initial Workload Details for Simulation Round-0
-      WL-0 [1000 Transactions (containing 3457 Data)  having a distribution of {87, 109, 440, 219, 145}
+      WL-0 [10 Transactions (containing 9 Data)  having a distribution of {0, 0, 7, 2, 1}
       -----------------------------------------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-      # Distributed Transactions: 933 (93.3% of Total 1000 Workload Transactions)
-      # Impact of Distributed Transactions: 1.36 (for a particular workload round)
+      TR-2[CDT(1), FRQ(1), Data(3)]{d4[P1|N1], d9[P2|N2], d10[P2|N2]}
+      TR-3[CDT(1), FRQ(1), Data(3)]{d1[P1|N1], d9[P2|N2], d10[P2|N2]}
+      TR-4[CDT(1), FRQ(1), Data(3)]{d1[P1|N1], d3[P1|N1], d10[P2|N2]}
+      TR-5[CDT(1), FRQ(1), Data(2)]{d5[P1|N1], d10[P2|N2]}
+      TR-6[CDT(1), FRQ(1), Data(4)]{d1[P1|N1], d2[P1|N1], d3[P1|N1], d9[P2|N2]}
+      TR-7[CDT(1), FRQ(1), Data(2)]{d1[P1|N1], d10[P2|N2]}
+      TR-8[CDT(1), FRQ(1), Data(4)]{d1[P1|N1], d3[P1|N1], d9[P2|N2], d10[P2|N2]}
+      TR-9[CDT(1), FRQ(1), Data(5)]{d1[P1|N1], d3[P1|N1], d4[P1|N1], d6[P1|N1], d9[P2|N2]}
+      TR-10[CDT(1), FRQ(1), Data(5)]{d1[P1|N1], d3[P1|N1], d7[P1|N1], d9[P2|N2], d10[P2|N2]}
+      TR-11[CDT(0), FRQ(1), Data(2)]{d9[P2|N2], d10[P2|N2]}
+
+      # Distributed Transactions: 9 (90.0% of Total 10 Workload Transactions)
+      # Impact of Distributed Transactions: 0.9 (for a particular workload round)
       # Database Partition Table Details
-      --N0
-       -P0[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P3[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P6[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P9[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P12[Capacity: 1000|Load: 40.0%] >> [H(400)]
       --N1
-       -P1[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P4[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P7[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P10[Capacity: 1000|Load: 80.0%] >> [H(800)]
+       -P1[Capacity: 10|Load: 80.0%] >> [H(8)]
       --N2
-       -P2[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P5[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P8[Capacity: 1000|Load: 80.0%] >> [H(800)]
-       -P11[Capacity: 1000|Load: 80.0%] >> [H(800)]
+       -P2[Capacity: 10|Load: 20.0%] >> [H(2)]
+      --N3
       -----------------------------------------------------------------------------------------------------------------
 
 [MSG] Workload generation completed for Simulation Round-0
-[ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Simulation Round-0] :: One(Cluster)-to-One(Partition) Peer
-[ACT] Generating Data Movement Mapping Matrix ...
-      (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
-	X	0	1	2	3	4	5	6	7	8	9	10	11	12	
-	0	28	28	26	25	17	30	22	33	23	33	27	30	22	
-	1	31	25	25	31	19	19	28	30	21	13	32	20	27	
-	2	26	28	11	29	21	30	23	25	38	28	27	31	38	
-	3	24	35	35	32	24	23	19	30	33	14	29	27	40	
-	4	26	12	28	26	21	25	19	22	27	30	26	15	25	
-	5	29	18	24	31	27	23	34	21	15	36	26	36	21	
-	6	36	18	33	31	26	25	18	18	23	26	27	27	13	
-	7	30	27	34	36	20	25	29	28	22	34	15	27	27	
-	8	17	25	20	35	24	21	18	31	39	21	13	24	39	
-	9	29	34	25	29	21	17	25	19	23	31	31	36	37	
-	10	30	24	30	33	39	33	23	28	18	22	22	22	22	
-	11	27	20	31	37	25	20	27	20	29	20	27	25	21	
-	12	19	11	14	14	11	11	8	9	11	15	15	13	12	
->> * Repeated Data: 768
-[OUT] Base Strategy Workload Details for Simulation Round-0
-      WL-0 [1000 Transactions (containing 3457 Data)  having a distribution of {87, 109, 440, 219, 145}
-      -----------------------------------------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
-      # Distributed Transactions: 22 (2.2% of Total 1000 Workload Transactions)
-      # Impact of Distributed Transactions: 0.03 (for a particular workload round)
-      # Intra-Node Data Movements (Avoided): 1150 (33.27% of Total 3457 Workload Data)
-      # Inter-Node Data Movements (Performed): 2307 (66.73% of Total 3457 Workload Data)
-      # Database Partition Table Details
-      --N0
-       -P0[Capacity: 1000|Load: 82.7%] >> [H(827)|82.7%, F(200)|20.0%], [R(173)|17.3%)]
-       -P3[Capacity: 1000|Load: 81.7%] >> [H(817)|81.7%, F(207)|20.7%], [R(190)|19.0%)]
-       -P6[Capacity: 1000|Load: 83.1%] >> [H(831)|83.1%, F(185)|18.5%], [R(154)|15.4%)]
-       -P9[Capacity: 1000|Load: 79.0%] >> [H(790)|79.0%, F(154)|15.4%], [R(164)|16.4%)]
-       -P12[Capacity: 1000|Load: 49.4%] >> [H(494)|49.4%, F(171)|17.1%], [R(77)|7.7%)]
-      --N1
-       -P1[Capacity: 1000|Load: 80.2%] >> [H(802)|80.2%, F(183)|18.3%], [R(181)|18.1%)]
-       -P4[Capacity: 1000|Load: 78.9%] >> [H(789)|78.9%, F(176)|17.6%], [R(187)|18.7%)]
-       -P7[Capacity: 1000|Load: 76.1%] >> [H(761)|76.1%, F(171)|17.1%], [R(210)|21.0%)]
-       -P10[Capacity: 1000|Load: 76.7%] >> [H(767)|76.7%, F(169)|16.9%], [R(202)|20.2%)]
-      --N2
-       -P2[Capacity: 1000|Load: 78.9%] >> [H(789)|78.9%, F(190)|19.0%], [R(201)|20.1%)]
-       -P5[Capacity: 1000|Load: 78.4%] >> [H(784)|78.4%, F(185)|18.5%], [R(201)|20.1%)]
-       -P8[Capacity: 1000|Load: 76.9%] >> [H(769)|76.9%, F(153)|15.3%], [R(184)|18.4%)]
-       -P11[Capacity: 1000|Load: 78.0%] >> [H(780)|78.0%, F(163)|16.3%], [R(183)|18.3%)]
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[RUN] Running Simulation Round-1 ...
-[MSG] Total 1000 previous transactions have been carried forward to the current Workload
-[MSG] Old Transaction Death Rate: 0.405
-[ACT] Killing 405 old transactions with a distribution of {35, 44, 179, 88, 59}
-[MSG] Total 595 transactions of 5 types having a distribution of {52, 65, 261, 131, 86} are currently in the workload.
-[MSG] New Transaction Birth Rate: 0.595
-[ACT] Creating 595 new transactions with a distribution of {52, 64, 263, 130, 86}
-[MSG] Total 1190 transactions of 5 types having a distribution of {104, 129, 524, 261, 172} are currently in the workload.
-[ACT] Searching for duplicates in the workload ...
-[OUT] Total 0 were transactions found in the workload !!!
-[OUT] Total 0 duplicate transactions have been removed from the workload.
-[ACT] Sampling Workload ...
-[MSG] Total 614 non-distributed transactions are discarded from current workload and left for re-analysing for the next round.
-[MSG] Total 576 transactions of 5 types having a distribution of {36, 61, 257, 132, 90} are currently in the workload.
-[OUT] Initial Workload Details for Simulation Round-1
-      WL-0 [576 Transactions (containing 2219 Data)  having a distribution of {36, 61, 257, 132, 90}
-      -----------------------------------------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-      # Distributed Transactions: 576 (100.0% of Total 576 Workload Transactions)
-      # Impact of Distributed Transactions: 1.49 (for a particular workload round)
-      # Intra-Node Data Movements (Avoided): 1150 (33.27% of Total 2219 Workload Data)
-      # Inter-Node Data Movements (Performed): 2307 (66.73% of Total 2219 Workload Data)
-      # Database Partition Table Details
-      --N0
-       -P0[Capacity: 1000|Load: 82.7%] >> [H(827)|82.7%, F(200)|20.0%], [R(173)|17.3%)]
-       -P3[Capacity: 1000|Load: 81.7%] >> [H(817)|81.7%, F(207)|20.7%], [R(190)|19.0%)]
-       -P6[Capacity: 1000|Load: 83.1%] >> [H(831)|83.1%, F(185)|18.5%], [R(154)|15.4%)]
-       -P9[Capacity: 1000|Load: 79.0%] >> [H(790)|79.0%, F(154)|15.4%], [R(164)|16.4%)]
-       -P12[Capacity: 1000|Load: 49.4%] >> [H(494)|49.4%, F(171)|17.1%], [R(77)|7.7%)]
-      --N1
-       -P1[Capacity: 1000|Load: 80.2%] >> [H(802)|80.2%, F(183)|18.3%], [R(181)|18.1%)]
-       -P4[Capacity: 1000|Load: 78.9%] >> [H(789)|78.9%, F(176)|17.6%], [R(187)|18.7%)]
-       -P7[Capacity: 1000|Load: 76.1%] >> [H(761)|76.1%, F(171)|17.1%], [R(210)|21.0%)]
-       -P10[Capacity: 1000|Load: 76.7%] >> [H(767)|76.7%, F(169)|16.9%], [R(202)|20.2%)]
-      --N2
-       -P2[Capacity: 1000|Load: 78.9%] >> [H(789)|78.9%, F(190)|19.0%], [R(201)|20.1%)]
-       -P5[Capacity: 1000|Load: 78.4%] >> [H(784)|78.4%, F(185)|18.5%], [R(201)|20.1%)]
-       -P8[Capacity: 1000|Load: 76.9%] >> [H(769)|76.9%, F(153)|15.3%], [R(184)|18.4%)]
-       -P11[Capacity: 1000|Load: 78.0%] >> [H(780)|78.0%, F(163)|16.3%], [R(183)|18.3%)]
-      -----------------------------------------------------------------------------------------------------------------
-
-[MSG] Workload generation completed for Simulation Round-1
-[ACT] Run HyperGraph Partitioning on the Workload ...
-[ACT] Base Strategy[Simulation Round-1] :: One(Cluster)-to-One(Partition) Peer
-[ACT] Generating Data Movement Mapping Matrix ...
-      (First Row: Pre-Partition Id, First Col: Cluster Id, Elements: Data Occurance Counts)
-	X	0	1	2	3	4	5	6	7	8	9	10	11	12	
-	0	22	12	14	17	12	27	14	11	12	19	11	16	17	
-	1	15	9	11	20	19	13	16	18	11	10	17	11	22	
-	2	21	12	17	18	13	21	16	13	16	8	16	11	16	
-	3	21	13	14	25	15	18	14	9	15	14	19	10	17	
-	4	4	16	15	17	16	13	8	13	11	15	11	14	12	
-	5	26	12	16	12	22	13	11	11	10	14	10	20	12	
-	6	22	19	13	20	20	10	26	13	13	21	14	14	17	
-	7	10	22	15	22	10	18	13	10	11	22	14	14	9	
-	8	10	17	14	22	12	18	17	9	20	7	14	9	12	
-	9	16	19	14	11	13	12	9	20	23	8	15	10	13	
-	10	23	20	15	19	20	18	13	14	14	16	11	16	17	
-	11	17	11	25	19	16	17	23	15	14	15	16	19	14	
-	12	15	11	10	8	6	9	11	5	4	12	8	14	5	
->> * Repeated Data: 264
-[OUT] Base Strategy Workload Details for Simulation Round-1
-      WL-0 [576 Transactions (containing 2219 Data)  having a distribution of {36, 61, 257, 132, 90}
-      -----------------------------------------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-      # Distributed Transactions: 0 (0.0% of Total 576 Workload Transactions)
-      # Impact of Distributed Transactions: 0.0 (for a particular workload round)
-      # Intra-Node Data Movements (Avoided): 789 (35.56% of Total 2219 Workload Data)
-      # Inter-Node Data Movements (Performed): 1430 (64.44% of Total 2219 Workload Data)
-      # Database Partition Table Details
-      --N0
-       -P0[Capacity: 1000|Load: 83.6%] >> [H(836)|83.6%, F(276)|27.6%], [R(240)|24.0%)]
-       -P3[Capacity: 1000|Load: 86.4%] >> [H(864)|86.4%, F(319)|31.9%], [R(255)|25.5%)]
-       -P6[Capacity: 1000|Load: 83.7%] >> [H(837)|83.7%, F(274)|27.4%], [R(237)|23.7%)]
-       -P9[Capacity: 1000|Load: 77.2%] >> [H(772)|77.2%, F(224)|22.4%], [R(252)|25.2%)]
-       -P12[Capacity: 1000|Load: 53.4%] >> [H(534)|53.4%, F(250)|25.0%], [R(116)|11.6%)]
-      --N1
-       -P1[Capacity: 1000|Load: 79.5%] >> [H(795)|79.5%, F(257)|25.7%], [R(262)|26.2%)]
-       -P4[Capacity: 1000|Load: 79.4%] >> [H(794)|79.4%, F(254)|25.4%], [R(260)|26.0%)]
-       -P7[Capacity: 1000|Load: 74.3%] >> [H(743)|74.3%, F(244)|24.4%], [R(301)|30.1%)]
-       -P10[Capacity: 1000|Load: 74.7%] >> [H(747)|74.7%, F(244)|24.4%], [R(297)|29.7%)]
-      --N2
-       -P2[Capacity: 1000|Load: 78.7%] >> [H(787)|78.7%, F(263)|26.3%], [R(276)|27.6%)]
-       -P5[Capacity: 1000|Load: 78.2%] >> [H(782)|78.2%, F(262)|26.2%], [R(280)|28.0%)]
-       -P8[Capacity: 1000|Load: 75.9%] >> [H(759)|75.9%, F(232)|23.2%], [R(273)|27.3%)]
-       -P11[Capacity: 1000|Load: 75.0%] >> [H(750)|75.0%, F(239)|23.9%], [R(289)|28.9%)]
-      -----------------------------------------------------------------------------------------------------------------
-***********************************************************************************************************************
-[RUN] Running Simulation Round-2 ...
-[ACT] Restoring previously discarded transactions from last simulation round ...
-[OUT] Total 614 transactions have been restored from last simulation round.
-[MSG] Total 1190 transactions of 5 types having a distribution of {104, 129, 524, 261, 172} are currently in the workload.
-[MSG] Total 1190 previous transactions have been carried forward to the current Workload
-[MSG] Old Transaction Death Rate: 0.18000000000000005
-[ACT] Killing 214 old transactions with a distribution of {18, 23, 95, 47, 31}
-[MSG] Total 976 transactions of 5 types having a distribution of {86, 106, 429, 214, 141} are currently in the workload.
-[MSG] New Transaction Birth Rate: 0.82
-[ACT] Creating 975 new transactions with a distribution of {85, 106, 429, 213, 142}
-[MSG] Total 1951 transactions of 5 types having a distribution of {171, 212, 858, 427, 283} are currently in the workload.
-[ACT] Re-analysing previously discarded workload ...
-[MSG] Total 298 newly distributed transactions are included from the previously discarded workload.
-[MSG] Total 2249 transactions of 5 types having a distribution of {189, 240, 994, 496, 330} are currently in the workload.
-[ACT] Searching for duplicates in the workload ...
-[OUT] Total 0 were transactions found in the workload !!!
-[OUT] Total 0 duplicate transactions have been removed from the workload.
-[ACT] Sampling Workload ...
-[MSG] Total 829 non-distributed transactions are discarded from current workload and left for re-analysing for the next round.
-[MSG] Total 1420 transactions of 5 types having a distribution of {88, 145, 640, 328, 219} are currently in the workload.
-[OUT] Initial Workload Details for Simulation Round-2
-      WL-0 [1420 Transactions (containing 4139 Data)  having a distribution of {88, 145, 640, 328, 219}
-      -----------------------------------------------------------------------------------------------------------------
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-      # Distributed Transactions: 1420 (100.0% of Total 1420 Workload Transactions)
-      # Impact of Distributed Transactions: 1.32 (for a particular workload round)
-      # Intra-Node Data Movements (Avoided): 789 (35.56% of Total 4139 Workload Data)
-      # Inter-Node Data Movements (Performed): 1430 (64.44% of Total 4139 Workload Data)
-      # Database Partition Table Details
-      --N0
-       -P0[Capacity: 1000|Load: 83.6%] >> [H(836)|83.6%, F(276)|27.6%], [R(240)|24.0%)]
-       -P3[Capacity: 1000|Load: 86.4%] >> [H(864)|86.4%, F(319)|31.9%], [R(255)|25.5%)]
-       -P6[Capacity: 1000|Load: 83.7%] >> [H(837)|83.7%, F(274)|27.4%], [R(237)|23.7%)]
-       -P9[Capacity: 1000|Load: 77.2%] >> [H(772)|77.2%, F(224)|22.4%], [R(252)|25.2%)]
-       -P12[Capacity: 1000|Load: 53.4%] >> [H(534)|53.4%, F(250)|25.0%], [R(116)|11.6%)]
-      --N1
-       -P1[Capacity: 1000|Load: 79.5%] >> [H(795)|79.5%, F(257)|25.7%], [R(262)|26.2%)]
-       -P4[Capacity: 1000|Load: 79.4%] >> [H(794)|79.4%, F(254)|25.4%], [R(260)|26.0%)]
-       -P7[Capacity: 1000|Load: 74.3%] >> [H(743)|74.3%, F(244)|24.4%], [R(301)|30.1%)]
-       -P10[Capacity: 1000|Load: 74.7%] >> [H(747)|74.7%, F(244)|24.4%], [R(297)|29.7%)]
-      --N2
-       -P2[Capacity: 1000|Load: 78.7%] >> [H(787)|78.7%, F(263)|26.3%], [R(276)|27.6%)]
-       -P5[Capacity: 1000|Load: 78.2%] >> [H(782)|78.2%, F(262)|26.2%], [R(280)|28.0%)]
-       -P8[Capacity: 1000|Load: 75.9%] >> [H(759)|75.9%, F(232)|23.2%], [R(273)|27.3%)]
-       -P11[Capacity: 1000|Load: 75.0%] >> [H(750)|75.0%, F(239)|23.9%], [R(289)|28.9%)]
-      -----------------------------------------------------------------------------------------------------------------
-
-[MSG] Workload generation completed for Simulation Round-2
 [ACT] Run HyperGraph Partitioning on the Workload ...

@@ -6,13 +6,25 @@
 
 package jkamal.prototype.db;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Data implements Comparable<Data> {
 	private int data_id;
 	private String data_label;
 	private String data_value;
 	private float data_size;
+	private int data_frequency;
 	private int data_weight;
 	private boolean data_isMoveable;
+	
+	// Workload Attributes
+	private int data_ranking;
+	private double data_cumulative_probability;
+	private double data_normalised_cumulative_probability;
+	
+	// Transaction Attributes
+	private List<Integer> data_transaction_involved;
 	
 	// HyperGraph Partitioning Attributes
 	private int data_hmetis_cluster_id;
@@ -33,9 +45,16 @@ public class Data implements Comparable<Data> {
 		this.setData_label("d"+label);
 		this.setData_value("Value:"+this.getData_label());
 		this.setData_size(1); // 1.0 = 1 MegaBytes
+		this.setData_frequency(0);
 		this.setData_weight(0);
-		this.setData_isMoveable(false);		
+		this.setData_isMoveable(false);	
+		
+		this.setData_ranking(0);
+		this.setData_cumulativeProbability(0.0);
+		this.setData_normalisedCumulativeProbability(0.0);
 				
+		this.setData_transaction_involved(new ArrayList<Integer>());
+		
 		this.setData_hmetisClusterId(-1);
 		this.setData_shadowHMetisId(-1);
 		this.setData_hasShadowHMetisId(false);				
@@ -55,9 +74,20 @@ public class Data implements Comparable<Data> {
 		this.setData_label(data.getData_label());
 		this.setData_value(data.getData_value());
 		this.setData_size(data.getData_size());
+		this.setData_frequency(data.getData_frequency());
 		this.setData_weight(data.getData_weight());
 		this.setData_isMoveable(data.isData_isMoveable());		
-				
+		
+		this.setData_ranking(data.getData_ranking());
+		this.setData_cumulativeProbability(data.getData_cumulativeProbability());
+		this.setData_normalisedCumulativeProbability(data.getData_normalisedCumulativeProbability());
+		
+		List<Integer> clone_data_transaction_involved = new ArrayList<Integer>();
+		for(Integer tr_id : data.getData_transaction_involved()) {
+			clone_data_transaction_involved.add(tr_id);
+		}
+		this.setData_transaction_involved(clone_data_transaction_involved);
+		
 		this.setData_hmetisClusterId(data.getData_hmetisClusterId());
 		this.setData_shadowHMetisId(data.getData_shadowHMetisId());
 		this.setData_hasShadowHMetisId(data.isData_hasShadowHMetisId());
@@ -91,6 +121,14 @@ public class Data implements Comparable<Data> {
 		return data_value;
 	}
 
+	public int getData_frequency() {
+		return data_frequency;
+	}
+
+	public void setData_frequency(int data_frequency) {
+		this.data_frequency = data_frequency;
+	}
+
 	public int getData_weight() {
 		return data_weight;
 	}
@@ -109,6 +147,39 @@ public class Data implements Comparable<Data> {
 
 	public void setData_size(float data_size) {
 		this.data_size = data_size;
+	}
+
+	public int getData_ranking() {
+		return data_ranking;
+	}
+
+	public void setData_ranking(int data_ranking) {
+		this.data_ranking = data_ranking;
+	}
+
+	public double getData_cumulativeProbability() {
+		return data_cumulative_probability;
+	}
+
+	public void setData_cumulativeProbability(double cumulative_probability) {
+		this.data_cumulative_probability = cumulative_probability;
+	}
+
+	public double getData_normalisedCumulativeProbability() {
+		return data_normalised_cumulative_probability;
+	}
+
+	public void setData_normalisedCumulativeProbability(double data_normalised_cdf) {
+		this.data_normalised_cumulative_probability = data_normalised_cdf;
+	}
+
+	public List<Integer> getData_transaction_involved() {
+		return data_transaction_involved;
+	}
+
+	public void setData_transaction_involved(
+			List<Integer> data_transaction_involved) {
+		this.data_transaction_involved = data_transaction_involved;
 	}
 
 	public boolean isData_isRoaming() {

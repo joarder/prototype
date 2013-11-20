@@ -14,17 +14,16 @@ import java.util.Map.Entry;
 
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
+import jkamal.prototype.main.DBMSSimulator;
 
-public class HGraphClusters {
-	private String part_dir = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";
-	
+public class HGraphClusters {	
 	public HGraphClusters() { }
 	
 	public void readPartFile(Database db, Workload workload) throws IOException {		
 		Map<Integer, Integer> keyMap = new TreeMap<Integer, Integer>();		
 		String wrl_fileName = workload.getWrl_workload_file();		
 		String part_file = wrl_fileName+".part."+db.getDb_partitions().size();						
-		File part = new File(this.part_dir+"\\"+part_file);
+		File part = new File(DBMSSimulator.DIR_LOCATION+"\\"+part_file);
 		int cluster_id = -1;
 		int key = 0;
 		

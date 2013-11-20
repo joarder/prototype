@@ -17,7 +17,7 @@ public class PartitionTableGeneration {
 		PartitionTable partitionTable = db.getDb_partitionTable();
 		Set<Partition> partitionSet;
 				
-		for(int i = 0; i < dbs.getDbs_nodes().size(); i++) {
+		for(int i = 1; i <= dbs.getDbs_nodes().size(); i++) {
 			partitionSet = dbs.getDbs_node(i).getNode_partitions();			
 			partitionTable.getPartition_table().put(i, partitionSet);
 		}

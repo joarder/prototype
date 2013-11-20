@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.io.StreamCollector;
+import jkamal.prototype.main.DBMSSimulator;
 import jkamal.prototype.workload.Workload;
 
 public class HGraphMinCut {
@@ -30,8 +31,8 @@ public class HGraphMinCut {
 	private String fixfile = null;
 
 	//public HGraphMinCut(File dir, String hgraph_exec, String hgraph_file, String fix_file, int num_partitions) {
-	public HGraphMinCut(Database db, Workload workload, File dir, String hgraph_exec) {
-		this.exec_dir = dir;
+	public HGraphMinCut(Database db, Workload workload, String hgraph_exec) {
+		this.exec_dir = new File(DBMSSimulator.DIR_LOCATION);
 		this.exec_name = hgraph_exec;
 		this.num_partitions = Integer.toString(db.getDb_partitions().size());
 		this.setHgraph_file(workload.getWrl_workload_file());
