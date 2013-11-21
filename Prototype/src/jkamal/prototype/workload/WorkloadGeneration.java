@@ -4,11 +4,19 @@
 
 package jkamal.prototype.workload;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
+import jkamal.prototype.main.DBMSSimulator;
 
 public class WorkloadGeneration {	
 	public WorkloadGeneration() {}	
@@ -29,7 +37,7 @@ public class WorkloadGeneration {
 		return null;
 	}
 	
-	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload, String DIR_LOCATION) {
+	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload) {
 		int transaction_types = workload.getWrl_transactionTypes();
 		
 		if(workload.getWrl_simulationRound() != 0) {
@@ -68,6 +76,7 @@ public class WorkloadGeneration {
 			// Other Stuffs
 			this.incrTransactionWeights(workload);
 			this.workloadEvaluation(db, workload);
+			
 			this.assignShadowHMetisDataId(workload);
 		} else {
 			// Initial Round			
@@ -78,6 +87,7 @@ public class WorkloadGeneration {
 			// Generating New Workload Transactions
 			TransactionGeneration trGen = new TransactionGeneration();
 			trGen.generateTransaction(db, workload);
+			
 			this.assignShadowHMetisDataId(workload);		
 		}																		
 		
@@ -86,8 +96,8 @@ public class WorkloadGeneration {
 		workload.generateDataNodeTable();		
 		
 		// Generating Workload and FixFile for HyperGraph Partitioning			
-		workload.generateWorkloadFile(dbs, workload, DIR_LOCATION);
-		workload.generateFixFile(DIR_LOCATION);				
+		this.generateWorkloadFile(workload);
+		this.generateFixFile(workload);				
 		
 		// Calculate the percentage of DT
 		workload.calculateDTPercentage();			
@@ -222,6 +232,105 @@ public class WorkloadGeneration {
 		workloadSampling.restoreDiscardedWorkload(db, workload);
 		System.out.println("[OUT] Total "+workload.getWrl_restoredTransactions()+" transactions have been restored from last simulation round."); 
 		WorkloadGeneration.print(workload);
+	}
+	
+	// Generates Workload File for Hypergraph partitioning
+	public void generateWorkloadFile(Workload workload) {
+		File workloadFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_workload_file());
+		Data trData;
+		int totalHyperEdges = workload.getWrl_totalTransactions();// + dbs.getDbs_nodes().size();
+		int totalDataItems = workload.getWrl_totalDataObjects();
+		int hasTransactionWeight = 1;
+		int hasDataWeight = 1;						
+		
+		try {
+			workloadFile.createNewFile();
+			Writer writer = null;
+			try {
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workloadFile), "utf-8"));
+				writer.write(totalHyperEdges+" "+totalDataItems+" "+hasTransactionWeight+""+hasDataWeight+"\n");
+				
+				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+					for(Transaction transaction : entry.getValue()) {
+						writer.write(transaction.getTr_weight()+" ");
+						
+						Iterator<Data> data =  transaction.getTr_dataSet().iterator();
+						while(data.hasNext()) {
+							trData = data.next();
+							//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
+							writer.write(Integer.toString(trData.getData_shadowHMetisId()));							
+							
+							if(data.hasNext())
+								writer.write(" "); 
+						} // end -- while() loop						
+						writer.write("\n");						
+					} // end -- for()-Transaction
+				} // end -- for()-Transaction-Types
+				
+				// Adding a single HyperEdge for each Node containing Data items within the Workload
+				/*for(Entry<Integer, Set<Data>> entry : this.getDataNodeTable().entrySet()) {
+					writer.write("1"+" "); // 1 = Node HyperEdge Weight will be always equals to 1
+					Iterator<Data> itr_node = entry.getValue().iterator();
+					while(itr_node.hasNext()) {
+						writer.write(Integer.toString(itr_node.next().getData_shadowHMetisId()));
+						
+						if(itr_node.hasNext())
+							writer.write(" ");
+					} // end -- while() loop
+					writer.write("\n");
+				} // end -- for() loop*/
+
+				// Writing Data Weight
+				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+					for(Transaction tr : entry.getValue()) {
+						for(Data data : tr.getTr_dataSet()) {
+							writer.write(Integer.toString(data.getData_weight()));
+							writer.write("\n");
+						}
+					}
+				}
+				
+			} catch(IOException e) {
+				e.printStackTrace();
+			}finally {
+				writer.close();
+			}
+		} catch (IOException e) {		
+			e.printStackTrace();
+		}										
+	}
+	
+	// Generates Fix Files (Determines whether a Data is movable from its current Partition or not) 
+	// for Hypergraph partitioning
+	public void generateFixFile(Workload workload) {
+		File fixFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_fixfile());
+		
+		try {
+			fixFile.createNewFile();
+			Writer writer = null;
+			try {
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fixFile), "utf-8"));
+				
+				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+					for(Transaction transaction : entry.getValue()) {			
+						for(Data data : transaction.getTr_dataSet()) {						
+							if(data.isData_isMoveable())
+								writer.write(Integer.toString(data.getData_partitionId()));
+							else
+								writer.write(Integer.toString(-1));
+							
+							writer.write("\n");
+						}
+					}					
+				}
+			} catch(IOException e) {
+				e.printStackTrace();
+			}finally {
+				writer.close();
+			}
+		} catch (IOException e) {		
+			e.printStackTrace();
+		}		
 	}
 	
 	public static void print(Workload workload) {

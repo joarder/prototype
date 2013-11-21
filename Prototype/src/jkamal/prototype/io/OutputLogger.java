@@ -136,9 +136,9 @@ public class OutputLogger {
 			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {				
 				space = entry.getValue().size();
 				for(Partition partition : entry.getValue()) {
-					prWriter.print(Integer.toString(partition.getPartition_dataObjects().size())+" ");
-					prWriter.print(Integer.toString(partition.getRoaming_dataObjects().size())+" ");
-					prWriter.print(Integer.toString(partition.getForeign_dataObjects().size()));
+					prWriter.print(Integer.toString(partition.getPartition_dataSet().size())+" ");
+					prWriter.print(Integer.toString(partition.getPartition_roaming_data())+" "); //getRoaming_dataObjects().size()
+					prWriter.print(Integer.toString(partition.getPartition_foreign_data())); //getForeign_dataObjects().size()
 					
 					if(space != 1)
 						prWriter.print(" ");
@@ -179,7 +179,7 @@ public class OutputLogger {
 	}
 	
 	public void logPartition(Database db, Workload workload, PrintWriter prWriter) {						
-		if(!this.isData_movement()) {
+		/*if(!this.isData_movement()) {
 			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {
 				for(Partition partition : entry.getValue()) {
 					this.getPartitionsBeforeDM().put(partition.getPartition_id(), 
@@ -193,14 +193,17 @@ public class OutputLogger {
 					prWriter.println(this.logPartitionDetails(partition));
 				}						
 			}						
-		}
+		}*/
 	}
 	
 	private String logPartitionDetails(Partition partition) {
 		return (partition.getPartition_current_load()+" "
-				+partition.getPartition_dataObjects().size()+" "+partition.getPartition_percentageMain()+" "
-				+partition.getRoaming_dataObjects().size()+" "+partition.getPartition_percentageRoaming()+" "
-				+partition.getForeign_dataObjects().size()+" "+partition.getPartition_percentageForeign());	
+				//+partition.getPartition_dataSet().size()+" "+partition.getPartition_percentageMain()+" "
+				//+partition.getRoaming_dataObjects().size()+" "+partition.getPartition_percentageRoaming()+" "
+				//+partition.getForeign_dataObjects().size()+" "+partition.getPartition_percentageForeign());	
+				+partition.getPartition_dataSet().size()//+" "+partition.getPartition_percentageMain()+" "
+				+partition.getPartition_roaming_data()//+" "+partition.getPartition_percentageRoaming()+" "
+				+partition.getPartition_foreign_data());//+" "+partition.getPartition_percentageForeign());	
 	}
 	
 	public void logTransactionProp(Workload workload, PrintWriter prWriter) {

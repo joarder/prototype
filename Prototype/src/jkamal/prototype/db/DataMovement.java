@@ -7,13 +7,10 @@
 package jkamal.prototype.db;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
-import java.util.TreeSet;
-
 import jkamal.prototype.util.Matrix;
 import jkamal.prototype.util.MatrixElement;
 import jkamal.prototype.workload.MappingTable;
@@ -149,16 +146,16 @@ public class DataMovement {
 				for(Data workload_data : transaction.getTr_dataSet()) {						
 					if(workload_data.getData_hmetisClusterId() != -1) {// && !observed_workload_data.contains(workload_data)) { // to check for repeated data						
 						home_partition_id = workload_data.getData_homePartitionId();
-						home_partition = db.getDb_partitionTable().getPartition(workload_data.getData_homePartitionId());
+						home_partition = db.getPartition(workload_data.getData_homePartitionId());
 						home_node_id = workload_data.getData_homeNodeId();						
 						
 						current_partition_id = workload_data.getData_partitionId();									
-						current_partition = db.getDb_partitionTable().getPartition(current_partition_id);
+						current_partition = db.getPartition(current_partition_id);
 						current_node_id = workload_data.getData_nodeId();			
 						
 						dst_partition_id = keyMap.get(workload_data.getData_hmetisClusterId());
-						dst_partition = db.getDb_partitionTable().getPartition(dst_partition_id);
-						dst_node_id = db.getDb_partitionTable().lookup(dst_partition_id);							
+						dst_partition = db.getPartition(dst_partition_id);
+						dst_node_id = dst_partition.getPartition_nodeId();							
 						
 						workload_data.setData_hmetisClusterId(-1);
 						//observed_workload_data.add(workload_data);
@@ -178,11 +175,13 @@ public class DataMovement {
 										workload_data.setData_partitionId(dst_partition_id);					
 										workload_data.setData_nodeId(dst_node_id);
 															
-										home_partition.getPartition_dataObjects().add(workload_data);
-										home_partition.getRoaming_dataObjects().remove(workload_data.getData_id());						
-									
-										current_partition.getForeign_dataObjects().remove(new Integer(workload_data.getData_id()));
-										current_partition.getPartition_dataObjects().remove(workload_data);									
+										home_partition.getPartition_dataSet().add(workload_data);
+										//home_partition.getRoaming_dataObjects().remove(workload_data.getData_id());						
+										home_partition.decPartition_roaming_data();
+										
+										//current_partition.getForeign_dataObjects().remove(new Integer(workload_data.getData_id()));
+										current_partition.decPartition_foreign_data();
+										current_partition.getPartition_dataSet().remove(workload_data);									
 										
 										//System.out.println("@debug (Returning to Home Node/Home Partition)->> ");
 										
@@ -198,14 +197,20 @@ public class DataMovement {
 										workload_data.setData_partitionId(dst_partition_id);					
 										workload_data.setData_nodeId(dst_node_id);
 										
-										dst_partition.getPartition_dataObjects().add(workload_data);
-										dst_partition.getForeign_dataObjects().add(workload_data.getData_id());
+										dst_partition.getPartition_dataSet().add(workload_data);
+										//dst_partition.getForeign_dataObjects().add(workload_data.getData_id());
+										dst_partition.incPartition_foreign_data();
 										
-										home_partition.getRoaming_dataObjects().remove(workload_data.getData_id());
-										home_partition.getRoaming_dataObjects().put(workload_data.getData_id(), dst_partition_id);																	
+										//home_partition.getRoaming_dataObjects().remove(workload_data.getData_id());
+										//home_partition.getRoaming_dataObjects().put(workload_data.getData_id(), dst_partition_id);
 										
-										current_partition.getForeign_dataObjects().remove((Integer)workload_data.getData_id());
-										current_partition.getPartition_dataObjects().remove(workload_data);
+										//Update Partition Data lookup table
+										home_partition.getPartition_dataLookupTable().remove(workload_data.getData_id());
+										home_partition.getPartition_dataLookupTable().put(workload_data.getData_id(), dst_partition_id);
+										
+										//current_partition.getForeign_dataObjects().remove((Integer)workload_data.getData_id());
+										current_partition.decPartition_foreign_data();
+										current_partition.getPartition_dataSet().remove(workload_data);
 										
 										//System.out.println("@debug (Returning to Home Node/Different Partition)->> ");
 										
@@ -223,14 +228,21 @@ public class DataMovement {
 									workload_data.setData_partitionId(dst_partition_id);					
 									workload_data.setData_nodeId(dst_node_id);
 								
-									dst_partition.getPartition_dataObjects().add(workload_data);
-									dst_partition.getForeign_dataObjects().add(workload_data.getData_id());
+									dst_partition.getPartition_dataSet().add(workload_data);
+									//dst_partition.getForeign_dataObjects().add(workload_data.getData_id());
+									dst_partition.incPartition_foreign_data();
 									
-									home_partition.getRoaming_dataObjects().remove(workload_data.getData_id());
-									home_partition.getRoaming_dataObjects().put(workload_data.getData_id(), dst_partition_id);																	
+									//home_partition.getRoaming_dataObjects().remove(workload_data.getData_id());
+									//home_partition.getRoaming_dataObjects().put(workload_data.getData_id(), dst_partition_id);																	
 									
-									current_partition.getForeign_dataObjects().remove((Integer)workload_data.getData_id());
-									current_partition.getPartition_dataObjects().remove(workload_data);		
+									//Update Partition Data lookup table
+									home_partition.getPartition_dataLookupTable().remove(workload_data.getData_id());
+									home_partition.getPartition_dataLookupTable().put(workload_data.getData_id(), dst_partition_id);
+									
+									
+									//current_partition.getForeign_dataObjects().remove((Integer)workload_data.getData_id());
+									current_partition.decPartition_foreign_data();
+									current_partition.getPartition_dataSet().remove(workload_data);		
 																		
 									//System.out.println("@debug (Roaming to Another Partition)->> ");
 									
@@ -250,11 +262,17 @@ public class DataMovement {
 								// Add the Roaming Data into the destination Partition's Foreign Data Item List
 								// Add an entry in the Old Partition Table's Roaming Data Item Table
 								// Remove the Data item from Old Partition's Data Item List
-								dst_partition.getPartition_dataObjects().add(workload_data);
-								dst_partition.getForeign_dataObjects().add(workload_data.getData_id());
+								dst_partition.getPartition_dataSet().add(workload_data);
+								//dst_partition.getForeign_dataObjects().add(workload_data.getData_id());
+								dst_partition.incPartition_foreign_data();
 								
-								home_partition.getRoaming_dataObjects().put(workload_data.getData_id(), dst_partition_id);								
-								home_partition.getPartition_dataObjects().remove(workload_data);
+								//home_partition.getRoaming_dataObjects().put(workload_data.getData_id(), dst_partition_id);
+								
+								//Update Partition Data lookup table
+								home_partition.getPartition_dataLookupTable().remove(workload_data.getData_id());
+								home_partition.getPartition_dataLookupTable().put(workload_data.getData_id(), dst_partition_id);
+								
+								home_partition.getPartition_dataSet().remove(workload_data);
 																
 								//System.out.println("@debug (First Time Roaming)->> ");
 
@@ -318,13 +336,13 @@ public class DataMovement {
 		workload.calculateIntraNodeDataMovementPercentage(workload.getWrl_intraNodeDataMovements());
 		workload.calculateInterNodeDataMovementPercentage(workload.getWrl_interNodeDataMovements());
 		
-		for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {
+		/*for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {
 			for(Partition partition : entry.getValue()) {
-				partition.calculateMainOccupied();
-				partition.calculateRoamingOccupied();
-				partition.calculateForeignOccupied();
-				partition.calculateCurrentLoad();
+				//partition.calculateMainOccupied();
+				//partition.calculateRoamingOccupied();
+				//partition.calculateForeignOccupied();
+				partition.getCurrentLoad();
 			}						
-		}
+		}*/
 	}
 }

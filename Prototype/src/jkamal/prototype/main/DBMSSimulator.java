@@ -24,10 +24,10 @@ import jkamal.prototype.workload.WorkloadVariation;
 
 public class DBMSSimulator {	
 	public final static int DB_SERVERS = 3;
-	public final static int DATA_OBJECTS = 1000; // 10GB Data (in Size)
+	public final static int DATA_OBJECTS = 100; // 10GB Data (in Size)
 	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "khmetis";
-	public final static int TRANSACTION_NUMS = 100;
+	public final static int TRANSACTION_NUMS = 10;
 	public final static int SIMULATION_RUN_NUMBERS = 3;
 	public static RandomDataGenerator random_birth;
 	public static RandomDataGenerator random_death;
@@ -41,12 +41,12 @@ public class DBMSSimulator {
 		
 		// Database Server and Tenant Database Creation
 		DatabaseServer dbs = new DatabaseServer(0, "test-dbs", DB_SERVERS);
-		System.out.println("[ACT] Creating Database Server #"+dbs.getDbs_name()+"# with "+dbs.getDbs_nodes().size()+" Nodes ...");
+		System.out.println("[ACT] Creating Database Server \""+dbs.getDbs_name()+"\" with "+dbs.getDbs_nodes().size()+" Nodes ...");
 		
 		// Database creation for tenant id-"0" with Range partitioning model with 1GB Partition size
-		Database db = new Database(0, "test-db", 0, "Range", 0.1);
+		Database db = new Database(0, "test-db", 0, "Range", 0.01);
 		//Database db = new Database(0, "testdb", 0, "Range", 1);
-		System.out.println("[ACT] Creating Database #"+db.getDb_name()+"# within "+dbs.getDbs_name()+" Database Server ...");		
+		System.out.println("[ACT] Creating Database \""+db.getDb_name()+"\" within "+dbs.getDbs_name()+" Database Server ...");		
 		
 		// Perform Bootstrapping through synthetic Data generation and placing it into appropriate Partition
 		// following partitioning schemes like Range, Salting, Hashing and Consistent Hashing partitioning
@@ -59,7 +59,7 @@ public class DBMSSimulator {
 		
 		// Printing out details after data loading
 		dbs.print();
-		db.print();						
+		db.show();						
 		
 		// Logging
 		logger.log(dbs, db, dbWriter);
@@ -123,7 +123,7 @@ public class DBMSSimulator {
 			}  // end -- if-else()
 			
 			// Generate Synthetic Workload
-			workload = workloadGen.generateWorkload(dbs, db, workload, DIR_LOCATION);
+			workload = workloadGen.generateWorkload(dbs, db, workload);
 			
 			workload.setMessage("Initial");
 			workload.print(db);

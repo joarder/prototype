@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
-import jkamal.prototype.db.GlobalDataMap;
+import jkamal.prototype.db.Partition;
 import jkamal.prototype.main.DBMSSimulator;
 
 public class TransactionGeneration {
@@ -23,19 +23,18 @@ public class TransactionGeneration {
 	}
 	
 	// This function will generate the required number of Transactions for a specific Workload with a specific Database
-	public void generateTransaction(Database db, Workload workload) {		
-		GlobalDataMap dataMap = db.getDb_dataMap();
+	public void generateTransaction(Database db, Workload workload) {				
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
 		Set<Data> trDataSet;
 		ArrayList<Integer> trDataList;
 		Data data;
+		Double rand = 0.0;
 		int[] prop;
 		int data_id = 0;
 		int data_frequency = 0;
 		int data_ranking = 0;
-		int data_weight = 0;
-		Double rand = 0.0;
+		int data_weight = 0;		
 		
 		//Selecting Transaction Prop
 		if(workload.getWrl_simulationRound() != 0)
@@ -49,7 +48,7 @@ public class TransactionGeneration {
 		
 		// Creating a Random Object for randomly chosen Data items
 		DBMSSimulator.random_data.reSeed(0);
-		this.prepareRandomData(dataMap);
+		this.prepareRandomData(db);
 		
 		// i -- Transaction types
 		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {	
@@ -65,15 +64,14 @@ public class TransactionGeneration {
 				// k -- required numbers of Data items based on Transaction type
 				for(int k = 0; k < i+2; k++) {
 					rand = Math.round(DBMSSimulator.random_data.nextUniform(0.0, 1.0, true) * 100.0)/100.0;
-					data_id = this.getRandomData(rand);
-					
-					//System.out.println("@debug rand = "+rand+"|d = "+data_id+"| i+2 = "+(i+2)+"| k = "+k);
+					data_id = this.getRandomData(rand);									
 										
 					if(trDataList.contains(data_id) && k > 0) {
 						--k;
 					} else {
 						trDataList.add(data_id);
-						data = dataMap.getData_items().get(data_id);
+						
+						data = db.search(data_id);
 						
 						data_frequency = data.getData_frequency();
 						data_ranking = data.getData_ranking();
@@ -109,33 +107,27 @@ public class TransactionGeneration {
 		workload.setWrl_globalTrId(tr_id);
 	}	
 	
-	public void prepareRandomData(GlobalDataMap dataMap) {		
+	public void prepareRandomData(Database db) {		
 		Map<Integer, Integer> unsortedMap = null;
 		int d = 0;
 		
-		for(Entry<Integer, Data> entry : dataMap.getData_items().entrySet()) {
-			d = 0;
-			Data data = entry.getValue();
-			double key = data.getData_normalisedCumulativeProbability();
-			
-			if(!this.normalised_cumulative_probability_to_data_map.containsKey(key)) {
-				unsortedMap = new TreeMap<Integer, Integer>();												
-				unsortedMap.put(d, data.getData_id());//, data.getData_ranking());				
+		for(Partition partition : db.getDb_partitions()) {
+			for(Data data : partition.getPartition_dataSet()) {
+				d = 0;
 				
-				this.normalised_cumulative_probability_to_data_map.put(key, unsortedMap);
-			} else {
-				++d;
-				this.normalised_cumulative_probability_to_data_map.get(key).put(d, data.getData_id());//, data.getData_ranking());
+				double key = data.getData_normalisedCumulativeProbability();
+				
+				if(!this.normalised_cumulative_probability_to_data_map.containsKey(key)) {
+					unsortedMap = new TreeMap<Integer, Integer>();												
+					unsortedMap.put(d, data.getData_id());		
+					
+					this.normalised_cumulative_probability_to_data_map.put(key, unsortedMap);
+				} else {
+					++d;
+					this.normalised_cumulative_probability_to_data_map.get(key).put(d, data.getData_id());
+				}
 			}
-		}
-		
-		/*for(Entry<Double, Map<Integer, Integer>> entry : this.normalised_cumulative_probability_to_data_map.entrySet()) {			
-			System.out.println("----"+entry.getKey());
-			
-			for(Entry<Integer, Integer> entry1 : entry.getValue().entrySet()) {
-				System.out.println("  --"+entry1.getKey()+" | "+entry1.getValue());
-			}
-		}*/				
+		}			
 	}
 	
 	public int getRandomData(double random_value) {

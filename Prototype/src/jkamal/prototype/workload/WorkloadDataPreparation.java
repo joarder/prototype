@@ -74,14 +74,14 @@ public class WorkloadDataPreparation {
 	    // Iterating each partitions
 	    while(iterator.hasNext()) {
 	    	partition = iterator.next();
-	    	partition_size = partition.getPartition_dataObjects().size();
+	    	partition_size = partition.getPartition_dataSet().size();
 	    		    	
 	    	this.getZipfRanking(partition.getPartition_id(), partition_size, d_start);
 	    	this.getCumulativeProbability(partition.getPartition_id(), partition_size, d_start);
 	    	this.getNormalisedCumulativeProbability((db.getDb_partitions().size() - partition.getPartition_id() + 1), d_start);
 	    		    	
 	    	// Iterating each data objects
-	    	for(Data data : partition.getPartition_dataObjects()) {	    		
+	    	for(Data data : partition.getPartition_dataSet()) {	    		
 	    		data.setData_ranking(this.zipf_rank_map.get(data.getData_id()));
 	    		data.setData_cumulativeProbability(Math.round( this.zipf_cumulative_probability_map.get(data.getData_id()) * 100.0)/100.0);	    		
 	    		data.setData_normalisedCumulativeProbability(Math.round( this.zipf_norm_cumulative_probability_map.get(data.getData_id()) * 100.0)/100.0);	    		

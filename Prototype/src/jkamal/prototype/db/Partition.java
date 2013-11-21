@@ -4,63 +4,97 @@
 
 package jkamal.prototype.db;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Partition implements Comparable<Partition> {
 	private int partition_id;
 	private String partition_label;
-	private int partition_capacity;
-	private int partition_node_id;	
-	private int partition_size;	// 1000 means 1GB is the defined partition size
-	private int partition_size_normal; //  partition_size * 0.8 = 800 means 800MB is the partition size in the normal operational margin
-	private int partition_size_overloaded; // partition_size * 0.9 = 900 means 900MB is the partition size in the overloading margin
-	private List<Data> partition_data_objects;
-	private Map<Integer, Integer> roaming_data_objects;
-	private List<Integer> foreign_data_objects;
-	private double partition_percentage_main;
-	private double partition_percentage_roaming;
-	private double partition_percentage_foreign;
+	private int partition_node_id;
+	private int partition_capacity;		
+	
+	private Set<Data> partition_data_set;
+	private Map<Integer, Integer> partition_data_lookup_table;
+	
+	private int partition_home_data;
+	private int partition_foreign_data;
+	private int partition_roaming_data;
+
 	private double partition_current_load;
 	private boolean partition_overloaded;
+
+	//private int partition_size;
+	//private int partition_size_normal; //  partition_size * 0.8 = 800 means 800MB is the partition size in the normal operational margin
+	//private int partition_size_overloaded; // partition_size * 0.9 = 900 means 900MB is the partition size in the overloading margin
 	
-	public Partition(int pid, String label, int nid, int psize) {
-		this.setPartition_id(pid);
-		this.setPartition_label("P"+label);
-		this.setPartition_capacity(0); // Initially no data items present in a partition. Current partition capacity will be determined by the number of data items it is holding.
-		this.setPartition_node_id(nid);
-		this.setPartition_size(psize);
-		this.setPartition_size_normal((int)(this.getPartition_size() * 0.8));
-		this.setPartition_size_overloaded((int)(this.getPartition_size() * 0.9));
-		this.setPartition_dataObjects(new ArrayList<Data>());
-		this.setRoaming_dataObjects(new TreeMap<Integer, Integer>());
-		this.setForeign_dataObjects(new ArrayList<Integer>());
-		this.setPartition_percentage_main(0.0d);
-		this.setPartition_percentage_roaming(0.0d);
-		this.setPartition_current_load(0.0d);
+	//private Map<Integer, Integer> roaming_data_objects;
+	//private List<Integer> foreign_data_objects;
+	//private double partition_percentage_main;
+	//private double partition_percentage_roaming;
+	//private double partition_percentage_foreign;
+	
+	public Partition(int partiton_id, String partition_label, int node_id, int partition_capacity) {
+		this.setPartition_id(partiton_id);
+		this.setPartition_label("P"+partition_label);
+		this.setPartition_node_id(node_id);
+		this.setPartition_capacity(partition_capacity);
+		
+		this.setPartition_dataSet(new TreeSet<Data>());
+		this.setPartition_dataLookupTable(new TreeMap<Integer, Integer>());
+		
+		this.setPartition_home_data(0);
+		this.setPartition_foreign_data(0);
+		this.setPartition_roaming_data(0);
+		
+		this.setPartition_current_load(0.0);
 		this.setPartition_overloaded(false);
+		
+		//this.setPartition_size(psize);
+		//this.setPartition_size_normal((int)(this.getPartition_size() * 0.8));
+		//this.setPartition_size_overloaded((int)(this.getPartition_size() * 0.9));
+		
+		//this.setRoaming_dataObjects(new TreeMap<Integer, Integer>());
+		//this.setForeign_dataObjects(new ArrayList<Integer>());
+		//this.setPartition_percentage_main(0.0d);
+		//this.setPartition_percentage_roaming(0.0d);
 	}	
 
 	// Copy Constructor
 	public Partition(Partition partition) {
 		this.setPartition_id(partition.getPartition_id());
 		this.setPartition_label(partition.getPartition_label());
-		this.setPartition_capacity(partition.getPartition_capacity());
 		this.setPartition_node_id(partition.getPartition_nodeId());
-		this.setPartition_size(partition.getPartition_size());
-		this.setPartition_size_normal(partition.getPartition_size_normal());
-		this.setPartition_size_overloaded(partition.getPartition_size_overloaded());
+		this.setPartition_capacity(partition.getPartition_capacity());				
 		
-		List<Data> clonePartitionDataItems = new ArrayList<Data>();
+		Set<Data> clonePartitionDataSet = new TreeSet<Data>();
 		Data cloneData;
-		for(Data data : partition.getPartition_dataObjects()) {
+		for(Data data : partition.getPartition_dataSet()) {
 			cloneData = new Data(data);
-			clonePartitionDataItems.add(cloneData);
+			clonePartitionDataSet.add(cloneData);
 		}
-		this.partition_data_objects = clonePartitionDataItems;
+		this.setPartition_dataSet(clonePartitionDataSet);
+				
+		Map<Integer, Integer> clone_data_lookup_table = new TreeMap<Integer, Integer>();
+		for(Entry<Integer, Integer> entry : partition.getPartition_dataLookupTable().entrySet()) {
+			clone_data_lookup_table.put(entry.getKey(), entry.getValue());
+		}
+		this.setPartition_dataLookupTable(clone_data_lookup_table);
+		
+		this.setPartition_home_data(partition.getPartition_home_data());
+		this.setPartition_foreign_data(partition.getPartition_foreign_data());
+		this.setPartition_roaming_data(partition.getPartition_roaming_data());
+		
+		this.setPartition_current_load(partition.getPartition_current_load());
+		this.setPartition_overloaded(partition.isPartition_overloaded());
+		
+		/*
+		this.setPartition_size(partition.getPartition_size());
+		//this.setPartition_size_normal(partition.getPartition_size_normal());
+		//this.setPartition_size_overloaded(partition.getPartition_size_overloaded());
 		
 		Map<Integer, Integer> cloneRoamingDataItems = new TreeMap<Integer, Integer>();
 		for(Entry<Integer, Integer> entry : partition.getRoaming_dataObjects().entrySet()) {
@@ -76,10 +110,9 @@ public class Partition implements Comparable<Partition> {
 		
 		this.setPartition_percentage_main(partition.getPartition_percentageMain());
 		this.setPartition_percentage_roaming(partition.getPartition_percentageRoaming());
-		this.setPartition_current_load(partition.getPartition_current_load());
-		this.setPartition_overloaded(partition.isPartition_overloaded());
-	}
-	
+		*/
+	}	
+
 	public int getPartition_id() {
 		return partition_id;
 	}
@@ -96,14 +129,6 @@ public class Partition implements Comparable<Partition> {
 		this.partition_label = partition_label;
 	}
 
-	public int getPartition_capacity() {
-		return partition_capacity;
-	}
-
-	public void setPartition_capacity(int partition_capacity) {
-		this.partition_capacity = partition_capacity;
-	}
-
 	public int getPartition_nodeId() {
 		return partition_node_id;
 	}
@@ -112,6 +137,93 @@ public class Partition implements Comparable<Partition> {
 		this.partition_node_id = partition_node_id;
 	}
 
+	public int getPartition_capacity() {
+		return partition_capacity;
+	}
+
+	public void setPartition_capacity(int partition_capacity) {
+		this.partition_capacity = partition_capacity;
+	}
+	
+	public Set<Data> getPartition_dataSet() {
+		return this.partition_data_set;
+	}
+
+	public void setPartition_dataSet(Set<Data> partition_data_set) {
+		this.partition_data_set = partition_data_set;
+	}
+	
+	public Map<Integer, Integer> getPartition_dataLookupTable() {
+		return partition_data_lookup_table;
+	}
+
+	public void setPartition_dataLookupTable(Map<Integer, Integer> data_lookup_table) {
+		this.partition_data_lookup_table = data_lookup_table;
+	}
+	
+	public int getPartition_home_data() {
+		return partition_home_data;
+	}
+
+	public void setPartition_home_data(int partition_home_data) {
+		this.partition_home_data = partition_home_data;
+	}
+
+	public int getPartition_foreign_data() {
+		return partition_foreign_data;
+	}
+
+	public void setPartition_foreign_data(int partition_foreign_data) {
+		this.partition_foreign_data = partition_foreign_data;
+	}
+
+	public int getPartition_roaming_data() {
+		return partition_roaming_data;
+	}
+
+	public void setPartition_roaming_data(int partition_roaming_data) {
+		this.partition_roaming_data = partition_roaming_data;
+	}
+		
+	public double getPartition_current_load() {
+		return partition_current_load;
+	}
+
+	public void setPartition_current_load(double partition_current_load) {
+		this.partition_current_load = partition_current_load;
+	}
+
+	public boolean isPartition_overloaded() {
+		return partition_overloaded;
+	}
+
+	public void setPartition_overloaded(boolean partition_overloaded) {
+		this.partition_overloaded = partition_overloaded;
+	}
+	
+	// Returns the current Partition Id for a queried Data Id
+	public int lookupPartitionId_byDataId(int data_id) {
+		int partition_id = -1;
+		
+		for(Entry<Integer, Integer> entry : this.getPartition_dataLookupTable().entrySet()) {
+			if(entry.getKey() == data_id)
+				return entry.getValue();
+		}
+		
+		return partition_id;
+	}
+	
+	// Returns a Data object queried by it's Data Id from the Partition
+	public Data getData_byDataId(int data_id) {		
+		for(Data data : this.getPartition_dataSet()) {
+			if(data.getData_id() == data_id)
+				return data;
+		}
+		
+		return null;
+	}
+	
+	/*
 	public int getPartition_size() {
 		return partition_size;
 	}
@@ -135,15 +247,7 @@ public class Partition implements Comparable<Partition> {
 	public void setPartition_size_overloaded(int partition_size_overloaded) {
 		this.partition_size_overloaded = partition_size_overloaded;
 	}
-
-	public List<Data> getPartition_dataObjects() {
-		return partition_data_objects;
-	}
-
-	public void setPartition_dataObjects(List<Data> partition_data_objects) {
-		this.partition_data_objects = partition_data_objects;
-	}
-
+	
 	public Map<Integer, Integer> getRoaming_dataObjects() {
 		return roaming_data_objects;
 	}
@@ -183,25 +287,9 @@ public class Partition implements Comparable<Partition> {
 	public void setPartition_percentage_foreign(double partition_percentage_foreign) {
 		this.partition_percentage_foreign = partition_percentage_foreign;
 	}
-	
-	public double getPartition_current_load() {
-		return partition_current_load;
-	}
-
-	public void setPartition_current_load(double partition_current_load) {
-		this.partition_current_load = partition_current_load;
-	}
-
-	public boolean isPartition_overloaded() {
-		return partition_overloaded;
-	}
-
-	public void setPartition_overloaded(boolean partition_overloaded) {
-		this.partition_overloaded = partition_overloaded;
-	}
 
 	public void calculateMainOccupied() {
-		double percentage = ((double)this.getPartition_dataObjects().size()/this.getPartition_size())*100.0;
+		double percentage = ((double)this.getPartition_dataSet().size()/this.getPartition_size())*100.0;
 		percentage = Math.round(percentage*100.0)/100.0;
 		this.setPartition_percentage_main(percentage);
 	}
@@ -216,25 +304,57 @@ public class Partition implements Comparable<Partition> {
 		double percentage = ((double)this.getForeign_dataObjects().size()/this.getPartition_size())*100.0;
 		percentage = Math.round(percentage*100.0)/100.0;
 		this.setPartition_percentage_foreign(percentage);		
+	}*/
+	
+	public void incPartition_home_data() {
+		int home_data = this.getPartition_home_data();		
+		this.setPartition_home_data(++home_data);
 	}
 	
-	public void calculateCurrentLoad() {
-		int totalData = this.getPartition_dataObjects().size();
+	public void decPartition_home_data() {
+		int home_data = this.getPartition_home_data();		
+		this.setPartition_home_data(--home_data);
+	}
+	
+	public void incPartition_foreign_data() {
+		int foreign_data = this.getPartition_foreign_data();		
+		this.setPartition_foreign_data(++foreign_data);
+	}
+	
+	public void decPartition_foreign_data() {
+		int foreign_data = this.getPartition_foreign_data();		
+		this.setPartition_foreign_data(--foreign_data);
+	}
+	
+	public void incPartition_roaming_data() {
+		int roaming_data = this.getPartition_roaming_data();		
+		this.setPartition_roaming_data(++roaming_data);
+	}
+	
+	public void decPartition_roaming_data() {
+		int roaming_data = this.getPartition_roaming_data();		
+		this.setPartition_roaming_data(--roaming_data);
+	}
+	
+	public void getCurrentLoad() {
+		int totalData = this.getPartition_dataSet().size();
 		
-		if(totalData > this.getPartition_size_overloaded())
+		if(totalData > this.getPartition_capacity()*0.9)//.getPartition_size_overloaded())
 			this.setPartition_overloaded(true);
 		else 
 			this.setPartition_overloaded(false);
 		
-		double percentage = ((double)totalData/this.getPartition_size()) * 100.0;
+		double percentage = ((double)totalData/this.getPartition_capacity()) * 100.0;
 		percentage = Math.round(percentage * 100.0) / 100.0;
 		this.setPartition_current_load(percentage);
 	}
 	
-	public void printContents() {
-		int comma = this.getPartition_dataObjects().size();
+	public void show() {
+		int comma = this.getPartition_dataSet().size();
+		
 		System.out.print("{");
-		for(Data data : this.getPartition_dataObjects()) {
+		
+		for(Data data : this.getPartition_dataSet()) {
 			System.out.print(data.toString());
 			
 			if(comma != 1)
@@ -242,25 +362,54 @@ public class Partition implements Comparable<Partition> {
 			
 			--comma;
 		}
+		
 		System.out.println("}");
 	}
 
 	@Override
 	public String toString() {
+		if(this.getPartition_roaming_data() != 0 || this.getPartition_foreign_data() !=0)
+			return (this.getPartition_label()
+					+"[Capacity: "+this.getPartition_capacity()+"|Load: "+this.getPartition_current_load()+"%]-"
+					+"H("+this.getPartition_dataSet().size()+")/"					
+					+"R("+this.getPartition_roaming_data()+")/"
+					+"F("+this.getPartition_roaming_data()+")");										
+		else	
+			return (this.getPartition_label()
+					+"[Capacity: "+getPartition_capacity()+"|Load: "+this.getPartition_current_load()+"%]-"
+					+"H("+this.getPartition_dataSet().size()+")");
+		
+		/*
 		if(this.getRoaming_dataObjects().size() != 0 || this.getForeign_dataObjects().size() !=0)
 			return (this.getPartition_label()+"[Capacity: "+this.getPartition_size()+"|Load: "+this.getPartition_current_load()+"%]"
-					+" >> [H("+this.getPartition_dataObjects().size()+")|"+this.getPartition_percentageMain()+"%, "					
+					+" >> [H("+this.getPartition_dataSet().size()+")|"+this.getPartition_percentageMain()+"%, "					
 					+"F("+this.getForeign_dataObjects().size()+")|"+this.getPartition_percentageForeign()+"%], "
 					+"[R("+this.getRoaming_dataObjects().size()+")|"+this.getPartition_percentageRoaming()+"%)"
 					+"]");
 		else	
 			return (this.getPartition_label()+"[Capacity: "+getPartition_size()+"|Load: "+this.getPartition_current_load()+"%]"
-					+" >> [H("+this.getPartition_dataObjects().size()+")]");
+					+" >> [H("+this.getPartition_dataSet().size()+")]");
+		*/
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Partition)) {
+			return false;
+		}
+		
+		Partition partition = (Partition) object;
+		  return (getPartition_label().equals(partition.getPartition_label()));
+		}
+
+	@Override
+	public int hashCode() {
+		return (this.getPartition_label().hashCode());
 	}
 
 	@Override
 	public int compareTo(Partition partition) {		
-		int compare = ((int)this.partition_id < (int)partition.partition_id) ? -1: ((int)this.partition_id > (int)partition.partition_id) ? 1:0;
-		return compare;
+		return (((int)this.getPartition_id() < (int)partition.getPartition_id()) ? -1: 
+			((int)this.getPartition_id() > (int)partition.getPartition_id()) ? 1:0);		
 	}
 }

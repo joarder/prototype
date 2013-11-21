@@ -4,12 +4,6 @@
 
 package jkamal.prototype.workload;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +14,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
-import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.db.Partition;
 
 public class Workload implements Comparable<Workload> {
@@ -473,103 +466,7 @@ public class Workload implements Comparable<Workload> {
 		}		
 		
 		return null;
-	}
-
-	public void generateWorkloadFile(DatabaseServer dbs, Workload workload, String dir) {
-		File workloadFile = new File(dir+"\\"+this.getWrl_workload_file());
-		Data trData;
-		int totalHyperEdges = this.getWrl_totalTransactions() + dbs.getDbs_nodes().size();
-		int totalDataItems = this.getWrl_totalDataObjects();
-		int hasTransactionWeight = 1;
-		int hasDataWeight = 1;						
-		
-		try {
-			workloadFile.createNewFile();
-			Writer writer = null;
-			try {
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workloadFile), "utf-8"));
-				writer.write(totalHyperEdges+" "+totalDataItems+" "+hasTransactionWeight+""+hasDataWeight+"\n");
-				
-				for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
-					for(Transaction transaction : entry.getValue()) {
-						writer.write(transaction.getTr_weight()+" ");
-						
-						Iterator<Data> data =  transaction.getTr_dataSet().iterator();
-						while(data.hasNext()) {
-							trData = data.next();
-							//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
-							writer.write(Integer.toString(trData.getData_shadowHMetisId()));							
-							
-							if(data.hasNext())
-								writer.write(" "); 
-						} // end -- while() loop						
-						writer.write("\n");						
-					} // end -- for()-Transaction
-				} // end -- for()-Transaction-Types
-				
-				// Adding a single HyperEdge for each Node containing Data items within the Workload
-				for(Entry<Integer, Set<Data>> entry : this.getDataNodeTable().entrySet()) {
-					writer.write("1"+" "); // 1 = Node HyperEdge Weight will be always equals to 1
-					Iterator<Data> itr_node = entry.getValue().iterator();
-					while(itr_node.hasNext()) {
-						writer.write(Integer.toString(itr_node.next().getData_shadowHMetisId()));
-						
-						if(itr_node.hasNext())
-							writer.write(" ");
-					} // end -- while() loop
-					writer.write("\n");
-				} // end -- for() loop
-
-				// Writing Data Weight
-				for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
-					for(Transaction tr : entry.getValue()) {
-						for(Data data : tr.getTr_dataSet()) {
-							writer.write(Integer.toString(data.getData_weight()));
-							writer.write("\n");
-						}
-					}
-				}
-				
-			} catch(IOException e) {
-				e.printStackTrace();
-			}finally {
-				writer.close();
-			}
-		} catch (IOException e) {		
-			e.printStackTrace();
-		}										
-	}
-	
-	public void generateFixFile(String dir) {
-		File fixFile = new File(dir+"\\"+this.getWrl_fixfile());
-		
-		try {
-			fixFile.createNewFile();
-			Writer writer = null;
-			try {
-				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fixFile), "utf-8"));
-				
-				for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {
-					for(Transaction transaction : entry.getValue()) {			
-						for(Data data : transaction.getTr_dataSet()) {						
-							if(data.isData_isMoveable())
-								writer.write(Integer.toString(data.getData_partitionId()));
-							else
-								writer.write(Integer.toString(-1));
-							
-							writer.write("\n");
-						}
-					}					
-				}
-			} catch(IOException e) {
-				e.printStackTrace();
-			}finally {
-				writer.close();
-			}
-		} catch (IOException e) {		
-			e.printStackTrace();
-		}		
-	}
+	}	
 
 	public int getWrl_DtNumbers() {
 		return wrl_dt_nums;

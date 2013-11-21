@@ -12,23 +12,21 @@ public class Database {
 	private int db_id;
 	private String db_name;
 	private int db_tenant;
-	private GlobalDataMap db_dataMap;
+	
 	private Set<Partition> db_partitions;
 	private PartitioningModel db_partition_model; // Options: Range, Salting, Hash (Random), Consistent-Hash (Random)
 	private int db_partition_size;
-	private PartitionTable db_partition_table;
-	private RoutingTable db_routing_table;
+	
 	private String db_dmv_strategy;	
 	
 	public Database(int id, String name, int tenant_id, String model, double partition_size) {
 		this.setDb_id(id);
 		this.setDb_name(name);
 		this.setDb_tenant(tenant_id);
-		this.setDb_dataMap(new GlobalDataMap());
+
 		this.setDb_partitions(new TreeSet<Partition>());
 		this.setDb_partition_size((int)(partition_size * 1000)); // Partition Size Range (1 ~ 1000 GB), 1 GB = 1000 Data Objects of equal size
-		this.setDb_partition_table(new PartitionTable());
-		this.setDb_routing_table(new RoutingTable());
+
 		this.setDb_dmv_strategy("bs");
 		
 		if(model.equals("Range"))
@@ -44,7 +42,6 @@ public class Database {
 		this.setDb_id(db.getDb_id());
 		this.setDb_name(db.getDb_name());
 		this.setDb_tenant(db.getDb_tenant());		
-		this.setDb_dataMap(new GlobalDataMap(db.getDb_dataMap()));
 		
 		Set<Partition> cloneDbPartitions = new TreeSet<Partition>();
 		Partition clonePartition;
@@ -54,9 +51,7 @@ public class Database {
 		}		
 		this.setDb_partitions(cloneDbPartitions);
 		
-		this.setDb_partition_size(db.getDb_partition_size());		
-		this.setDb_partition_table(new PartitionTable(db.getDb_partitionTable()));
-		//this.db_routing_table = new RoutingTable(db.getDb_routing_table());
+		this.setDb_partition_size(db.getDb_partition_size());				
 		this.setDb_dmv_strategy(db.getDb_dmv_strategy());
 	}
 
@@ -84,14 +79,6 @@ public class Database {
 		this.db_tenant = db_tenant;
 	}
 	
-	public GlobalDataMap getDb_dataMap() {
-		return db_dataMap;
-	}
-
-	public void setDb_dataMap(GlobalDataMap db_dataMap) {
-		this.db_dataMap = db_dataMap;
-	}
-	
 	public Set<Partition> getDb_partitions() {
 		return db_partitions;
 	}
@@ -117,22 +104,6 @@ public class Database {
 		this.db_partition_size = db_partition_size;
 	}
 
-	public PartitionTable getDb_partitionTable() {
-		return db_partition_table;
-	}
-
-	public void setDb_partition_table(PartitionTable db_partition_table) {
-		this.db_partition_table = db_partition_table;
-	}
-
-	public RoutingTable getDb_routing_table() {
-		return db_routing_table;
-	}
-
-	public void setDb_routing_table(RoutingTable db_routing_table) {
-		this.db_routing_table = db_routing_table;
-	}
-
 	public String getDb_dmv_strategy() {
 		return db_dmv_strategy;
 	}
@@ -141,27 +112,49 @@ public class Database {
 		this.db_dmv_strategy = db_dmv_strategy;
 	}
 
-	public void insert() {
+	public boolean insert() {
+		boolean success = false;
 		
+		
+		return success;
 	}
 	
-	public void update() {
+	public boolean update() {
+		boolean success = false;
 		
+		
+		return success;
 	}
 	
-	// Returns the Node Id where the actual Data item resides. -1 means data NOT Found.
-	public int search(Data data) {
-		int node_id = -1;
+	// Searches for a specific Data by it's Id
+	public Data search(int data_id) {		
+		for(Partition partition : this.getDb_partitions()) {
+			int partition_id = partition.lookupPartitionId_byDataId(data_id);
+			
+			if(partition_id != -1) 
+				return(partition.getData_byDataId(data_id));
+		}			
 		
-		
-		return node_id;
+		return null;
 	}
 	
-	public void delete() {
+	public boolean delete(int data_id) {
+		boolean success = false;
 		
+		
+		return success;
 	}
 	
-	public void print() {
+	public Partition getPartition(int partition_id) {
+		for(Partition partition : this.getDb_partitions()) {						
+			if(partition.getPartition_id() == partition_id) 
+				return partition;
+		}
+		
+		return null;
+	}
+	
+	public void show() {
 		// DB Details
 		//System.out.println();
 		System.out.println("[OUT] Database Details====");

@@ -253,37 +253,36 @@ public class Data implements Comparable<Data> {
 	public void setData_isMoveable(boolean data_isMoveable) {
 		this.data_isMoveable = data_isMoveable;
 	}
-	
+
 	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Data)) {
+	public String toString() {		
+		if(this.isData_isRoaming())
+			return (this.data_label+"("+this.data_weight+"|P"+this.data_partition_id+"(H"+this.data_home_partition_id
+					+")/N"+this.data_node_id+"(H"+this.data_home_node_id+"))");// @C("+this.data_hmetis_cluster_id+") @h("+this.data_shadow_hmetis_id+")");
+		else
+			return (this.data_label+"("+this.data_weight+"|P"+this.data_partition_id
+					+"/N"+this.data_node_id+")");// @C("+this.data_hmetis_cluster_id+") //@h("+this.data_shadow_hmetis_id+")");
+	}
+		
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Data)) {
 			return false;
 		}
 		
-		Data data = (Data) obj;
-		  return data_label.equals(data.data_label);
+		Data data = (Data) object;
+		  return this.getData_label().equals(data.getData_label());
 		}
 
 	@Override
 	public int hashCode() {
-		return data_label.hashCode();
-	}
-
-	@Override
-	public String toString() {
-		//return (this.data_label+"("+this.data_id+")");
-		//return (this.data_label+"[N"+this.data_node_id+"]");
-		
-		if(this.isData_isRoaming())
-			return (this.data_label+"("+this.data_weight+"|P"+this.data_partition_id+"(H"+this.data_home_partition_id+")/N"+this.data_node_id+"(H"+this.data_home_node_id+"))");// @C("+this.data_hmetis_cluster_id+") @h("+this.data_shadow_hmetis_id+")");
-		else
-			return (this.data_label+"("+this.data_weight+"|P"+this.data_partition_id+"/N"+this.data_node_id+")");// @C("+this.data_hmetis_cluster_id+") //@h("+this.data_shadow_hmetis_id+")");
-		//return (this.data_label+"["+this.data_current_trId+"]");
+		return this.getData_label().hashCode();
 	}
 
 	@Override
 	public int compareTo(Data data) {		
-		int compare = ((int)this.data_id < (int)data.data_id) ? -1: ((int)this.data_id > (int)data.data_id) ? 1:0;
-		return compare;
+		return (((int)this.getData_id() < (int)data.getData_id()) ? -1:
+			((int)this.getData_id() > (int)data.getData_id()) ? 1:0);
+		
 	}
 }
