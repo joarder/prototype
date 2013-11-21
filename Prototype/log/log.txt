@@ -1,52 +1,169 @@
 [ACT] Creating Database Server #test-dbs# with 3 Nodes ...
 [ACT] Creating Database #test-db# within test-dbs Database Server ...
 [ACT] Started Bootstrapping Process ...
-[ACT] Generating 10 synthetic data items ...
-[ACT] Creating Partition P1[Capacity/Size: 10] and placing it into N1
-[ACT] Creating Partition P2[Capacity/Size: 10] and placing it into N2
-[MSG] Total Data Items: 10
-[MSG] Total Partitions: 2
+[ACT] Generating 1000 synthetic data items ...
+[ACT] Creating Partition P1[Capacity/Size: 100] and placing it into N1
+[ACT] Creating Partition P2[Capacity/Size: 100] and placing it into N2
+[ACT] Creating Partition P3[Capacity/Size: 100] and placing it into N3
+[ACT] Creating Partition P4[Capacity/Size: 100] and placing it into N1
+[ACT] Creating Partition P5[Capacity/Size: 100] and placing it into N2
+[ACT] Creating Partition P6[Capacity/Size: 100] and placing it into N3
+[ACT] Creating Partition P7[Capacity/Size: 100] and placing it into N1
+[ACT] Creating Partition P8[Capacity/Size: 100] and placing it into N2
+[ACT] Creating Partition P9[Capacity/Size: 100] and placing it into N3
+[ACT] Creating Partition P10[Capacity/Size: 100] and placing it into N1
+[ACT] Creating Partition P11[Capacity/Size: 100] and placing it into N2
+[ACT] Creating Partition P12[Capacity/Size: 100] and placing it into N3
+[ACT] Creating Partition P13[Capacity/Size: 100] and placing it into N1
+[MSG] Total Data Items: 1000
+[MSG] Total Partitions: 13
 [MSG] Data creation and placement into partitions done.
 [OUT] Database Server Details===
       Database Server: test-dbs
       Number of Nodes: 3
 [OUT] Node Details===
-      N1 with 1 Partitions. Current Load 10.0%
-      N2 with 1 Partitions. Current Load 10.0%
-      N3 with 0 Partitions. Current Load 0.0%
+      N1 with 5 Partitions. Current Load 50.0%
+      N2 with 4 Partitions. Current Load 40.0%
+      N3 with 4 Partitions. Current Load 40.0%
 [OUT] Database Details====
       Database: test-db
-      Number of Partitions: 2
+      Number of Partitions: 13
 [OUT] Partition Table Details====
-      N1 {P1[Capacity: 10|Load: 80.0%] >> [H(8)]}
-      N2 {P2[Capacity: 10|Load: 20.0%] >> [H(2)]}
-      N3 {}
+      N1 {P1[Capacity: 100|Load: 80.0%] >> [H(80)], P4[Capacity: 100|Load: 80.0%] >> [H(80)], P7[Capacity: 100|Load: 80.0%] >> [H(80)], P10[Capacity: 100|Load: 80.0%] >> [H(80)], P13[Capacity: 100|Load: 40.0%] >> [H(40)]}
+      N2 {P2[Capacity: 100|Load: 80.0%] >> [H(80)], P5[Capacity: 100|Load: 80.0%] >> [H(80)], P8[Capacity: 100|Load: 80.0%] >> [H(80)], P11[Capacity: 100|Load: 80.0%] >> [H(80)]}
+      N3 {P3[Capacity: 100|Load: 80.0%] >> [H(80)], P6[Capacity: 100|Load: 80.0%] >> [H(80)], P9[Capacity: 100|Load: 80.0%] >> [H(80)], P12[Capacity: 100|Load: 80.0%] >> [H(80)]}
 ***********************************************************************************************************************
 [RUN] Running Simulation Round-0 ...
-[ACT] Generating an initial workload with 10 transactions of 5 types having a proportion of {0, 0, 7, 2, 1}
+[ACT] Generating an initial workload with 100 transactions of 5 types having a proportion of {8, 10, 47, 21, 14}
 [OUT] Initial Workload Details for Simulation Round-0
-      WL-0 [10 Transactions (containing 9 Data)  having a distribution of {0, 0, 7, 2, 1}
+      WL-0 [100 Transactions (containing 122 Data)  having a distribution of {8, 10, 47, 21, 14}
       -----------------------------------------------------------------------------------------------------------------
-      TR-2[CDT(1), FRQ(1), Data(3)]{d4[P1|N1], d9[P2|N2], d10[P2|N2]}
-      TR-3[CDT(1), FRQ(1), Data(3)]{d1[P1|N1], d9[P2|N2], d10[P2|N2]}
-      TR-4[CDT(1), FRQ(1), Data(3)]{d1[P1|N1], d3[P1|N1], d10[P2|N2]}
-      TR-5[CDT(1), FRQ(1), Data(2)]{d5[P1|N1], d10[P2|N2]}
-      TR-6[CDT(1), FRQ(1), Data(4)]{d1[P1|N1], d2[P1|N1], d3[P1|N1], d9[P2|N2]}
-      TR-7[CDT(1), FRQ(1), Data(2)]{d1[P1|N1], d10[P2|N2]}
-      TR-8[CDT(1), FRQ(1), Data(4)]{d1[P1|N1], d3[P1|N1], d9[P2|N2], d10[P2|N2]}
-      TR-9[CDT(1), FRQ(1), Data(5)]{d1[P1|N1], d3[P1|N1], d4[P1|N1], d6[P1|N1], d9[P2|N2]}
-      TR-10[CDT(1), FRQ(1), Data(5)]{d1[P1|N1], d3[P1|N1], d7[P1|N1], d9[P2|N2], d10[P2|N2]}
-      TR-11[CDT(0), FRQ(1), Data(2)]{d9[P2|N2], d10[P2|N2]}
+      TR-1[CDT(0), FRQ(1), Data(2)]{d967(38|P13/N1), d973(5|P13/N1)}
+      TR-2[CDT(0), FRQ(1), Data(2)]{d899(0|P12/N3), d907(0|P12/N3)}
+      TR-3[CDT(0), FRQ(1), Data(2)]{d883(6|P12/N3), d887(3|P12/N3)}
+      TR-4[CDT(1), FRQ(1), Data(2)]{d1(91|P1/N1), d687(0|P9/N3)}
+      TR-5[CDT(0), FRQ(1), Data(2)]{d971(0|P13/N1), d983(0|P13/N1)}
+      TR-6[CDT(1), FRQ(1), Data(2)]{d906(4|P12/N3), d995(0|P13/N1)}
+      TR-7[CDT(0), FRQ(1), Data(2)]{d702(0|P9/N3), d911(0|P12/N3)}
+      TR-8[CDT(1), FRQ(1), Data(2)]{d911(0|P12/N3), d972(0|P13/N1)}
+      TR-9[CDT(1), FRQ(1), Data(3)]{d723(14|P10/N1), d881(12|P12/N3), d968(0|P13/N1)}
+      TR-10[CDT(1), FRQ(1), Data(3)]{d618(0|P8/N2), d966(38|P13/N1), d971(0|P13/N1)}
+      TR-11[CDT(1), FRQ(1), Data(3)]{d902(4|P12/N3), d938(6|P12/N3), d974(0|P13/N1)}
+      TR-12[CDT(0), FRQ(1), Data(3)]{d976(3|P13/N1), d981(0|P13/N1), d985(0|P13/N1)}
+      TR-13[CDT(1), FRQ(1), Data(3)]{d821(4|P11/N2), d967(38|P13/N1), d971(0|P13/N1)}
+      TR-14[CDT(0), FRQ(1), Data(3)]{d967(38|P13/N1), d968(0|P13/N1), d998(0|P13/N1)}
+      TR-15[CDT(1), FRQ(1), Data(3)]{d768(0|P10/N1), d803(10|P11/N2), d974(0|P13/N1)}
+      TR-16[CDT(0), FRQ(1), Data(3)]{d10(0|P1/N1), d968(0|P13/N1), d985(0|P13/N1)}
+      TR-17[CDT(1), FRQ(1), Data(3)]{d920(4|P12/N3), d966(38|P13/N1), d971(0|P13/N1)}
+      TR-18[CDT(1), FRQ(1), Data(3)]{d823(2|P11/N2), d964(3|P13/N1), d971(0|P13/N1)}
+      TR-19[CDT(1), FRQ(1), Data(4)]{d639(0|P8/N2), d860(0|P11/N2), d967(38|P13/N1), d985(0|P13/N1)}
+      TR-20[CDT(2), FRQ(1), Data(4)]{d478(0|P6/N3), d618(0|P8/N2), d754(2|P10/N1), d931(2|P12/N3)}
+      TR-21[CDT(0), FRQ(1), Data(4)]{d967(38|P13/N1), d984(0|P13/N1), d987(0|P13/N1), d996(4|P13/N1)}
+      TR-22[CDT(2), FRQ(1), Data(4)]{d561(0|P8/N2), d882(6|P12/N3), d883(6|P12/N3), d986(0|P13/N1)}
+      TR-23[CDT(2), FRQ(1), Data(4)]{d642(20|P9/N3), d687(0|P9/N3), d880(1|P11/N2), d974(0|P13/N1)}
+      TR-24[CDT(1), FRQ(1), Data(4)]{d71(1|P1/N1), d642(20|P9/N3), d896(1|P12/N3), d986(0|P13/N1)}
+      TR-25[CDT(2), FRQ(1), Data(4)]{d801(15|P11/N2), d887(3|P12/N3), d938(6|P12/N3), d974(0|P13/N1)}
+      TR-26[CDT(1), FRQ(1), Data(4)]{d610(0|P8/N2), d754(2|P10/N1), d972(0|P13/N1), d974(0|P13/N1)}
+      TR-27[CDT(1), FRQ(1), Data(4)]{d817(0|P11/N2), d821(4|P11/N2), d861(1|P11/N2), d900(1|P12/N3)}
+      TR-28[CDT(2), FRQ(1), Data(4)]{d837(3|P11/N2), d916(0|P12/N3), d971(0|P13/N1), d981(0|P13/N1)}
+      TR-29[CDT(1), FRQ(1), Data(4)]{d811(3|P11/N2), d967(38|P13/N1), d971(0|P13/N1), d995(0|P13/N1)}
+      TR-30[CDT(2), FRQ(1), Data(4)]{d821(4|P11/N2), d828(0|P11/N2), d898(1|P12/N3), d975(0|P13/N1)}
+      TR-31[CDT(1), FRQ(1), Data(4)]{d845(0|P11/N2), d971(0|P13/N1), d972(0|P13/N1), d980(0|P13/N1)}
+      TR-32[CDT(1), FRQ(1), Data(4)]{d1(91|P1/N1), d809(0|P11/N2), d844(0|P11/N2), d966(38|P13/N1)}
+      TR-33[CDT(0), FRQ(1), Data(4)]{d974(0|P13/N1), d975(0|P13/N1), d984(0|P13/N1), d989(0|P13/N1)}
+      TR-34[CDT(1), FRQ(1), Data(4)]{d762(0|P10/N1), d906(4|P12/N3), d970(0|P13/N1), d975(0|P13/N1)}
+      TR-35[CDT(2), FRQ(1), Data(4)]{d687(0|P9/N3), d833(0|P11/N2), d966(38|P13/N1), d974(0|P13/N1)}
+      TR-36[CDT(1), FRQ(1), Data(4)]{d887(3|P12/N3), d923(0|P12/N3), d969(6|P13/N1), d983(0|P13/N1)}
+      TR-37[CDT(1), FRQ(1), Data(4)]{d902(4|P12/N3), d967(38|P13/N1), d983(0|P13/N1), d984(0|P13/N1)}
+      TR-38[CDT(0), FRQ(1), Data(4)]{d1(91|P1/N1), d982(0|P13/N1), d991(0|P13/N1), d995(0|P13/N1)}
+      TR-39[CDT(1), FRQ(1), Data(4)]{d837(3|P11/N2), d845(0|P11/N2), d973(5|P13/N1), d978(0|P13/N1)}
+      TR-40[CDT(1), FRQ(1), Data(4)]{d1(91|P1/N1), d920(4|P12/N3), d969(6|P13/N1), d972(0|P13/N1)}
+      TR-41[CDT(1), FRQ(1), Data(4)]{d5(8|P1/N1), d480(0|P6/N3), d725(2|P10/N1), d980(0|P13/N1)}
+      TR-42[CDT(1), FRQ(1), Data(4)]{d687(0|P9/N3), d892(0|P12/N3), d936(6|P12/N3), d996(4|P13/N1)}
+      TR-43[CDT(2), FRQ(1), Data(4)]{d639(0|P8/N2), d938(6|P12/N3), d968(0|P13/N1), d971(0|P13/N1)}
+      TR-44[CDT(1), FRQ(1), Data(4)]{d725(2|P10/N1), d938(6|P12/N3), d967(38|P13/N1), d979(0|P13/N1)}
+      TR-45[CDT(1), FRQ(1), Data(4)]{d478(0|P6/N3), d907(0|P12/N3), d920(4|P12/N3), d983(0|P13/N1)}
+      TR-46[CDT(1), FRQ(1), Data(4)]{d881(12|P12/N3), d892(0|P12/N3), d967(38|P13/N1), d975(0|P13/N1)}
+      TR-47[CDT(0), FRQ(1), Data(4)]{d966(38|P13/N1), d974(0|P13/N1), d978(0|P13/N1), d981(0|P13/N1)}
+      TR-48[CDT(2), FRQ(1), Data(4)]{d71(1|P1/N1), d803(10|P11/N2), d936(6|P12/N3), d971(0|P13/N1)}
+      TR-49[CDT(0), FRQ(1), Data(4)]{d965(6|P13/N1), d968(0|P13/N1), d989(0|P13/N1), d991(0|P13/N1)}
+      TR-50[CDT(2), FRQ(1), Data(4)]{d879(0|P11/N2), d907(0|P12/N3), d938(6|P12/N3), d984(0|P13/N1)}
+      TR-51[CDT(1), FRQ(1), Data(4)]{d837(3|P11/N2), d965(6|P13/N1), d966(38|P13/N1), d972(0|P13/N1)}
+      TR-52[CDT(2), FRQ(1), Data(4)]{d381(0|P5/N2), d902(4|P12/N3), d979(0|P13/N1), d992(0|P13/N1)}
+      TR-53[CDT(1), FRQ(1), Data(4)]{d747(0|P10/N1), d903(3|P12/N3), d941(1|P12/N3), d966(38|P13/N1)}
+      TR-54[CDT(1), FRQ(1), Data(4)]{d1(91|P1/N1), d768(0|P10/N1), d903(3|P12/N3), d995(0|P13/N1)}
+      TR-55[CDT(1), FRQ(1), Data(4)]{d1(91|P1/N1), d861(1|P11/N2), d972(0|P13/N1), d975(0|P13/N1)}
+      TR-56[CDT(1), FRQ(1), Data(4)]{d883(6|P12/N3), d943(0|P12/N3), d967(38|P13/N1), d995(0|P13/N1)}
+      TR-57[CDT(1), FRQ(1), Data(4)]{d886(2|P12/N3), d967(38|P13/N1), d972(0|P13/N1), d981(0|P13/N1)}
+      TR-58[CDT(1), FRQ(1), Data(4)]{d641(21|P9/N3), d941(1|P12/N3), d961(0|P13/N1), d993(0|P13/N1)}
+      TR-59[CDT(1), FRQ(1), Data(4)]{d38(2|P1/N1), d901(0|P12/N3), d984(0|P13/N1), d995(0|P13/N1)}
+      TR-60[CDT(1), FRQ(1), Data(4)]{d10(0|P1/N1), d926(0|P12/N3), d960(3|P12/N3), d973(5|P13/N1)}
+      TR-61[CDT(1), FRQ(1), Data(4)]{d1(91|P1/N1), d305(1|P4/N1), d642(20|P9/N3), d972(0|P13/N1)}
+      TR-62[CDT(1), FRQ(1), Data(4)]{d38(2|P1/N1), d915(0|P12/N3), d938(6|P12/N3), d967(38|P13/N1)}
+      TR-63[CDT(1), FRQ(1), Data(4)]{d5(8|P1/N1), d321(0|P5/N2), d727(0|P10/N1), d972(0|P13/N1)}
+      TR-64[CDT(1), FRQ(1), Data(4)]{d803(10|P11/N2), d966(38|P13/N1), d976(3|P13/N1), d998(0|P13/N1)}
+      TR-65[CDT(1), FRQ(1), Data(4)]{d908(0|P12/N3), d943(0|P12/N3), d965(6|P13/N1), d975(0|P13/N1)}
+      TR-66[CDT(1), FRQ(1), Data(5)]{d883(6|P12/N3), d936(6|P12/N3), d967(38|P13/N1), d968(0|P13/N1), d985(0|P13/N1)}
+      TR-67[CDT(1), FRQ(1), Data(5)]{d10(0|P1/N1), d762(0|P10/N1), d845(0|P11/N2), d967(38|P13/N1), d971(0|P13/N1)}
+      TR-68[CDT(1), FRQ(1), Data(5)]{d3(0|P1/N1), d702(0|P9/N3), d960(3|P12/N3), d975(0|P13/N1), d991(0|P13/N1)}
+      TR-69[CDT(2), FRQ(1), Data(5)]{d828(0|P11/N2), d936(6|P12/N3), d968(0|P13/N1), d971(0|P13/N1), d973(5|P13/N1)}
+      TR-70[CDT(1), FRQ(1), Data(5)]{d1(91|P1/N1), d884(4|P12/N3), d889(0|P12/N3), d966(38|P13/N1), d991(0|P13/N1)}
+      TR-71[CDT(1), FRQ(1), Data(5)]{d550(0|P7/N1), d610(0|P8/N2), d807(4|P11/N2), d966(38|P13/N1), d983(0|P13/N1)}
+      TR-72[CDT(2), FRQ(1), Data(5)]{d639(0|P8/N2), d892(0|P12/N3), d943(0|P12/N3), d965(6|P13/N1), d996(4|P13/N1)}
+      TR-73[CDT(1), FRQ(1), Data(5)]{d550(0|P7/N1), d723(14|P10/N1), d837(3|P11/N2), d969(6|P13/N1), d978(0|P13/N1)}
+      TR-74[CDT(1), FRQ(1), Data(5)]{d10(0|P1/N1), d721(14|P10/N1), d887(3|P12/N3), d903(3|P12/N3), d963(4|P13/N1)}
+      TR-75[CDT(2), FRQ(1), Data(5)]{d381(0|P5/N2), d723(14|P10/N1), d804(3|P11/N2), d931(2|P12/N3), d978(0|P13/N1)}
+      TR-76[CDT(2), FRQ(1), Data(5)]{d381(0|P5/N2), d916(0|P12/N3), d966(38|P13/N1), d974(0|P13/N1), d995(0|P13/N1)}
+      TR-77[CDT(1), FRQ(1), Data(5)]{d890(0|P12/N3), d966(38|P13/N1), d976(3|P13/N1), d988(0|P13/N1), d993(0|P13/N1)}
+      TR-78[CDT(1), FRQ(1), Data(5)]{d641(21|P9/N3), d642(20|P9/N3), d976(3|P13/N1), d985(0|P13/N1), d989(0|P13/N1)}
+      TR-79[CDT(1), FRQ(1), Data(5)]{d884(4|P12/N3), d896(1|P12/N3), d931(2|P12/N3), d968(0|P13/N1), d982(0|P13/N1)}
+      TR-80[CDT(2), FRQ(1), Data(5)]{d642(20|P9/N3), d844(0|P11/N2), d964(3|P13/N1), d968(0|P13/N1), d969(6|P13/N1)}
+      TR-81[CDT(1), FRQ(1), Data(5)]{d768(0|P10/N1), d886(2|P12/N3), d975(0|P13/N1), d978(0|P13/N1), d979(0|P13/N1)}
+      TR-82[CDT(2), FRQ(1), Data(5)]{d821(4|P11/N2), d905(1|P12/N3), d965(6|P13/N1), d973(5|P13/N1), d978(0|P13/N1)}
+      TR-83[CDT(1), FRQ(1), Data(5)]{d781(0|P10/N1), d886(2|P12/N3), d898(1|P12/N3), d902(4|P12/N3), d998(0|P13/N1)}
+      TR-84[CDT(2), FRQ(1), Data(5)]{d747(0|P10/N1), d807(4|P11/N2), d907(0|P12/N3), d966(38|P13/N1), d979(0|P13/N1)}
+      TR-85[CDT(1), FRQ(1), Data(5)]{d781(0|P10/N1), d956(0|P12/N3), d963(4|P13/N1), d978(0|P13/N1), d1000(0|P13/N1)}
+      TR-86[CDT(1), FRQ(1), Data(5)]{d914(0|P12/N3), d960(3|P12/N3), d962(5|P13/N1), d971(0|P13/N1), d978(0|P13/N1)}
+      TR-87[CDT(0), FRQ(1), Data(6)]{d768(0|P10/N1), d966(38|P13/N1), d967(38|P13/N1), d975(0|P13/N1), d983(0|P13/N1), d992(0|P13/N1)}
+      TR-88[CDT(1), FRQ(1), Data(6)]{d687(0|P9/N3), d768(0|P10/N1), d903(3|P12/N3), d906(4|P12/N3), d960(3|P12/N3), d999(0|P13/N1)}
+      TR-89[CDT(2), FRQ(1), Data(6)]{d478(0|P6/N3), d807(4|P11/N2), d829(0|P11/N2), d884(4|P12/N3), d975(0|P13/N1), d991(0|P13/N1)}
+      TR-90[CDT(2), FRQ(1), Data(6)]{d610(0|P8/N2), d721(14|P10/N1), d957(0|P12/N3), d966(38|P13/N1), d967(38|P13/N1), d979(0|P13/N1)}
+      TR-91[CDT(1), FRQ(1), Data(6)]{d821(4|P11/N2), d823(2|P11/N2), d966(38|P13/N1), d971(0|P13/N1), d974(0|P13/N1), d993(0|P13/N1)}
+      TR-92[CDT(0), FRQ(1), Data(6)]{d305(1|P4/N1), d966(38|P13/N1), d967(38|P13/N1), d978(0|P13/N1), d980(0|P13/N1), d993(0|P13/N1)}
+      TR-93[CDT(1), FRQ(1), Data(6)]{d829(0|P11/N2), d880(1|P11/N2), d965(6|P13/N1), d971(0|P13/N1), d989(0|P13/N1), d992(0|P13/N1)}
+      TR-94[CDT(2), FRQ(1), Data(6)]{d5(8|P1/N1), d610(0|P8/N2), d882(6|P12/N3), d966(38|P13/N1), d967(38|P13/N1), d979(0|P13/N1)}
+      TR-95[CDT(2), FRQ(1), Data(6)]{d754(2|P10/N1), d811(3|P11/N2), d902(4|P12/N3), d905(1|P12/N3), d966(38|P13/N1), d990(0|P13/N1)}
+      TR-96[CDT(2), FRQ(1), Data(6)]{d550(0|P7/N1), d687(0|P9/N3), d768(0|P10/N1), d801(15|P11/N2), d965(6|P13/N1), d967(38|P13/N1)}
+      TR-97[CDT(2), FRQ(1), Data(6)]{d10(0|P1/N1), d804(3|P11/N2), d900(1|P12/N3), d938(6|P12/N3), d979(0|P13/N1), d986(0|P13/N1)}
+      TR-98[CDT(0), FRQ(1), Data(6)]{d968(0|P13/N1), d971(0|P13/N1), d972(0|P13/N1), d981(0|P13/N1), d995(0|P13/N1), d997(0|P13/N1)}
+      TR-99[CDT(0), FRQ(1), Data(6)]{d962(5|P13/N1), d967(38|P13/N1), d968(0|P13/N1), d974(0|P13/N1), d977(0|P13/N1), d992(0|P13/N1)}
+      TR-100[CDT(0), FRQ(1), Data(6)]{d747(0|P10/N1), d966(38|P13/N1), d972(0|P13/N1), d973(5|P13/N1), d975(0|P13/N1), d998(0|P13/N1)}
 
-      # Distributed Transactions: 9 (90.0% of Total 10 Workload Transactions)
-      # Impact of Distributed Transactions: 0.9 (for a particular workload round)
+      # Distributed Transactions: 82 (82.0% of Total 100 Workload Transactions)
+      # Impact of Distributed Transactions: 1.06 (for a particular workload round)
       # Database Partition Table Details
       --N1
-       -P1[Capacity: 10|Load: 80.0%] >> [H(8)]
+       -P1[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P4[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P7[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P10[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P13[Capacity: 100|Load: 40.0%] >> [H(40)]
       --N2
-       -P2[Capacity: 10|Load: 20.0%] >> [H(2)]
+       -P2[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P5[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P8[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P11[Capacity: 100|Load: 80.0%] >> [H(80)]
       --N3
+       -P3[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P6[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P9[Capacity: 100|Load: 80.0%] >> [H(80)]
+       -P12[Capacity: 100|Load: 80.0%] >> [H(80)]
       -----------------------------------------------------------------------------------------------------------------
 
 [MSG] Workload generation completed for Simulation Round-0
 [ACT] Run HyperGraph Partitioning on the Workload ...
+[ACT] Base Strategy[Simulation Round-0] :: One(Cluster)-to-One(Partition) Peer
+Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 14
+	at jkamal.prototype.workload.MappingTable.generateMappingTable(MappingTable.java:54)
+	at jkamal.prototype.db.DataMovement.baseStrategy(DataMovement.java:39)
+	at jkamal.prototype.main.DBMSSimulator.main(DBMSSimulator.java:173)

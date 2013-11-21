@@ -23,12 +23,19 @@ public class TransactionGeneration {
 	}
 	
 	// This function will generate the required number of Transactions for a specific Workload with a specific Database
-	public void generateTransaction(Database db, Workload workload) {								
+	public void generateTransaction(Database db, Workload workload) {		
+		GlobalDataMap dataMap = db.getDb_dataMap();
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
 		Set<Data> trDataSet;
+		ArrayList<Integer> trDataList;
 		Data data;
 		int[] prop;
+		int data_id = 0;
+		int data_frequency = 0;
+		int data_ranking = 0;
+		int data_weight = 0;
+		Double rand = 0.0;
 		
 		//Selecting Transaction Prop
 		if(workload.getWrl_simulationRound() != 0)
@@ -36,13 +43,13 @@ public class TransactionGeneration {
 		else 
 			prop = workload.getWrl_transactionProportions();		
 				
-		int tr_id = 1; 
+		int tr_id = 0; 
 		if(workload.getWrl_simulationRound() != 0)
 			tr_id = workload.getWrl_globalTrId();
 		
 		// Creating a Random Object for randomly chosen Data items
 		DBMSSimulator.random_data.reSeed(0);
-		this.prepareRandomData(db);
+		this.prepareRandomData(dataMap);
 		
 		// i -- Transaction types
 		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {	
@@ -53,17 +60,36 @@ public class TransactionGeneration {
 			for(int j = 0; j < prop[i]; j++) {
 				++tr_id;
 				trDataSet = new TreeSet<Data>();
+				trDataList = new ArrayList<Integer>();
 				
 				// k -- required numbers of Data items based on Transaction type
 				for(int k = 0; k < i+2; k++) {
-					data = this.getRandomData(db, Math.round(DBMSSimulator.random_data.nextUniform(0.0, 1.0, true) * 100.0)/100.0);
-					data.getData_transaction_involved().add(tr_id);
+					rand = Math.round(DBMSSimulator.random_data.nextUniform(0.0, 1.0, true) * 100.0)/100.0;
+					data_id = this.getRandomData(rand);
 					
-					trDataSet.add(data);					
+					//System.out.println("@debug rand = "+rand+"|d = "+data_id+"| i+2 = "+(i+2)+"| k = "+k);
+										
+					if(trDataList.contains(data_id) && k > 0) {
+						--k;
+					} else {
+						trDataList.add(data_id);
+						data = dataMap.getData_items().get(data_id);
+						
+						data_frequency = data.getData_frequency();
+						data_ranking = data.getData_ranking();
+						data_weight = (data_frequency * data_ranking);
+						
+						data.setData_frequency(++data_frequency);	
+						data.setData_weight(data_weight);
+								
+						data.getData_transaction_involved().add(tr_id);
+						
+						trDataSet.add(data);						
+					}					
 				} // end--k for() loop
 																
 				transaction = new Transaction(tr_id, trDataSet);				
-				transaction.setTr_type(i);
+				transaction.setTr_type(i+1);
 				transaction.generateTransactionCost(db);
 				workload.incWrl_totalTransaction();
 				
@@ -83,8 +109,7 @@ public class TransactionGeneration {
 		workload.setWrl_globalTrId(tr_id);
 	}	
 	
-	public void prepareRandomData(Database db) {
-		GlobalDataMap dataMap = db.getDb_dataMap();		
+	public void prepareRandomData(GlobalDataMap dataMap) {		
 		Map<Integer, Integer> unsortedMap = null;
 		int d = 0;
 		
@@ -113,13 +138,8 @@ public class TransactionGeneration {
 		}*/				
 	}
 	
-	public Data getRandomData(Database db, double random_value) {
-		GlobalDataMap dataMap = db.getDb_dataMap();
-		Data random_data = null;
+	public int getRandomData(double random_value) {
 		int data_id = 0;
-		int data_frequency = 0;
-		int data_ranking = 0;
-		int data_weight = 0;
 		
 		if(this.normalised_cumulative_probability_to_data_map.containsKey(random_value)) {									
 			Object[] values = this.normalised_cumulative_probability_to_data_map.get(random_value).values().toArray();
@@ -147,16 +167,7 @@ public class TransactionGeneration {
 			else
 				data_id = (int) values[0];						
 		}
-				
-		random_data = dataMap.getData_items().get(data_id);
 		
-		data_frequency = random_data.getData_frequency();
-		data_ranking = random_data.getData_ranking();
-		data_weight = (data_frequency * data_ranking);
-		
-		random_data.setData_frequency(++data_frequency);	
-		random_data.setData_weight(data_weight);
-				
-		return random_data;
+		return data_id;
 	}
 }
