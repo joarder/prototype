@@ -98,7 +98,7 @@ public class WorkloadVariation {
 	
 	public void generateVariation(int simulation_run_numbers) {		
 		for(int i = 0; i < simulation_run_numbers; i++) {
-			this.setTransaction_birth_rate(Math.round((this.getbRangeMin() + (this.getbRangeMax() - this.getbRangeMin()) * DBMSSimulator.bRand.nextWeibull(1, 1)) 
+			this.setTransaction_birth_rate(Math.round((this.getbRangeMin() + (this.getbRangeMax() - this.getbRangeMin()) * DBMSSimulator.random_birth.nextWeibull(1, 1)) 
 					* 100.0) / 100.0);			
 					
 			if(this.getTransaction_birth_rate() >= 1) {
@@ -119,7 +119,7 @@ public class WorkloadVariation {
 				// Nothing to do
 			}
 			
-			this.setTransaction_death_rate(Math.round((this.getdRangeMin() + (this.getdRangeMax() - this.getdRangeMin()) * DBMSSimulator.dRand.nextWeibull(1, 1))
+			this.setTransaction_death_rate(Math.round((this.getdRangeMin() + (this.getdRangeMax() - this.getdRangeMin()) * DBMSSimulator.random_death.nextWeibull(1, 1))
 					* 100.0) / 100.0);
 			this.setTransaction_death_rate(1-this.getTransaction_birth_rate());						
 			

@@ -6,7 +6,6 @@
 
 package jkamal.prototype.main;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import org.apache.commons.math3.random.RandomDataGenerator;
@@ -18,20 +17,21 @@ import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.io.OutputLogger;
 import jkamal.prototype.workload.HGraphClusters;
 import jkamal.prototype.workload.Workload;
+import jkamal.prototype.workload.WorkloadDataPreparation;
 import jkamal.prototype.workload.WorkloadGeneration;
 import jkamal.prototype.workload.WorkloadReplay;
 import jkamal.prototype.workload.WorkloadVariation;
 
 public class DBMSSimulator {	
 	public final static int DB_SERVERS = 3;
-	public final static int DATA_OBJECTS = 10000; // 10GB Data (in Size)
+	public final static int DATA_OBJECTS = 1000; // 10GB Data (in Size)
 	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "khmetis";
-	public final static int TRANSACTION_NUMS = 1000;
-	public final static int SIMULATION_RUN_NUMBERS = 28;
-	public static RandomDataGenerator bRand;
-	public static RandomDataGenerator dRand;
-	public static RandomDataGenerator dataRand;
+	public final static int TRANSACTION_NUMS = 100;
+	public final static int SIMULATION_RUN_NUMBERS = 3;
+	public static RandomDataGenerator random_birth;
+	public static RandomDataGenerator random_death;
+	public static RandomDataGenerator random_data;
 	
 	public static void main(String[] args) throws IOException {			
 		OutputLogger logger = new OutputLogger();
@@ -40,12 +40,12 @@ public class DBMSSimulator {
 		PrintWriter partitionWriter = logger.getWriter(DIR_LOCATION, "partition");
 		
 		// Database Server and Tenant Database Creation
-		DatabaseServer dbs = new DatabaseServer(0, "testdbs", DB_SERVERS);
+		DatabaseServer dbs = new DatabaseServer(0, "test-dbs", DB_SERVERS);
 		System.out.println("[ACT] Creating Database Server #"+dbs.getDbs_name()+"# with "+dbs.getDbs_nodes().size()+" Nodes ...");
 		
 		// Database creation for tenant id-"0" with Range partitioning model with 1GB Partition size
-		//Database db = new Database(0, "testdb", 0, "Range", 0.005);
-		Database db = new Database(0, "testdb", 0, "Range", 1);
+		Database db = new Database(0, "test-db", 0, "Range", 0.1);
+		//Database db = new Database(0, "testdb", 0, "Range", 1);
 		System.out.println("[ACT] Creating Database #"+db.getDb_name()+"# within "+dbs.getDbs_name()+" Database Server ...");		
 		
 		// Perform Bootstrapping through synthetic Data generation and placing it into appropriate Partition
@@ -70,18 +70,20 @@ public class DBMSSimulator {
 		Workload workload = null;
 		WorkloadReplay workloadReplay = new WorkloadReplay();
 		WorkloadVariation workloadVariation = new WorkloadVariation();
-		File dir = new File(DIR_LOCATION);
 		HGraphMinCut minCut;
 		HGraphClusters hGraphClusters = new HGraphClusters();
 		DataMovement dataMovement = new DataMovement();	
 		int simulation_round = 0;
 				
-		bRand = new RandomDataGenerator();
-		dRand = new RandomDataGenerator();
-		dataRand = new RandomDataGenerator();
-	    bRand.reSeed(0);
-	    dRand.reSeed(1);
-	    dataRand.reSeed(0);
+		random_birth = new RandomDataGenerator();
+		random_death = new RandomDataGenerator();
+		random_data = new RandomDataGenerator();
+	    random_birth.reSeed(0);
+	    random_death.reSeed(1);	    
+	    		
+		// Test
+		WorkloadDataPreparation wrl_data = new WorkloadDataPreparation();
+		wrl_data.prepareWorkloadData(db);
 	    
 	    workloadVariation.generateVariation(SIMULATION_RUN_NUMBERS);	    
 	    		
@@ -142,7 +144,7 @@ public class DBMSSimulator {
 
 			//==============================================================================================
 			// Run hMetis HyperGraph Partitioning							
-			minCut = new HGraphMinCut(db, workload, dir, HMETIS); 		
+			minCut = new HGraphMinCut(db, workload, HMETIS); 		
 			minCut.runHMetis();
 
 			// Sleep for 5sec to ensure the files are generated

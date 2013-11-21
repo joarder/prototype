@@ -22,7 +22,7 @@ public class DatabaseServer {
 		this.setDbs_nodes(new TreeSet<Node>());		
 		this.setDbs_tenants(new TreeSet<Database>());
 		
-		for(int i = 0; i < nodes; i++)			
+		for(int i = 1; i <= nodes; i++)			
 			this.getDbs_nodes().add(new Node(i, i));
 	}
 

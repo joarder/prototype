@@ -112,7 +112,7 @@ public class WorkloadGeneration {
 		
 		// TR Rankings {T1, T2, T3, T4, T5} = {5, 4, 1, 2, 3}; 1 = Higher, 5 = Lower
 		int begin = 0;
-		int end = rankArray.length-1;
+		int end = (rankArray.length - 1);
 		for(int i = 0; i < propArray.length; i++) {
 			if(i < 2) {
 				propArray[i] = rankArray[end];

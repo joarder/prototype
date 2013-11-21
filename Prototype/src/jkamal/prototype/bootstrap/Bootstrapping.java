@@ -23,17 +23,16 @@ public class Bootstrapping {
 		Partition partition;
 		ArrayList<Data> dataList;
 		Data data;												
-		int node_id = 0;
+		int node_id = 1; //1
 		int partition_capacity = 0;
 		int partition_nums = (int) Math.ceil((double) DATA_OBJECTS/(db.getDb_partition_size() * 0.8));
-		//int partition_nums = 0;
-		int data_id = 0;
+		int data_id = 1; //0
 		int data_nums = 0;
 		
 		// i -- partition
-		for(int partition_id = 0; partition_id < partition_nums; partition_id++) {	
-			if(node_id == dbs.getDbs_nodes().size())
-				node_id = 0;
+		for(int partition_id = 1; partition_id <= partition_nums; partition_id++) {	
+			if(node_id > dbs.getDbs_nodes().size())
+				node_id = 1;
 			
 			// Create a new Partition and attach it to the Database			
 			partition = new Partition(partition_id, String.valueOf(partition_id), node_id, db.getDb_partition_size());			
@@ -44,7 +43,7 @@ public class Bootstrapping {
 			
 			// Create an ArrayList for placing into the Routing Table for each i-th Partition entry
 			dataList = new ArrayList<Data>();																											
-			for(int k = 0; k < data_nums && data_id < DATA_OBJECTS; k++) {
+			for(int k = 1; k <= data_nums && data_id <= DATA_OBJECTS; k++) {
 				// Create a new Data Item within the Partition
 				data = new Data(data_id, String.valueOf(data_id), partition_id, node_id, false);
 				partition.getPartition_dataObjects().add(data);
@@ -55,7 +54,7 @@ public class Bootstrapping {
 				globalDataList.getData_items().put(data_id, data);
 								
 				dataList.add(data);				
-				data_id++;
+				++data_id;
 			} // end -- for
 			
 			// Calculate current load
