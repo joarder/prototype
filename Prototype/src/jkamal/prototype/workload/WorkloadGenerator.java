@@ -12,16 +12,42 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.main.DBMSSimulator;
 
-public class WorkloadGeneration {	
-	public WorkloadGeneration() {}	
+public class WorkloadGenerator {	
+	private Map<Integer, Workload> workload_map;	
+	private WorkloadDataPreparer workloadDataPreparer;
 	
-	public Workload init(Database db, String workload_name, int workload_id) {
+	public WorkloadGenerator() {
+		this.setWorkload_map(new TreeMap<Integer, Workload>());
+		this.setWorkloadDataPreparer(new WorkloadDataPreparer());
+	}	
+	
+	public Map<Integer, Workload> getWorkload_map() {
+		return workload_map;
+	}
+
+	public void setWorkload_map(Map<Integer, Workload> workload_map) {
+		this.workload_map = workload_map;
+	}
+
+	public WorkloadDataPreparer getWorkloadDataPreparer() {
+		return workloadDataPreparer;
+	}
+
+	public void setWorkloadDataPreparer(WorkloadDataPreparer workloadDataPreparer) {
+		this.workloadDataPreparer = workloadDataPreparer;
+	}
+
+	// Workload Initialisation
+	public Workload workloadInitialisation(Database db, String workload_name, int workload_id) {
 		// Workload Details : http://oltpbenchmark.com/wiki/index.php?title=Workloads
 		switch(workload_name) {
 			case "AuctionMark":
@@ -31,79 +57,64 @@ public class WorkloadGeneration {
 			case "SEATS":
 				return(new Workload(workload_id, 6, db.getDb_id()));
 			case "TPC-C":
-				return(new Workload(workload_id, 5, db.getDb_id()));	
+				return(new Workload(workload_id, 5, db.getDb_id()));
+			case "YCSB":
+				return(new Workload(workload_id, 6, db.getDb_id()));
 			}		
 		
 		return null;
 	}
 	
-	public Workload generateWorkload(DatabaseServer dbs, Database db, Workload workload) {
-		int transaction_types = workload.getWrl_transactionTypes();
+	// Generates Workloads for the entire simulation
+	public void generateWorkloads(DatabaseServer dbs, Database db) {
+		Workload workload = null;
+		TransactionClassifier workloadClassifier = new TransactionClassifier();
+		int workload_id = 0;
 		
-		if(workload.getWrl_simulationRound() != 0) {
-			// === Death Management
-			System.out.println("[MSG] Old Transaction Death Rate: "+workload.getWrl_transactionDeathRate());
-			System.out.print("[ACT] Killing "+workload.getWrl_transactionDying()+" old transactions with a distribution of ");			
-			
-			int[] deathArray = transactionPropGen(transaction_types, workload.getWrl_transactionDying());
-			workload.setWrl_transactionDeathProp(deathArray);
-			
-			workload.printWrl_transactionProp(workload.getWrl_transactionDeathProportions());
-			System.out.println();																		
-			
-			// Reducing Old Workload Transactions			
-			TransactionReduction trRed = new TransactionReduction();
-			trRed.reduceTransaction(db, workload);
-			
-			WorkloadGeneration.print(workload);			
-			
-			// === Birth Management
-			System.out.println("[MSG] New Transaction Birth Rate: "+workload.getWrl_transactionBirthRate());
-			System.out.print("[ACT] Creating "+workload.getWrl_transactionBorning()+" new transactions with a distribution of ");																	
-			
-			int[] birthArray = transactionPropGen(transaction_types, workload.getWrl_transactionBorning());
-			workload.setWrl_transactionBirthProp(birthArray);
-			
-			workload.printWrl_transactionProp(workload.getWrl_transactionBirthProp());			
-			System.out.println();
-			
-			// Generating New Workload Transactions						
-			TransactionGeneration trGen = new TransactionGeneration();
-			trGen.generateTransaction(db, workload);			
-			
-			WorkloadGeneration.print(workload);						
-			
-			// Other Stuffs
-			this.incrTransactionWeights(workload);
-			this.workloadEvaluation(db, workload);
-			
-			this.assignShadowHMetisDataId(workload);
-		} else {
-			// Initial Round			
-			workload.setWrl_transactionProp(transactionPropGen(transaction_types, workload.getWrl_initTotalTransactions()));			
-			workload.printWrl_transactionProp(workload.getWrl_transactionProportions());
-			System.out.println();
-			
-			// Generating New Workload Transactions
-			TransactionGeneration trGen = new TransactionGeneration();
-			trGen.generateTransaction(db, workload);
-			
-			this.assignShadowHMetisDataId(workload);		
-		}																		
+		// Prepare Workload Data based on Zipfian Ranking with Normalised Cumulative Probability
+		this.getWorkloadDataPreparer().prepareWorkloadData(db);
 		
-		// Generating Workload's Data Partition and Node Distribution Details
-		workload.generateDataPartitionTable();
-		workload.generateDataNodeTable();		
-		
-		// Generating Workload and FixFile for HyperGraph Partitioning			
-		this.generateWorkloadFile(workload);
-		this.generateFixFile(workload);				
-		
-		// Calculate the percentage of DT
-		workload.calculateDTPercentage();			
+		while(workload_id != DBMSSimulator.SIMULATION_RUN_NUMBERS) {
+			if(workload_id != 0) {
+				workload = this.getWorkload_map().get(workload_id -1);
 				
-		return workload;
-	}
+				// === Death Management === 	
+				workload.setWrl_transactionDying((int) ((int) workload.getWrl_totalTransactions() * 0.5));				
+				workload.setWrl_transactionDeathRate(0.5);	
+				workload.setWrl_transactionDeathProp(transactionPropGen(workload.getWrl_transactionTypes(), 
+						workload.getWrl_transactionDying()));
+				
+				// Reducing Old Workload Transactions			
+				TransactionReducer transactionReducer = new TransactionReducer();
+				transactionReducer.reduceTransaction(db, workload);
+				
+				// === Birth Management ===				
+				workload.setWrl_transactionBorning((int) ((int) workload.getWrl_totalTransactions() * 0.5));
+				workload.setWrl_transactionBirthRate(0.5);
+				workload.setWrl_transactionBirthProp(transactionPropGen(workload.getWrl_transactionTypes(), 
+						workload.getWrl_transactionBorning()));
+				
+				// Generating New Workload Transactions						
+				TransactionGenerator transactionGenerator = new TransactionGenerator();
+				transactionGenerator.generateTransaction(db, workload);				
+			} else {
+				// === Workload Generation Round 0 ===
+				workload = this.workloadInitialisation(db, DBMSSimulator.WORKLOAD_TYPE, workload_id);
+				workload.setWrl_initTotalTransactions(DBMSSimulator.TRANSACTION_NUMS);
+			}			
+			
+			// Classify the Workload Transactions based on whether they are Distributed or not (Red/Orange/Green List)
+			workloadClassifier.classifyTransactions(workload);			
+			this.getWorkload_map().put(workload_id, workload);
+			
+			workload.updateWrl_workloadFileName(Integer.toString(workload.getWrl_id()));
+			
+			this.generateWorkloadFile(workload);
+			this.generateFixFile(workload);
+			
+			++workload_id;
+		}
+	}			
 	
 	public void incrTransactionWeights(Workload workload) {
 		int tr_weight = 0;
@@ -197,43 +208,6 @@ public class WorkloadGeneration {
 		workload.setWrl_totalData(total_dataItems);
 	}
 	
-	public void workloadEvaluation(Database db, Workload workload) {
-		WorkloadSampling workloadSampling = workload.getWorkloadSampling();
-		boolean emptyWorkload = false;
-		
-		// Re-evaluate Discarded Transactions
-		if(workload.getWrl_simulationRound() > 1) {
-			System.out.println("[ACT] Re-analysing previously discarded workload ...");
-			emptyWorkload = workloadSampling.includeDiscardedWorkload(db, workload);
-			System.out.println("[MSG] Total "+workloadSampling.getReseletedTransaction()
-					+" newly distributed transactions are included from the previously discarded workload.");
-			WorkloadGeneration.print(workload);
-		}
-		
-		if(emptyWorkload) {
-			System.out.println("[ALM] Empty workload !!! No transactions included !!!");
-			workload.setWorkloadEmpty(true);
-		}
-		
-		workload.removeDuplicates();
-		
-		// Workload Sampling
-		System.out.println("[ACT] Sampling Workload ...");		
-		workloadSampling.performSampling(workload);
-		System.out.println("[MSG] Total "+workloadSampling.getDiscardedTransaction()
-				+" non-distributed transactions are discarded from current workload and left for re-analysing for the next round.");
-		WorkloadGeneration.print(workload);						
-	}
-	
-	public void workloadRestoration(Database db, Workload workload) {
-		WorkloadSampling workloadSampling = workload.getWorkloadSampling();		
-		
-		System.out.println("[ACT] Restoring previously discarded transactions from last simulation round ...");
-		workloadSampling.restoreDiscardedWorkload(db, workload);
-		System.out.println("[OUT] Total "+workload.getWrl_restoredTransactions()+" transactions have been restored from last simulation round."); 
-		WorkloadGeneration.print(workload);
-	}
-	
 	// Generates Workload File for Hypergraph partitioning
 	public void generateWorkloadFile(Workload workload) {
 		File workloadFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_workload_file());
@@ -252,18 +226,21 @@ public class WorkloadGeneration {
 				
 				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 					for(Transaction transaction : entry.getValue()) {
-						writer.write(transaction.getTr_weight()+" ");
-						
-						Iterator<Data> data =  transaction.getTr_dataSet().iterator();
-						while(data.hasNext()) {
-							trData = data.next();
-							//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
-							writer.write(Integer.toString(trData.getData_shadowHMetisId()));							
+						if(transaction.getTr_class() != "green") {
+							writer.write(transaction.getTr_weight()+" ");
 							
-							if(data.hasNext())
-								writer.write(" "); 
-						} // end -- while() loop						
-						writer.write("\n");						
+							Iterator<Data> data =  transaction.getTr_dataSet().iterator();
+							while(data.hasNext()) {
+								trData = data.next();
+								//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
+								writer.write(Integer.toString(trData.getData_shadowHMetisId()));							
+								
+								if(data.hasNext())
+									writer.write(" "); 
+							} // end -- while() loop
+							
+							writer.write("\n");						
+						} // end -- if()-Transaction Class
 					} // end -- for()-Transaction
 				} // end -- for()-Transaction-Types
 				

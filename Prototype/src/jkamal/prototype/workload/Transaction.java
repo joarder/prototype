@@ -14,32 +14,36 @@ import jkamal.prototype.db.Partition;
 
 public class Transaction implements Comparable<Transaction> {
 	private int tr_id;
-	private String tr_label;
-	private int tr_type;
-	private int tr_popularity_rank; // 1 = Highest Popularity
-	private int tr_weight;
-	private Set<Data> tr_dataSet;
+	private String tr_label;	
+	private int tr_ranking;
+	private int tr_frequency;	
+	private int tr_weight;	
 	private int tr_dtCost; // Node Span Cost or, Distributed Transaction Cost
 	private int tr_psCost; // Partition Span Cost
+	private Set<Data> tr_dataSet;
+	private String tr_class;
 	
 	public Transaction(int id, Set<Data> dataSet) {
 		this.setTr_id(id);
-		this.setTr_label("TR-"+Integer.toString(this.getTr_id()));
-		this.setTr_type(-1);
-		this.setTr_popularity_rank(1); // By default every transaction is highly popular
-		this.setTr_weight(1); // 1 means that the transaction has occurred for a single time in the Workload
-		this.setTr_dataSet(dataSet);
+		this.setTr_label("T"+Integer.toString(this.getTr_id()));
+		this.setTr_ranking(0);
+		this.setTr_frequency(0);
+		this.setTr_weight(0); 		
 		this.setTr_dtCost(0);
-		this.setTr_psCost(0);				
+		this.setTr_psCost(0);
+		this.setTr_dataSet(dataSet);
+		this.setTr_class(null);
 	}
 	
 	// Copy Constructor
 	public Transaction(Transaction transaction) {
-		this.tr_id = transaction.getTr_id();
-		this.tr_label = transaction.getTr_label();
-		this.tr_type = transaction.getTr_type();
-		this.setTr_popularity_rank(transaction.getTr_popularity_rank());
-		this.tr_weight = transaction.getTr_weight();		
+		this.setTr_id(transaction.getTr_id());
+		this.setTr_label(transaction.getTr_label());
+		this.setTr_ranking(transaction.getTr_ranking());
+		this.setTr_weight(transaction.getTr_weight());		
+		this.setTr_dtCost(transaction.getTr_dtCost());
+		this.setTr_psCost(transaction.getTr_psCost());
+		this.setTr_class(transaction.getTr_class());
 		
 		Data cloneData;
 		Set<Data> cloneDataSet = new TreeSet<Data>();
@@ -47,10 +51,7 @@ public class Transaction implements Comparable<Transaction> {
 			cloneData = new Data(data);
 			cloneDataSet.add(cloneData);
 		}		
-		this.tr_dataSet = cloneDataSet;
-		
-		this.tr_dtCost = transaction.getTr_dtCost();
-		this.tr_psCost = transaction.getTr_psCost();
+		this.setTr_dataSet(cloneDataSet);
 	}
 
 	public int getTr_id() {
@@ -60,45 +61,38 @@ public class Transaction implements Comparable<Transaction> {
 	public void setTr_id(int tr_id) {
 		this.tr_id = tr_id;
 	}
-
+	
+	public String getTr_label() {
+		return tr_label;
+	}
+	
 	public void setTr_label(String tr_label) {
 		this.tr_label = tr_label;
+	}
+
+	public int getTr_ranking() {
+		return tr_ranking;
+	}
+
+	public void setTr_ranking(int tr_ranking) {
+		this.tr_ranking = tr_ranking;
+	}
+
+	public int getTr_frequency() {
+		return tr_frequency;
+	}
+
+	public void setTr_frequency(int tr_frequency) {
+		this.tr_frequency = tr_frequency;
 	}
 
 	public void setTr_weight(int tr_weight) {
 		this.tr_weight = tr_weight;
 	}
 
-	public int getTr_type() {
-		return tr_type;
-	}
-
-	public void setTr_type(int tr_type) {
-		this.tr_type = tr_type;
-	}
-
-	public int getTr_popularity_rank() {
-		return tr_popularity_rank;
-	}
-
-	public void setTr_popularity_rank(int tr_popularity_rank) {
-		this.tr_popularity_rank = tr_popularity_rank;
-	}
-
 	public int getTr_weight() {
 		return tr_weight;
 	}
-	public String getTr_label() {
-		return tr_label;
-	}
-
-	public Set<Data> getTr_dataSet() {
-		return tr_dataSet;
-	}
-
-	public void setTr_dataSet(Set<Data> tr_dataSet) {
-		this.tr_dataSet = tr_dataSet;
-	}	
 
 	public int getTr_dtCost() {
 		return tr_dtCost;
@@ -114,6 +108,31 @@ public class Transaction implements Comparable<Transaction> {
 
 	public void setTr_psCost(int tr_psCost) {
 		this.tr_psCost = tr_psCost;
+	}
+	
+	public Set<Data> getTr_dataSet() {
+		return tr_dataSet;
+	}
+
+	public void setTr_dataSet(Set<Data> tr_dataSet) {
+		this.tr_dataSet = tr_dataSet;
+	}	
+	
+	public String getTr_class() {
+		return tr_class;
+	}
+
+	public void setTr_class(String tr_class) {
+		this.tr_class = tr_class;
+	}
+
+	public void incTr_frequency() {
+		int tr_frequency = this.getTr_frequency();
+		this.setTr_frequency(++tr_frequency);
+	}
+	
+	public void calculateTr_weight() {
+		this.setTr_weight(this.getTr_frequency() * this.getTr_ranking());
 	}
 	
 	// This function will calculate the Node and Partition Span Cost for the representative Transaction
@@ -158,7 +177,7 @@ public class Transaction implements Comparable<Transaction> {
 		this.setTr_psCost(psCost.size()-1);		
 	}
 	
-	// Given a Data Id this function will return the corresponding Data Object from the Transaction
+	// Given a Data Id this function returns the corresponding Data from the Transaction
 	public Data lookup(int id) {
 		for(Data data : this.tr_dataSet) {
 			if(data.getData_id() == id)
@@ -168,9 +187,8 @@ public class Transaction implements Comparable<Transaction> {
 		return null;
 	}
 	
-	// This function will print all of the contents of the representative Transaction
-	public void print() {
-		//System.out.println("===Transaction Details========================");
+	// Prints out all of the contents of the representative Transaction
+	public void show() {
 		System.out.print(" "+this.getTr_label()+"[CDT("+this.getTr_dtCost()+"), " +
 				"FRQ("+this.getTr_weight()+"), Data("+this.getTr_dataSet().size()+")]");
 		
@@ -187,7 +205,7 @@ public class Transaction implements Comparable<Transaction> {
 	
 	@Override
 	public String toString() {	
-		return (this.tr_label+"[Type: "+this.tr_type+", Weight: "+this.tr_weight+"]");
+		return (this.getTr_label()+"("+this.getTr_weight()+"|"+this.getTr_dataSet().size()+" data)");
 	}
 
 	@Override

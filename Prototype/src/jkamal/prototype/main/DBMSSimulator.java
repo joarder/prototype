@@ -17,18 +17,21 @@ import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.io.OutputLogger;
 import jkamal.prototype.workload.HGraphClusters;
 import jkamal.prototype.workload.Workload;
-import jkamal.prototype.workload.WorkloadDataPreparation;
-import jkamal.prototype.workload.WorkloadGeneration;
+import jkamal.prototype.workload.WorkloadDataPreparer;
+import jkamal.prototype.workload.WorkloadGenerator;
 import jkamal.prototype.workload.WorkloadReplay;
 import jkamal.prototype.workload.WorkloadVariation;
 
 public class DBMSSimulator {	
 	public final static int DB_SERVERS = 3;
+	public final static String WORKLOAD_TYPE = "TPC-C";
 	public final static int DATA_OBJECTS = 100; // 10GB Data (in Size)
-	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
-	public final static String HMETIS = "khmetis";
 	public final static int TRANSACTION_NUMS = 10;
 	public final static int SIMULATION_RUN_NUMBERS = 3;
+	
+	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
+	public final static String HMETIS = "khmetis";
+	
 	public static RandomDataGenerator random_birth;
 	public static RandomDataGenerator random_death;
 	public static RandomDataGenerator random_data;
@@ -41,18 +44,20 @@ public class DBMSSimulator {
 		
 		// Database Server and Tenant Database Creation
 		DatabaseServer dbs = new DatabaseServer(0, "test-dbs", DB_SERVERS);
+		
 		System.out.println("[ACT] Creating Database Server \""+dbs.getDbs_name()+"\" with "+dbs.getDbs_nodes().size()+" Nodes ...");
 		
 		// Database creation for tenant id-"0" with Range partitioning model with 1GB Partition size
 		Database db = new Database(0, "test-db", 0, "Range", 0.01);
 		//Database db = new Database(0, "testdb", 0, "Range", 1);
+
 		System.out.println("[ACT] Creating Database \""+db.getDb_name()+"\" within "+dbs.getDbs_name()+" Database Server ...");		
 		
 		// Perform Bootstrapping through synthetic Data generation and placing it into appropriate Partition
 		// following partitioning schemes like Range, Salting, Hashing and Consistent Hashing partitioning
 		System.out.println("[ACT] Started Bootstrapping Process ...");
 		System.out.println("[ACT] Generating "+ DATA_OBJECTS +" synthetic data items ...");
-		//System.out.println();
+
 		Bootstrapping bootstrapping = new Bootstrapping();
 		bootstrapping.bootstrapping(dbs, db, DATA_OBJECTS);
 		System.out.println("[MSG] Data creation and placement into partitions done.");
@@ -65,8 +70,10 @@ public class DBMSSimulator {
 		logger.log(dbs, db, dbWriter);
 		
 		//==============================================================================================
-		// Initial
-		WorkloadGeneration workloadGen = new WorkloadGeneration();
+		// Workload generation for the entire simulation
+		WorkloadGenerator workloadGeneration = new WorkloadGenerator();		
+		workloadGeneration.generateWorkloads(dbs, db);
+		
 		Workload workload = null;
 		WorkloadReplay workloadReplay = new WorkloadReplay();
 		WorkloadVariation workloadVariation = new WorkloadVariation();
@@ -80,10 +87,7 @@ public class DBMSSimulator {
 		random_data = new RandomDataGenerator();
 	    random_birth.reSeed(0);
 	    random_death.reSeed(1);	    
-	    		
-		// Test
-		WorkloadDataPreparation wrl_data = new WorkloadDataPreparation();
-		wrl_data.prepareWorkloadData(db);
+	    				
 	    
 	    workloadVariation.generateVariation(SIMULATION_RUN_NUMBERS);	    
 	    		
@@ -93,13 +97,8 @@ public class DBMSSimulator {
 		while(simulation_round != SIMULATION_RUN_NUMBERS) {								
 			System.out.println("[RUN] Running Simulation Round-"+simulation_round+" ...");
 			
-			if(simulation_round != 0) {		
-				if(simulation_round > 1) {
-					workloadGen.workloadRestoration(db, workload);
-					workload.setWrl_restoredTransactions(0);
-				}
-				
-				workload.setWrl_round(simulation_round);				
+			if(simulation_round != 0) {						
+				workload.setWrl_id(simulation_round);				
 				System.out.println("[MSG] Total "+workload.getWrl_totalTransactions()+" previous transactions have been carried forward to the current Workload");
 
 				// Death Management				
@@ -111,10 +110,10 @@ public class DBMSSimulator {
 				workload.setWrl_transactionBorning((int) ((int) workload.getWrl_totalTransactions() 
 						* workloadVariation.getTransactionBirthRate(simulation_round)));
 				workload.setWrl_transactionBirthRate(workloadVariation.getTransactionBirthRate(simulation_round));
-				;
+				//;
 			} else {	
 				// Initial
-				workload = workloadGen.init(db, "TPC-C", 0);
+				workload = workloadGeneration.workloadInitialisation(db, "TPC-C", 0);
 				workload.setWrl_initTotalTransactions(TRANSACTION_NUMS);
 				
 				// Printing Output Messages
@@ -123,10 +122,10 @@ public class DBMSSimulator {
 			}  // end -- if-else()
 			
 			// Generate Synthetic Workload
-			workload = workloadGen.generateWorkload(dbs, db, workload);
+			workload = workloadGeneration.generateWorkloads(dbs, db, workload);
 			
 			workload.setMessage("Initial");
-			workload.print(db);
+			workload.show(db);
 			System.out.println();
 			System.out.println("[MSG] Workload generation completed for Simulation Round-"+simulation_round);	
 			

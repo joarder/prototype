@@ -253,6 +253,16 @@ public class Data implements Comparable<Data> {
 	public void setData_isMoveable(boolean data_isMoveable) {
 		this.data_isMoveable = data_isMoveable;
 	}
+	
+	
+	public void incData_frequency() {
+		int data_frequency = this.getData_frequency();
+		this.setData_frequency(++data_frequency);
+	}
+	
+	public void calculateData_weight() {
+		this.setData_weight(this.getData_frequency() * this.getData_ranking());
+	}
 
 	@Override
 	public String toString() {		

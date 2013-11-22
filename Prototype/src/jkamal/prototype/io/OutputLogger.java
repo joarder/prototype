@@ -116,9 +116,7 @@ public class OutputLogger {
 		int space = -1;
 		
 		try {							
-			prWriter.print(Integer.toString(dbs.getDbs_nodes().size())+" ");			
-			prWriter.print(Integer.toString(db.getDb_routing_table().getData_items().size())+" ");			
-			prWriter.print(Integer.toString(db.getDb_dataMap().getData_items().size()));			
+			prWriter.print(Integer.toString(dbs.getDbs_nodes().size())+" ");		
 			prWriter.println();
 			
 			space = dbs.getDbs_nodes().size();
@@ -133,20 +131,20 @@ public class OutputLogger {
 			
 			prWriter.println();			
 			
-			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {				
-				space = entry.getValue().size();
-				for(Partition partition : entry.getValue()) {
-					prWriter.print(Integer.toString(partition.getPartition_dataSet().size())+" ");
-					prWriter.print(Integer.toString(partition.getPartition_roaming_data())+" "); //getRoaming_dataObjects().size()
-					prWriter.print(Integer.toString(partition.getPartition_foreign_data())); //getForeign_dataObjects().size()
-					
-					if(space != 1)
-						prWriter.print(" ");
+			for(Partition partition : db.getDb_partitions()) {				
+				space = db.getDb_partitions().size();
 				
-					--space;
-				}				
-				prWriter.println();			
-			}			
+				prWriter.print(Integer.toString(partition.getPartition_dataSet().size())+" ");
+				prWriter.print(Integer.toString(partition.getPartition_roaming_data())+" "); //getRoaming_dataObjects().size()
+				prWriter.print(Integer.toString(partition.getPartition_foreign_data())); //getForeign_dataObjects().size()
+				
+				if(space != 1)
+					prWriter.print(" ");
+			
+				--space;									
+			}	
+			
+			prWriter.println();
 		} finally {
 			prWriter.flush();
 			prWriter.close();
@@ -156,7 +154,7 @@ public class OutputLogger {
 	public void logWorkload(Database db, Workload workload, PrintWriter prWriter) {		
 		if(!this.isData_movement()) {									
 			//prWriter.print(workload.getWrl_capture()+" ");
-			prWriter.print(workload.getWrl_simulationRound()+" ");
+			prWriter.print(workload.getWrl_id()+" ");
 			//prWriter.print(workload.getWrl_percentageVariation()+" ");
 			prWriter.print("in ");
 			

@@ -15,14 +15,23 @@ import jkamal.prototype.db.Database;
 import jkamal.prototype.db.Partition;
 import jkamal.prototype.main.DBMSSimulator;
 
-public class TransactionGeneration {
+public class TransactionGenerator {
 	private Map<Double, Map<Integer, Integer>> normalised_cumulative_probability_to_data_map;
 	
-	public TransactionGeneration(){
-		normalised_cumulative_probability_to_data_map = new TreeMap<Double, Map<Integer, Integer>>();
+	public TransactionGenerator(){
+		this.setNormalised_cumulative_probability_to_data_map(new TreeMap<Double, Map<Integer, Integer>>());
 	}
 	
-	// This function will generate the required number of Transactions for a specific Workload with a specific Database
+	public Map<Double, Map<Integer, Integer>> getNormalised_cumulative_probability_to_data_map() {
+		return this.normalised_cumulative_probability_to_data_map;
+	}
+
+	public void setNormalised_cumulative_probability_to_data_map(
+			Map<Double, Map<Integer, Integer>> normalised_cumulative_probability_to_data_map) {
+		this.normalised_cumulative_probability_to_data_map = normalised_cumulative_probability_to_data_map;
+	}
+
+	// Generates the required number of Transactions for a specific Workload with a specific Database
 	public void generateTransaction(Database db, Workload workload) {				
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
@@ -32,19 +41,16 @@ public class TransactionGeneration {
 		Double rand = 0.0;
 		int[] prop;
 		int data_id = 0;
-		int data_frequency = 0;
-		int data_ranking = 0;
-		int data_weight = 0;		
 		
 		//Selecting Transaction Prop
-		if(workload.getWrl_simulationRound() != 0)
+		if(workload.getWrl_id() != 0)
 			prop = workload.getWrl_transactionBirthProp();
 		else 
 			prop = workload.getWrl_transactionProportions();		
 				
 		int tr_id = 0; 
-		if(workload.getWrl_simulationRound() != 0)
-			tr_id = workload.getWrl_globalTrId();
+		if(workload.getWrl_id() != 0)
+			tr_id = workload.getWrl_totalTransactions();
 		
 		// Creating a Random Object for randomly chosen Data items
 		DBMSSimulator.random_data.reSeed(0);
@@ -72,13 +78,9 @@ public class TransactionGeneration {
 						trDataList.add(data_id);
 						
 						data = db.search(data_id);
-						
-						data_frequency = data.getData_frequency();
-						data_ranking = data.getData_ranking();
-						data_weight = (data_frequency * data_ranking);
-						
-						data.setData_frequency(++data_frequency);	
-						data.setData_weight(data_weight);
+												
+						data.incData_frequency();
+						data.calculateData_weight();
 								
 						data.getData_transaction_involved().add(tr_id);
 						
@@ -87,8 +89,12 @@ public class TransactionGeneration {
 				} // end--k for() loop
 																
 				transaction = new Transaction(tr_id, trDataSet);				
-				transaction.setTr_type(i+1);
+				
+				transaction.setTr_ranking(i+1);
+				transaction.incTr_frequency();
+				transaction.calculateTr_weight();
 				transaction.generateTransactionCost(db);
+				
 				workload.incWrl_totalTransaction();
 				
 				if(workload.getWrl_transactionMap().containsKey(i)) {
@@ -98,13 +104,11 @@ public class TransactionGeneration {
 					transactionList.add(transaction);
 			} // end--j for() loop
 										
-			if(workload.getWrl_simulationRound() == 0)
+			if(workload.getWrl_id() == 0)
 				workload.getWrl_transactionMap().put(i, transactionList);
 			else
 				workload.incWrl_transactionProportions(i, typedTransactions);			
 		} // end--i for() loop
-		
-		workload.setWrl_globalTrId(tr_id);
 	}	
 	
 	public void prepareRandomData(Database db) {		
@@ -117,14 +121,14 @@ public class TransactionGeneration {
 				
 				double key = data.getData_normalisedCumulativeProbability();
 				
-				if(!this.normalised_cumulative_probability_to_data_map.containsKey(key)) {
+				if(!this.getNormalised_cumulative_probability_to_data_map().containsKey(key)) {
 					unsortedMap = new TreeMap<Integer, Integer>();												
 					unsortedMap.put(d, data.getData_id());		
 					
-					this.normalised_cumulative_probability_to_data_map.put(key, unsortedMap);
+					this.getNormalised_cumulative_probability_to_data_map().put(key, unsortedMap);
 				} else {
 					++d;
-					this.normalised_cumulative_probability_to_data_map.get(key).put(d, data.getData_id());
+					this.getNormalised_cumulative_probability_to_data_map().get(key).put(d, data.getData_id());
 				}
 			}
 		}			
@@ -133,8 +137,8 @@ public class TransactionGeneration {
 	public int getRandomData(double random_value) {
 		int data_id = 0;
 		
-		if(this.normalised_cumulative_probability_to_data_map.containsKey(random_value)) {									
-			Object[] values = this.normalised_cumulative_probability_to_data_map.get(random_value).values().toArray();
+		if(this.getNormalised_cumulative_probability_to_data_map().containsKey(random_value)) {									
+			Object[] values = this.getNormalised_cumulative_probability_to_data_map().get(random_value).values().toArray();
 			
 			if(values.length > 1)
 				data_id = (int) values[DBMSSimulator.random_data.nextInt(0, (values.length - 1))];
@@ -142,7 +146,8 @@ public class TransactionGeneration {
 				data_id = (int) values[0];
 		} else {		
 			double smallest_key_encountered = 0.0;
-			for(Entry<Double, Map<Integer, Integer>> entry : this.normalised_cumulative_probability_to_data_map.entrySet()) {
+			
+			for(Entry<Double, Map<Integer, Integer>> entry : this.getNormalised_cumulative_probability_to_data_map().entrySet()) {
 				if(random_value > entry.getKey()) {
 					smallest_key_encountered = entry.getKey();					
 				} else if(random_value >= 0.0 && random_value < entry.getKey()) {
@@ -153,7 +158,8 @@ public class TransactionGeneration {
 				}
 			}
 			
-			Object[] values = this.normalised_cumulative_probability_to_data_map.get(smallest_key_encountered).values().toArray();			
+			Object[] values = this.getNormalised_cumulative_probability_to_data_map().get(smallest_key_encountered).values().toArray();			
+			
 			if(values.length > 1)
 				data_id = (int) values[DBMSSimulator.random_data.nextInt(0, (values.length - 1))];
 			else

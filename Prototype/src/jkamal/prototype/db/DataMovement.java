@@ -8,7 +8,6 @@ package jkamal.prototype.db;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import jkamal.prototype.util.Matrix;
@@ -51,7 +50,7 @@ public class DataMovement {
 		workload.setMessage("Base Strategy");
 				
 		this.metricsGeneration(db, workload);		
-		workload.print(db);		
+		workload.show(db);		
 	}
 	
 	public void strategy1(Database db, Workload workload) {		
@@ -77,7 +76,7 @@ public class DataMovement {
 		workload.setMessage("Strategy-1");
 		
 		this.metricsGeneration(db, workload);
-		workload.print(db);		
+		workload.show(db);		
 	}
 	
 	public void strategy2(Database db, Workload workload) {		
@@ -122,7 +121,7 @@ public class DataMovement {
 		workload.setMessage("Strategy-2");
 
 		this.metricsGeneration(db, workload);			
-		workload.print(db);
+		workload.show(db);
 	}
 	
 	// Perform Actual Data Movement
@@ -326,23 +325,10 @@ public class DataMovement {
 	}
 	
 	public void metricsGeneration(Database db, Workload workload) {
-		// Generating Workload's Data Partition and Node Distribution Details
-		workload.generateDataPartitionTable();
-		workload.generateDataNodeTable();
-		
 		// Calculating Various Metrics
 		workload.calculateDTPercentage();
 		workload.calculateDTImapct();
 		workload.calculateIntraNodeDataMovementPercentage(workload.getWrl_intraNodeDataMovements());
 		workload.calculateInterNodeDataMovementPercentage(workload.getWrl_interNodeDataMovements());
-		
-		/*for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {
-			for(Partition partition : entry.getValue()) {
-				//partition.calculateMainOccupied();
-				//partition.calculateRoamingOccupied();
-				//partition.calculateForeignOccupied();
-				partition.getCurrentLoad();
-			}						
-		}*/
 	}
 }

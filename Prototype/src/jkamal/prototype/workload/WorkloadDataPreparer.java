@@ -15,15 +15,41 @@ import jkamal.prototype.db.Database;
 import jkamal.prototype.db.Partition;
 import jkamal.prototype.main.DBMSSimulator;
 
-public class WorkloadDataPreparation {	
+public class WorkloadDataPreparer {	
 	private Map<Integer, Integer> zipf_rank_map;
 	private Map<Integer, Double> zipf_cumulative_probability_map;
-	Map<Integer, Double> zipf_norm_cumulative_probability_map;
+	private Map<Integer, Double> zipf_norm_cumulative_probability_map;
 	
-	public WorkloadDataPreparation() {		
-		zipf_rank_map = new HashMap<Integer, Integer>();
-		zipf_cumulative_probability_map = new HashMap<Integer, Double>();
-		zipf_norm_cumulative_probability_map = new HashMap<Integer, Double>();
+	public WorkloadDataPreparer() {		
+		this.setZipf_rank_map(new HashMap<Integer, Integer>());
+		this.setZipf_cumulative_probability_map(new HashMap<Integer, Double>());
+		this.setZipf_norm_cumulative_probability_map(new HashMap<Integer, Double>());
+	}
+	
+	public Map<Integer, Integer> getZipf_rank_map() {
+		return this.zipf_rank_map;
+	}
+
+	public void setZipf_rank_map(Map<Integer, Integer> zipf_rank_map) {
+		this.zipf_rank_map = zipf_rank_map;
+	}
+
+	public Map<Integer, Double> getZipf_cumulative_probability_map() {
+		return this.zipf_cumulative_probability_map;
+	}
+
+	public void setZipf_cumulative_probability_map(
+			Map<Integer, Double> zipf_cumulative_probability_map) {
+		this.zipf_cumulative_probability_map = zipf_cumulative_probability_map;
+	}
+
+	public Map<Integer, Double> getZipf_norm_cumulative_probability_map() {
+		return this.zipf_norm_cumulative_probability_map;
+	}
+
+	public void setZipf_norm_cumulative_probability_map(
+			Map<Integer, Double> zipf_norm_cumulative_probability_map) {
+		this.zipf_norm_cumulative_probability_map = zipf_norm_cumulative_probability_map;
 	}
 	
 	// Calculate ranking for all the Data objects in a particular Partition following Zipf Distribution
@@ -45,7 +71,7 @@ public class WorkloadDataPreparation {
 		for(int i = d_start; i <= (number_of_elements + d_start - 1); i++) {
 			occurrences = Collections.frequency(zipf_rank_list, (i));	
 			
-			this.zipf_rank_map.put((i), occurrences);						
+			this.getZipf_rank_map().put((i), occurrences);						
 		}		
 	}
 	
@@ -56,13 +82,14 @@ public class WorkloadDataPreparation {
 		zipf_distribution.reseedRandomGenerator(seed);		
 		
 		for(int i = d_start; i <= (number_of_elements + d_start - 1); i++)
-			this.zipf_cumulative_probability_map.put((i), zipf_distribution.cumulativeProbability(i - d_start + 1));				
+			this.getZipf_cumulative_probability_map().put((i), zipf_distribution.cumulativeProbability(i - d_start + 1));				
 	}
 	
 	// Calculate cumulative normalised probability P(X <= x) for all the Data objects in a particular Partition following Zipf Distribution
 	public void getNormalisedCumulativeProbability(int normalisation_divisor, int d_start) {		
-		for(int i = d_start; i <= this.zipf_cumulative_probability_map.size(); i++)
-			this.zipf_norm_cumulative_probability_map.put(i, (this.zipf_cumulative_probability_map.get(i)/normalisation_divisor));
+		for(int i = d_start; i <= this.getZipf_cumulative_probability_map().size(); i++)
+			this.getZipf_norm_cumulative_probability_map().
+				put(i, (this.getZipf_cumulative_probability_map().get(i)/normalisation_divisor));
 	}
 	
 	public void prepareWorkloadData(Database db) {
@@ -76,15 +103,20 @@ public class WorkloadDataPreparation {
 	    	partition = iterator.next();
 	    	partition_size = partition.getPartition_dataSet().size();
 	    		    	
-	    	this.getZipfRanking(partition.getPartition_id(), partition_size, d_start);
-	    	this.getCumulativeProbability(partition.getPartition_id(), partition_size, d_start);
-	    	this.getNormalisedCumulativeProbability((db.getDb_partitions().size() - partition.getPartition_id() + 1), d_start);
+	    	this.getZipfRanking(
+	    			partition.getPartition_id(), partition_size, d_start);
+	    	this.getCumulativeProbability(
+	    			partition.getPartition_id(), partition_size, d_start);
+	    	this.getNormalisedCumulativeProbability(
+	    			(db.getDb_partitions().size() - partition.getPartition_id() + 1), d_start);
 	    		    	
 	    	// Iterating each data objects
 	    	for(Data data : partition.getPartition_dataSet()) {	    		
-	    		data.setData_ranking(this.zipf_rank_map.get(data.getData_id()));
-	    		data.setData_cumulativeProbability(Math.round( this.zipf_cumulative_probability_map.get(data.getData_id()) * 100.0)/100.0);	    		
-	    		data.setData_normalisedCumulativeProbability(Math.round( this.zipf_norm_cumulative_probability_map.get(data.getData_id()) * 100.0)/100.0);	    		
+	    		data.setData_ranking(this.getZipf_rank_map().get(data.getData_id()));
+	    		data.setData_cumulativeProbability(
+	    				Math.round( this.getZipf_cumulative_probability_map().get(data.getData_id()) * 100.0)/100.0);	    		
+	    		data.setData_normalisedCumulativeProbability(
+	    				Math.round( this.getZipf_norm_cumulative_probability_map().get(data.getData_id()) * 100.0)/100.0);	    		
 	    		
 	    		/*System.out.println(data.getData_id()+" "
 	    				+data.getData_ranking()+" "

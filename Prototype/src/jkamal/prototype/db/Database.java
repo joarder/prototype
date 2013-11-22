@@ -4,37 +4,30 @@
 
 package jkamal.prototype.db;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
 public class Database {
 	private int db_id;
 	private String db_name;
-	private int db_tenant;
-	
-	private Set<Partition> db_partitions;
-	private PartitioningModel db_partition_model; // Options: Range, Salting, Hash (Random), Consistent-Hash (Random)
+	private int db_tenant;	
 	private int db_partition_size;
-	
+	private Set<Partition> db_partitions;		
+	private Map<Integer, Set<Integer>> db_nodes;	
 	private String db_dmv_strategy;	
 	
 	public Database(int id, String name, int tenant_id, String model, double partition_size) {
 		this.setDb_id(id);
 		this.setDb_name(name);
 		this.setDb_tenant(tenant_id);
-
-		this.setDb_partitions(new TreeSet<Partition>());
 		this.setDb_partition_size((int)(partition_size * 1000)); // Partition Size Range (1 ~ 1000 GB), 1 GB = 1000 Data Objects of equal size
-
+		this.setDb_partitions(new TreeSet<Partition>());
+		this.setDb_nodes(new TreeMap<Integer, Set<Integer>>());
 		this.setDb_dmv_strategy("bs");
-		
-		if(model.equals("Range"))
-			this.setDb_partition_model(new RangePartition());
-		else if(model.equals("Hash"))
-			this.setDb_partition_model(new RandomPartition());
-		else
-			System.out.println();
 	}	
 	
 	// Copy Constructor
@@ -42,6 +35,7 @@ public class Database {
 		this.setDb_id(db.getDb_id());
 		this.setDb_name(db.getDb_name());
 		this.setDb_tenant(db.getDb_tenant());		
+		this.setDb_partition_size(db.getDb_partition_size());
 		
 		Set<Partition> cloneDbPartitions = new TreeSet<Partition>();
 		Partition clonePartition;
@@ -51,7 +45,17 @@ public class Database {
 		}		
 		this.setDb_partitions(cloneDbPartitions);
 		
-		this.setDb_partition_size(db.getDb_partition_size());				
+		Map<Integer, Set<Integer>> clone_db_nodes = new TreeMap<Integer, Set<Integer>>();
+		Set<Integer> clone_partitions = new TreeSet<Integer>();
+		for(Entry<Integer, Set<Integer>> entry : db.getDb_nodes().entrySet()) {
+			for(Integer partition_id : entry.getValue()) {
+				clone_partitions.add(partition_id);
+			}
+			
+			clone_db_nodes.put(entry.getKey(), clone_partitions);
+		}
+		this.setDb_nodes(clone_db_nodes);
+						
 		this.setDb_dmv_strategy(db.getDb_dmv_strategy());
 	}
 
@@ -88,12 +92,12 @@ public class Database {
 	}
 	
 	
-	public PartitioningModel getDb_partition_model() {
-		return db_partition_model;
+	public Map<Integer, Set<Integer>> getDb_nodes() {
+		return db_nodes;
 	}
 
-	public void setDb_partition_model(PartitioningModel db_partition_model) {
-		this.db_partition_model = db_partition_model;
+	public void setDb_nodes(Map<Integer, Set<Integer>> db_nodes) {
+		this.db_nodes = db_nodes;
 	}
 
 	public int getDb_partition_size() {
@@ -155,23 +159,43 @@ public class Database {
 	}
 	
 	public void show() {
-		// DB Details
-		//System.out.println();
 		System.out.println("[OUT] Database Details====");
 		System.out.println("      Database: "+this.getDb_name());
-		System.out.println("      Number of Partitions: "+this.getDb_partitions().size());
-		
-		// Partition Table Details
-		//System.out.println();
+		System.out.println("      Number of Partitions: "+this.getDb_partitions().size());		
 		System.out.println("[OUT] Partition Table Details====");		
 		
+		ArrayList<Integer> overloadedPartition = new ArrayList<Integer>();
 		int comma = -1;
-		for(Entry<Integer, Set<Partition>> entry : this.getDb_partitionTable().getPartition_table().entrySet()) {
+		
+		for(Entry<Integer, Set<Integer>> entry : this.getDb_nodes().entrySet()) {
 			System.out.print("      N"+entry.getKey()+" {");
 			
 			comma = entry.getValue().size();
-			for(Partition partition : entry.getValue()) {
+			for(Integer partition_id : entry.getValue()) {
+				Partition partition = this.getPartition(partition_id);
+				
 				System.out.print(partition.toString());
+				
+				if(comma != 1)
+					System.out.print(", ");
+			
+				--comma;
+				
+				if(partition.isPartition_overloaded())
+					overloadedPartition.add(partition.getPartition_id());
+			}
+			
+			System.out.print("}\n");			
+		}
+		
+		if(overloadedPartition.size() != 0) {
+			System.out.println();
+			System.out.print("[ALM] Overloaded Partition: ");
+			
+			comma = overloadedPartition.size();
+			
+			for(Integer pid : overloadedPartition) {
+				System.out.print("P"+pid);
 				
 				if(comma != 1)
 					System.out.print(", ");
@@ -179,7 +203,7 @@ public class Database {
 				--comma;
 			}
 			
-			System.out.print("}\n");			
-		}		
+			System.out.print("\n");
+		}
 	}
 }
