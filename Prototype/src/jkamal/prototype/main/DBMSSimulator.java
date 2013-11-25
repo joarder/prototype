@@ -14,7 +14,7 @@ import jkamal.prototype.bootstrap.Bootstrapping;
 import jkamal.prototype.db.DataMovement;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
-import jkamal.prototype.io.OutputLogger;
+import jkamal.prototype.io.SimulationMetricsLogger;
 import jkamal.prototype.workload.HGraphClusters;
 import jkamal.prototype.workload.Workload;
 import jkamal.prototype.workload.WorkloadDataPreparer;
@@ -29,7 +29,7 @@ public class DBMSSimulator {
 	public final static int TRANSACTION_NUMS = 10;
 	public final static int SIMULATION_RUN_NUMBERS = 3;
 	
-	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
+	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "khmetis";
 	
 	public static RandomDataGenerator random_birth;
@@ -37,10 +37,10 @@ public class DBMSSimulator {
 	public static RandomDataGenerator random_data;
 	
 	public static void main(String[] args) throws IOException {			
-		OutputLogger logger = new OutputLogger();
-		PrintWriter dbWriter = logger.getWriter(DIR_LOCATION, "db");
-		PrintWriter workloadWriter = logger.getWriter(DIR_LOCATION, "workload");
-		PrintWriter partitionWriter = logger.getWriter(DIR_LOCATION, "partition");
+		SimulationMetricsLogger logger = new SimulationMetricsLogger();
+		PrintWriter db_log = logger.getWriter(DIR_LOCATION, "db");
+		PrintWriter workload_log = logger.getWriter(DIR_LOCATION, "workload");
+		PrintWriter partition_log = logger.getWriter(DIR_LOCATION, "partition");
 		
 		// Database Server and Tenant Database Creation
 		DatabaseServer dbs = new DatabaseServer(0, "test-dbs", DB_SERVERS);
@@ -67,7 +67,7 @@ public class DBMSSimulator {
 		db.show();						
 		
 		// Logging
-		logger.log(dbs, db, dbWriter);
+		logger.log(dbs, db, db_log);
 		
 		//==============================================================================================
 		// Workload generation for the entire simulation
@@ -162,8 +162,8 @@ public class DBMSSimulator {
 			workloadReplay.captureWorkload(simulation_round, db, workload);
 							
 			// Logging Before Data Movement				
-			logger.logWorkload(db, workload, workloadWriter);
-			logger.logPartition(db, workload, partitionWriter);
+			logger.logWorkload(db, workload, workload_log);
+			logger.logPartition(db, workload, partition_log);
 			
 			//==============================================================================================
 			// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
@@ -173,8 +173,8 @@ public class DBMSSimulator {
 
 			// Logging After Data Movement
 			logger.setData_movement(true);
-			logger.logWorkload(db, workload, workloadWriter);
-			logger.logPartition(db, workload, partitionWriter);
+			logger.logWorkload(db, workload, workload_log);
+			logger.logPartition(db, workload, partition_log);
 			logger.setData_movement(false);
 			
 			// Increase Simulation Round by 1
@@ -193,8 +193,8 @@ public class DBMSSimulator {
 			//System.out.println();
 			
 			// Logging Before Data Movement
-			logger.logWorkload(db1, workload1, workloadWriter);
-			logger.logPartition(db1, workload1, partitionWriter);
+			logger.logWorkload(db1, workload1, workload_log);
+			logger.logPartition(db1, workload1, partition_log);
 			
 			System.out.println("[ACT] Strategy-1[Simulation Round-"+strategy1_run_round
 					+"] :: One(Cluster)-to-One(Partition) [Column Max]");
@@ -203,8 +203,8 @@ public class DBMSSimulator {
 			
 			// Logging After Data Movement
 			logger.setData_movement(true);
-			logger.logWorkload(db1, workload1, workloadWriter);
-			logger.logPartition(db1, workload1, partitionWriter);
+			logger.logWorkload(db1, workload1, workload_log);
+			logger.logPartition(db1, workload1, partition_log);
 			logger.setData_movement(false);
 			
 			++strategy1_run_round;	
@@ -222,8 +222,8 @@ public class DBMSSimulator {
 			//System.out.println();
 			
 			// Logging Before Data Movement
-			logger.logWorkload(db2, workload2, workloadWriter);
-			logger.logPartition(db2, workload2, partitionWriter);
+			logger.logWorkload(db2, workload2, workload_log);
+			logger.logPartition(db2, workload2, partition_log);
 			
 			System.out.println("[ACT] Strategy-2[Simulation Round-"+strategy2_run_round
 					+"] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]");
@@ -232,8 +232,8 @@ public class DBMSSimulator {
 			
 			// Logging After Data Movement
 			logger.setData_movement(true);
-			logger.logWorkload(db2, workload2, workloadWriter);
-			logger.logPartition(db2, workload2, partitionWriter);
+			logger.logWorkload(db2, workload2, workload_log);
+			logger.logPartition(db2, workload2, partition_log);
 			logger.setData_movement(false);
 			
 			++strategy2_run_round;
@@ -241,10 +241,10 @@ public class DBMSSimulator {
 		}
 		
 		// End Logging
-		workloadWriter.flush();
-		partitionWriter.flush();
+		workload_log.flush();
+		partition_log.flush();
 		
-		workloadWriter.close();
-		partitionWriter.close();
+		workload_log.close();
+		partition_log.close();
 	}
 }

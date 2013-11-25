@@ -9,27 +9,28 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.db.Node;
 import jkamal.prototype.db.Partition;
 import jkamal.prototype.workload.Workload;
 
-public class OutputLogger {	
+public class SimulationMetricsLogger {	
 	private String db_logger;
 	private String workload_logger;
 	private String partition_logger;
 	private boolean data_movement;
 	private Map<Integer, String> partitionsBeforeDM;
 	
-	public OutputLogger() {
-		this.setDb_logger("jk-trace-db.txt");
-		this.setWorkload_logger("jk-trace-workload.txt");
-		this.setPartition_logger("jk-trace-partition.txt");
+	public SimulationMetricsLogger() {
+		this.setDb_logger("db-log.txt");
+		this.setWorkload_logger("workload-log.txt");
+		this.setPartition_logger("partition-log.txt");
 		this.setData_movement(false);
 		this.setPartitionsBeforeDM(new TreeMap<Integer, String>());
 	}
@@ -149,6 +150,17 @@ public class OutputLogger {
 			prWriter.flush();
 			prWriter.close();
 		} 
+	}
+	
+	public void logDb(Database db, Workload workload, PrintWriter printWriter) {
+		for(Partition partition : db.getDb_partitions()) {
+			for(Data data : partition.getPartition_dataSet()) {
+				printWriter.print(workload.getWrl_id()+" ");
+				printWriter.print(data.getData_id()+" ");
+				printWriter.print(data.getData_partitionId()+" ");
+				printWriter.print(data.getData_id()+" ");
+			}
+		}
 	}
 	
 	public void logWorkload(Database db, Workload workload, PrintWriter prWriter) {		

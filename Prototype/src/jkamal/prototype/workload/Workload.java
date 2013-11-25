@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
@@ -26,10 +25,6 @@ public class Workload implements Comparable<Workload> {
 	
 	private int wrl_initTotalTransactions;
 	private int wrl_totalTransaction;	
-	
-	private Set<Integer> wrl_transactionRedList;
-	private Set<Integer> wrl_transactionOrangeList;
-	private Set<Integer> wrl_transactionGreenList;
 	
 	private int wrl_transactionBorning;
 	private double wrl_transactionBirthRate;

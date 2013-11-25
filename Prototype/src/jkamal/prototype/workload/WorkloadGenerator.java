@@ -104,8 +104,10 @@ public class WorkloadGenerator {
 			}			
 			
 			// Classify the Workload Transactions based on whether they are Distributed or not (Red/Orange/Green List)
-			workloadClassifier.classifyTransactions(workload);			
-			this.getWorkload_map().put(workload_id, workload);
+			workloadClassifier.classifyTransactions(workload);
+			
+			Workload cloneWorkload = new Workload(workload);			
+			this.getWorkload_map().put(workload_id, cloneWorkload);
 			
 			workload.updateWrl_workloadFileName(Integer.toString(workload.getWrl_id()));
 			
