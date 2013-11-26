@@ -49,6 +49,7 @@ public class Workload implements Comparable<Workload> {
 	private double wrl_percentage_ndmv;
 	
 	private boolean wrl_hasDataMoved;
+	private String wrl_data_movement_strategy;
 	private String message = null;
 	
 	public Workload(int id, int trTypes, int db_id) {
@@ -83,6 +84,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_percentage_inter_ndmv(0.0);
 		
 		this.setWrl_hasDataMoved(false);
+		this.setWrl_data_movement_strategy(null);
 		this.setMessage(" (Initial Stage) ");
 	}
 	
@@ -142,6 +144,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_percentage_inter_ndmv(workload.getWrl_percentageInterNodeDataMovement());
 		
 		this.setWrl_hasDataMoved(workload.isWrl_hasDataMoved());
+		this.setWrl_data_movement_strategy(workload.getWrl_data_movement_strategy());
 		this.setMessage(workload.getMessage());
 	}
 
@@ -400,6 +403,14 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_hasDataMoved = wrl_hasDataMoved;
 	}
 	
+	public String getWrl_data_movement_strategy() {
+		return wrl_data_movement_strategy;
+	}
+
+	public void setWrl_data_movement_strategy(String wrl_data_movement_strategy) {
+		this.wrl_data_movement_strategy = wrl_data_movement_strategy;
+	}
+
 	public void updateWrl_workloadFileName(String ext) {
 		this.setWrl_workload_file(ext+"-"+this.getWrl_workload_file());
 	}

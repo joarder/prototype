@@ -18,6 +18,7 @@ import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.db.Node;
 import jkamal.prototype.db.Partition;
+import jkamal.prototype.workload.Transaction;
 import jkamal.prototype.workload.Workload;
 
 public class SimulationMetricsLogger {	
@@ -158,16 +159,27 @@ public class SimulationMetricsLogger {
 				printWriter.print(workload.getWrl_id()+" ");
 				printWriter.print(data.getData_id()+" ");
 				printWriter.print(data.getData_partitionId()+" ");
+				
+				int space = data.getData_transaction_involved().size();
+				for(Integer transaction_id : data.getData_transaction_involved()) {
+					Transaction transaction = workload.findWrl_transaction(transaction_id);
+					
+					printWriter.print(transaction.getTr_id()+" ");
+					printWriter.print(transaction.getTr_ranking());
+					
+					--space;
+					if(space != 0)
+						printWriter.print(" ");
+				}
+				
 				printWriter.print(data.getData_id()+" ");
 			}
 		}
 	}
 	
 	public void logWorkload(Database db, Workload workload, PrintWriter prWriter) {		
-		if(!this.isData_movement()) {									
-			//prWriter.print(workload.getWrl_capture()+" ");
-			prWriter.print(workload.getWrl_id()+" ");
-			//prWriter.print(workload.getWrl_percentageVariation()+" ");
+		if(!this.isData_movement()) {
+			prWriter.print(workload.getWrl_id()+" ");			
 			prWriter.print("in ");
 			
 			prWriter.print(workload.getWrl_DtNumbers()+" ");

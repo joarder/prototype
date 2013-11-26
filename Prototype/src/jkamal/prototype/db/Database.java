@@ -17,8 +17,7 @@ public class Database {
 	private int db_tenant;	
 	private int db_partition_size;
 	private Set<Partition> db_partitions;		
-	private Map<Integer, Set<Integer>> db_nodes;	
-	private String db_dmv_strategy;	
+	private Map<Integer, Set<Integer>> db_nodes;		
 	
 	public Database(int id, String name, int tenant_id, String model, double partition_size) {
 		this.setDb_id(id);
@@ -27,7 +26,6 @@ public class Database {
 		this.setDb_partition_size((int)(partition_size * 1000)); // Partition Size Range (1 ~ 1000 GB), 1 GB = 1000 Data Objects of equal size
 		this.setDb_partitions(new TreeSet<Partition>());
 		this.setDb_nodes(new TreeMap<Integer, Set<Integer>>());
-		this.setDb_dmv_strategy("bs");
 	}	
 	
 	// Copy Constructor
@@ -55,8 +53,6 @@ public class Database {
 			clone_db_nodes.put(entry.getKey(), clone_partitions);
 		}
 		this.setDb_nodes(clone_db_nodes);
-						
-		this.setDb_dmv_strategy(db.getDb_dmv_strategy());
 	}
 
 	public int getDb_id() {
@@ -106,14 +102,6 @@ public class Database {
 
 	public void setDb_partition_size(int db_partition_size) {
 		this.db_partition_size = db_partition_size;
-	}
-
-	public String getDb_dmv_strategy() {
-		return db_dmv_strategy;
-	}
-
-	public void setDb_dmv_strategy(String db_dmv_strategy) {
-		this.db_dmv_strategy = db_dmv_strategy;
 	}
 
 	public boolean insert() {
