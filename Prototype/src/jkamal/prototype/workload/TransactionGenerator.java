@@ -32,7 +32,7 @@ public class TransactionGenerator {
 	}
 
 	// Generates the required number of Transactions for a specific Workload with a specific Database
-	public void generateTransaction(Database db, Workload workload) {				
+	public void generateTransaction(Database db, Workload workload, int global_tr_id) {				
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
 		Set<Data> trDataSet;
@@ -45,16 +45,12 @@ public class TransactionGenerator {
 		//Selecting Transaction Prop
 		if(workload.getWrl_id() != 0)
 			prop = workload.getWrl_transactionBirthProp();
-		else 
-			prop = workload.getWrl_transactionProportions();		
-				
-		int tr_id = 0; 
-		if(workload.getWrl_id() != 0)
-			tr_id = workload.getWrl_totalTransactions();
+		else
+			prop = workload.getWrl_transactionProportions();
 		
 		// Creating a Random Object for randomly chosen Data items
 		DBMSSimulator.random_data.reSeed(0);
-		this.prepareRandomData(db);
+		this.prepareRandomData(db);			
 		
 		// i -- Transaction types
 		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {	
@@ -62,8 +58,10 @@ public class TransactionGenerator {
 			
 			int typedTransactions = 0;
 			// j -- a specific Transaction type in the Transaction proportion array
-			for(int j = 0; j < prop[i]; j++) {
-				++tr_id;
+			for(int j = 0; j < prop[i]; j++) { System.out.println(">> "+prop[i]);
+				++global_tr_id;
+				DBMSSimulator.incGlobal_tr_id();
+				
 				trDataSet = new TreeSet<Data>();
 				trDataList = new ArrayList<Integer>();
 				
@@ -82,13 +80,13 @@ public class TransactionGenerator {
 						data.incData_frequency();
 						data.calculateData_weight();
 								
-						data.getData_transaction_involved().add(tr_id);
+						data.getData_transaction_involved().add(global_tr_id);
 						
 						trDataSet.add(data);						
 					}					
 				} // end--k for() loop
 																
-				transaction = new Transaction(tr_id, trDataSet);				
+				transaction = new Transaction(global_tr_id, trDataSet);				
 				
 				transaction.setTr_ranking(i+1);
 				transaction.incTr_frequency();
@@ -102,12 +100,17 @@ public class TransactionGenerator {
 					++typedTransactions;
 				} else
 					transactionList.add(transaction);
+								
+				System.out.println("@ T"+transaction.getTr_id()+" is created ...");
 			} // end--j for() loop
 										
 			if(workload.getWrl_id() == 0)
 				workload.getWrl_transactionMap().put(i, transactionList);
-			else
-				workload.incWrl_transactionProportions(i, typedTransactions);			
+			else {
+				System.out.println(" *** ");
+				workload.incWrl_transactionProportions(i, typedTransactions);
+				workload.printWrl_transactionProp(workload.getWrl_transactionProportions());
+			}						
 		} // end--i for() loop
 	}	
 	

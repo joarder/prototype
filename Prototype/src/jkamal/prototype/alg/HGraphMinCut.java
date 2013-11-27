@@ -35,8 +35,8 @@ public class HGraphMinCut {
 		this.exec_dir = new File(DBMSSimulator.DIR_LOCATION);
 		this.exec_name = hgraph_exec;
 		this.num_partitions = Integer.toString(db.getDb_partitions().size());
-		this.setHgraph_file(workload.getWrl_workload_file());
-		this.setFixfile(workload.getWrl_fixfile());		
+		this.setHgraph_file(workload.getWrl_workloadFile());
+		this.setFixfile(workload.getWrl_fixFile());		
 		
 		switch(this.exec_name) {
 		case "shmetis":		

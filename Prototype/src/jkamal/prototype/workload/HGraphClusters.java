@@ -21,7 +21,7 @@ public class HGraphClusters {
 	
 	public void readPartFile(Database db, Workload workload) throws IOException {		
 		Map<Integer, Integer> keyMap = new TreeMap<Integer, Integer>();		
-		String wrl_fileName = workload.getWrl_workload_file();		
+		String wrl_fileName = workload.getWrl_workloadFile();		
 		String part_file = wrl_fileName+".part."+db.getDb_partitions().size();						
 		File part = new File(DBMSSimulator.DIR_LOCATION+"\\"+part_file);
 		int cluster_id = -1;

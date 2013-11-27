@@ -146,6 +146,22 @@ public class Database {
 		return null;
 	}
 	
+	public Set<Integer> getNodePartitions(int node_id) {
+		Set<Integer> node_partitions = new TreeSet<Integer>();
+		
+		for(Entry<Integer, Set<Integer>> entry : this.getDb_nodes().entrySet()) {
+			if(entry.getKey() == node_id) {
+				for(Integer partition_id : entry.getValue()) {
+					node_partitions.add(this.getPartition(partition_id).getPartition_id());
+				}
+				
+				break;
+			}
+		}
+		
+		return node_partitions;
+	}
+	
 	public void show() {
 		System.out.println("[OUT] Database Details====");
 		System.out.println("      Database: "+this.getDb_name());

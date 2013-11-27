@@ -39,7 +39,7 @@ public class Workload implements Comparable<Workload> {
 	private int wrl_interNodeDataMovements;
 	
 	private String wrl_workload_file = null;
-	private String wrl_fixfile = null;
+	private String wrl_fix_file = null;
 	
 	private double wrl_dt_impact;
 	private int wrl_dt_nums;
@@ -74,8 +74,8 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_intraNodeDataMovements(0);
 		this.setWrl_interNodeDataMovements(0);
 		
-		this.setWrl_workload_file("workload.txt");
-		this.setWrl_fixfile("fixfile.txt");
+		this.setWrl_workloadFile("workload.txt");
+		this.setWrl_fixFile("fixfile.txt");
 		
 		this.setWrl_dt_impact(0.0);
 		this.setWrl_dt_nums(0);
@@ -134,8 +134,8 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_intraNodeDataMovements(workload.getWrl_intraNodeDataMovements());
 		this.setWrl_interNodeDataMovements(workload.getWrl_interNodeDataMovements());
 				
-		this.setWrl_workload_file(workload.getWrl_workload_file());
-		this.setWrl_fixfile(workload.getWrl_fixfile());
+		this.setWrl_workloadFile(workload.getWrl_workloadFile());
+		this.setWrl_fixFile(workload.getWrl_fixFile());
 		
 		this.setWrl_dt_impact(workload.getWrl_DtImpact());
 		this.setWrl_dt_nums(workload.getWrl_DtNumbers());
@@ -316,20 +316,20 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_interNodeDataMovements = wrl_interNodeDataMovements;
 	}
 
-	public String getWrl_workload_file() {
+	public String getWrl_workloadFile() {
 		return wrl_workload_file;
 	}
 
-	public void setWrl_workload_file(String wrl_workload_file) {
+	public void setWrl_workloadFile(String wrl_workload_file) {
 		this.wrl_workload_file = wrl_workload_file;
 	}
 
-	public String getWrl_fixfile() {
-		return wrl_fixfile;
+	public String getWrl_fixFile() {
+		return wrl_fix_file;
 	}
 
-	public void setWrl_fixfile(String wrl_fixfile) {
-		this.wrl_fixfile = wrl_fixfile;
+	public void setWrl_fixFile(String wrl_fixfile) {
+		this.wrl_fix_file = wrl_fixfile;
 	}
 	
 	public double getWrl_DtImpact() {
@@ -340,10 +340,10 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_dt_impact = wrl_dt_impact;
 	}
 	
-	public Transaction findWrl_transaction(int tr_id) {		
+	public Transaction getTransaction(int transaction_id) {		
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) {			
 			for(Transaction transaction : entry.getValue()) {
-				if(transaction.getTr_id() == tr_id)
+				if(transaction.getTr_id() == transaction_id)
 					return transaction;
 			}
 		}
@@ -351,7 +351,7 @@ public class Workload implements Comparable<Workload> {
 		return null;
 	}
 	
-	public Data findWrl_transactionData(Transaction transaction, int data_id) {
+	public Data getData(Transaction transaction, int data_id) {
 		Data data;
 		Iterator<Data> iterator = transaction.getTr_dataSet().iterator();
 		while(iterator.hasNext()) {
@@ -411,8 +411,12 @@ public class Workload implements Comparable<Workload> {
 		this.wrl_data_movement_strategy = wrl_data_movement_strategy;
 	}
 
-	public void updateWrl_workloadFileName(String ext) {
-		this.setWrl_workload_file(ext+"-"+this.getWrl_workload_file());
+	public void updateWrl_workloadFileName(String string) {
+		this.setWrl_workloadFile(string+"-"+this.getWrl_workloadFile());
+	}
+	
+	public void updateWrl_fixFileName(String string) {
+		this.setWrl_fixFile(string+"-"+this.getWrl_fixFile());
 	}
 
 	// Calculate DT Impacts for the Workload

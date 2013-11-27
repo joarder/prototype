@@ -17,10 +17,7 @@ import jkamal.prototype.db.DatabaseServer;
 import jkamal.prototype.io.SimulationMetricsLogger;
 import jkamal.prototype.workload.HGraphClusters;
 import jkamal.prototype.workload.Workload;
-import jkamal.prototype.workload.WorkloadDataPreparer;
 import jkamal.prototype.workload.WorkloadGenerator;
-import jkamal.prototype.workload.WorkloadReplay;
-import jkamal.prototype.workload.WorkloadVariation;
 
 public class DBMSSimulator {	
 	public final static int DB_SERVERS = 3;
@@ -29,14 +26,31 @@ public class DBMSSimulator {
 	public final static int TRANSACTION_NUMS = 10;
 	public final static int SIMULATION_RUN_NUMBERS = 3;
 	
-	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
+	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "khmetis";
 	
 	public static RandomDataGenerator random_birth;
 	public static RandomDataGenerator random_death;
 	public static RandomDataGenerator random_data;
 	
-	public static void main(String[] args) throws IOException {			
+	private static int global_tr_id;
+	
+	public static int getGlobal_tr_id() {
+		return global_tr_id;
+	}
+
+	public static void setGlobal_tr_id(int global_tr_id) {
+		DBMSSimulator.global_tr_id = global_tr_id;
+	}
+	
+	public static void incGlobal_tr_id() {
+		int id = DBMSSimulator.getGlobal_tr_id();
+		DBMSSimulator.setGlobal_tr_id(++id);
+	}
+	
+	public static void main(String[] args) throws IOException {
+		random_data = new RandomDataGenerator();
+		
 		SimulationMetricsLogger logger = new SimulationMetricsLogger();
 		PrintWriter db_log = logger.getWriter(DIR_LOCATION, "db");
 		PrintWriter workload_log = logger.getWriter(DIR_LOCATION, "workload");
@@ -67,13 +81,37 @@ public class DBMSSimulator {
 		db.show();						
 		
 		// Logging
-		logger.log(dbs, db, db_log);
+		//logger.log(dbs, db, db_log);
 		
 		//==============================================================================================
 		// Workload generation for the entire simulation
-		WorkloadGenerator workloadGeneration = new WorkloadGenerator();		
-		workloadGeneration.generateWorkloads(dbs, db);
+		WorkloadGenerator workloadGenerator = new WorkloadGenerator();		
+		workloadGenerator.generateWorkloads(dbs, db);
 		
+		/*int simulation_run = 0;
+		while(simulation_run != DBMSSimulator.SIMULATION_RUN_NUMBERS) {
+			
+			Workload workload = workloadGenerator.getWorkload_map().get(simulation_run);
+			workload.setMessage("Initial");
+			
+			//==============================================================================================
+			// Run hMetis HyperGraph Partitioning							
+			HGraphMinCut minCut = new HGraphMinCut(db, workload, HMETIS); 		
+			minCut.runHMetis();
+
+			// Sleep for 5sec to ensure the files are generated
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			
+			++ simulation_run;
+		}
+		
+		
+		/*
 		Workload workload = null;
 		WorkloadReplay workloadReplay = new WorkloadReplay();
 		WorkloadVariation workloadVariation = new WorkloadVariation();
@@ -84,7 +122,7 @@ public class DBMSSimulator {
 				
 		random_birth = new RandomDataGenerator();
 		random_death = new RandomDataGenerator();
-		random_data = new RandomDataGenerator();
+		
 	    random_birth.reSeed(0);
 	    random_death.reSeed(1);	    
 	    				
@@ -113,7 +151,7 @@ public class DBMSSimulator {
 				//;
 			} else {	
 				// Initial
-				workload = workloadGeneration.workloadInitialisation(db, "TPC-C", 0);
+				workload = workloadGenerator.workloadInitialisation(db, "TPC-C", 0);
 				workload.setWrl_initTotalTransactions(TRANSACTION_NUMS);
 				
 				// Printing Output Messages
@@ -122,7 +160,7 @@ public class DBMSSimulator {
 			}  // end -- if-else()
 			
 			// Generate Synthetic Workload
-			workload = workloadGeneration.generateWorkloads(dbs, db, workload);
+			workload = workloadGenerator.generateWorkloads(dbs, db, workload);
 			
 			workload.setMessage("Initial");
 			workload.show(db);
@@ -238,7 +276,7 @@ public class DBMSSimulator {
 			
 			++strategy2_run_round;
 			System.out.println("***********************************************************************************************************************");
-		}
+		}*/
 		
 		// End Logging
 		workload_log.flush();

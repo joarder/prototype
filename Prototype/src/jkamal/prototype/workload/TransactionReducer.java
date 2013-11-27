@@ -7,43 +7,39 @@ package jkamal.prototype.workload;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
-
-import jkamal.prototype.db.Database;
 import jkamal.prototype.main.DBMSSimulator;
 
 public class TransactionReducer {
 	public TransactionReducer() {}
 	
 	// This function will reduce the required number of Transactions for a specific Workload with a specific Database
-	public void reduceTransaction(Database db, Workload workload) {
+	public void reduceTransaction(Workload workload) {
 		ArrayList<Transaction> transactionList = null;
-		int listSize = 0;
+		Set<Integer> random_transactions = null;
+		int size = 0;
 		
 		verifyTransactionDeathProportions(workload);
 		
 		// i -- Transaction types
-		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {			
-			transactionList = workload.getWrl_transactionMap().get(i);
-			listSize = workload.getWrl_transactionMap().get(i).size();
+		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {
+			size = workload.getWrl_transactionDeathProportions()[i];			
 			
-			Set<Integer> random_transactions = this.randomSelection(listSize -1);
-			for(int j : random_transactions) {
-				transactionList.remove(j);
-				
-				workload.decWrl_totalTransactions();				
-				workload.decWrl_transactionProportions(i);
-			}
+			System.out.println("@ "+size+" >> i = "+i);
 			
-/*			// j -- a specific Transaction type in the Transaction proportion array
-			for(int j = 0; j < workload.getWrl_transactionDeathProportions()[i]; j++) {				
-				//System.out.println(" >> Removing "+transactionList.get(workload.getWrl_transactionMap().get(i).size() - 1)+" from the current workload ...");
-				transactionList.remove(listSize - 1);
-				--listSize;		
+			if(size != 0) {
+				transactionList = workload.getWrl_transactionMap().get(i);
+				random_transactions = this.randomSelection(size);
 				
-				workload.decWrl_totalTransactions();				
-				workload.decWrl_transactionProportions(i);								
-			} // end -- j			
-*/			
+				System.out.println("* "+random_transactions.size());
+				
+				for(int j : random_transactions) {
+					System.out.println("> "+j+" T"+transactionList.get(j).getTr_id());
+					transactionList.remove(j);
+					
+					workload.decWrl_totalTransactions();				
+					workload.decWrl_transactionProportions(i);
+				}
+			}		
 			//System.out.println("@debug >> total TR = "+workload.getWrl_totalTransaction());
 		} // end -- i		
 	}

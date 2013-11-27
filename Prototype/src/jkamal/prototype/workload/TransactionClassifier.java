@@ -38,7 +38,7 @@ public class TransactionClassifier {
 							++green_tr_data;
 						else {							
 							for(int tr_id : data.getData_transaction_involved()){
-								Transaction tr = workload.findWrl_transaction(tr_id);
+								Transaction tr = workload.getTransaction(tr_id);
 								
 								if(tr.getTr_dtCost() > 0)
 									++orange_tr_data;

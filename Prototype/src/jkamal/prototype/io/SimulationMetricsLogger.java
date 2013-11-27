@@ -9,10 +9,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
-
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
@@ -77,7 +77,8 @@ public class SimulationMetricsLogger {
 	}
 
 	public PrintWriter getWriter(String dir, String content) {
-		String trace_type = null;		
+		String trace_type = null;
+		
 		switch(content) {
 		case "db": 
 			trace_type = this.getDb_logger();
@@ -153,79 +154,82 @@ public class SimulationMetricsLogger {
 		} 
 	}
 	
-	public void logDb(Database db, Workload workload, PrintWriter printWriter) {
-		for(Partition partition : db.getDb_partitions()) {
-			for(Data data : partition.getPartition_dataSet()) {
-				printWriter.print(workload.getWrl_id()+" ");
-				printWriter.print(data.getData_id()+" ");
-				printWriter.print(data.getData_partitionId()+" ");
+	public void logDb(Database db, Workload workload, PrintWriter writer) {
+		for(Entry<Integer, Set<Integer>> entry : db.getDb_nodes().entrySet()) {			
+			
+			Set<Integer> node_partitions = db.getNodePartitions(entry.getKey());
+			for(Integer partition_id : node_partitions) {
+				Partition partition = db.getPartition(partition_id);
 				
-				int space = data.getData_transaction_involved().size();
-				for(Integer transaction_id : data.getData_transaction_involved()) {
-					Transaction transaction = workload.findWrl_transaction(transaction_id);
+				for(Data data : partition.getPartition_dataSet()) {										
+					if(data.getData_transaction_involved().size() != 0) {
 					
-					printWriter.print(transaction.getTr_id()+" ");
-					printWriter.print(transaction.getTr_ranking());
+						for(Integer transaction_id : data.getData_transaction_involved()) {
+							Transaction transaction = workload.getTransaction(transaction_id);
+							
+							this.logData(workload, entry, partition, data, writer);
+							
+							writer.print("T"+transaction.getTr_id()+" ");
+						
+							writer.print(transaction.getTr_ranking()+" ");
+							writer.print(transaction.getTr_frequency()+" ");
+							writer.print(transaction.getTr_weight()+" ");
+						}
+					} else {						
+						this.logData(workload, entry, partition, data, writer);
+					}
 					
-					--space;
-					if(space != 0)
-						printWriter.print(" ");
+					writer.println();
 				}
-				
-				printWriter.print(data.getData_id()+" ");
 			}
 		}
 	}
 	
-	public void logWorkload(Database db, Workload workload, PrintWriter prWriter) {		
+	private void logData(Workload workload, Entry<Integer, Set<Integer>> entry, Partition partition, Data data, 
+			PrintWriter writer) {
+		
+		writer.print("W"+workload.getWrl_id()+" ");
+		writer.print("D"+data.getData_id()+" ");
+		writer.print("N"+entry.getKey()+" ");
+		writer.print("P"+partition.getPartition_id()+" ");
+		
+		writer.print(data.getData_ranking()+" ");
+		writer.print(data.getData_frequency()+" ");
+		writer.print(data.getData_weight()+" ");
+	}
+	
+	public void logWorkload(Database db, Workload workload, PrintWriter writer) {		
 		if(!this.isData_movement()) {
-			prWriter.print(workload.getWrl_id()+" ");			
-			prWriter.print("in ");
+			writer.print(workload.getWrl_id()+" ");			
+			writer.print("in ");
 			
-			prWriter.print(workload.getWrl_DtNumbers()+" ");
-			prWriter.print(workload.getWrl_DtImpact()+" ");																		
+			writer.print(workload.getWrl_DtNumbers()+" ");
+			writer.print(workload.getWrl_DtImpact()+" ");																		
 		} else {					
-			prWriter.print(db.getDb_dmv_strategy()+" ");
+			writer.print(workload.getWrl_data_movement_strategy()+" ");
 			
-			prWriter.print(workload.getWrl_DtNumbers()+" ");
-			prWriter.print(workload.getWrl_DtImpact()+" ");								
+			writer.print(workload.getWrl_DtNumbers()+" ");
+			writer.print(workload.getWrl_DtImpact()+" ");								
 			
-			prWriter.print(workload.getWrl_totalDataObjects()+" ");
-			prWriter.print(workload.getWrl_intraNodeDataMovements()+" ");
-			prWriter.print(workload.getWrl_percentageIntraNodeDataMovement()+" ");
-			prWriter.print(workload.getWrl_interNodeDataMovements()+" ");
-			prWriter.print(workload.getWrl_percentageInterNodeDataMovement());
+			writer.print(workload.getWrl_totalDataObjects()+" ");
+			writer.print(workload.getWrl_intraNodeDataMovements()+" ");
+			writer.print(workload.getWrl_percentageIntraNodeDataMovement()+" ");
+			writer.print(workload.getWrl_interNodeDataMovements()+" ");
+			writer.print(workload.getWrl_percentageInterNodeDataMovement());
 			
-			prWriter.println();			
+			writer.println();			
 		}				
 	}
 	
-	public void logPartition(Database db, Workload workload, PrintWriter prWriter) {						
-		/*if(!this.isData_movement()) {
-			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {
-				for(Partition partition : entry.getValue()) {
-					this.getPartitionsBeforeDM().put(partition.getPartition_id(), 
-							entry.getKey()+" "+partition.getPartition_id()+" "+this.logPartitionDetails(partition)+" ");
-				}						
-			}						
-		} else {			
-			for(Entry<Integer, Set<Partition>> entry : db.getDb_partitionTable().getPartition_table().entrySet()) {							
-				for(Partition partition : entry.getValue()) {
-					prWriter.print(this.getPartitionsBeforeDM().get(partition.getPartition_id()));					
-					prWriter.println(this.logPartitionDetails(partition));
-				}						
-			}						
-		}*/
-	}
-	
-	private String logPartitionDetails(Partition partition) {
-		return (partition.getPartition_current_load()+" "
-				//+partition.getPartition_dataSet().size()+" "+partition.getPartition_percentageMain()+" "
-				//+partition.getRoaming_dataObjects().size()+" "+partition.getPartition_percentageRoaming()+" "
-				//+partition.getForeign_dataObjects().size()+" "+partition.getPartition_percentageForeign());	
-				+partition.getPartition_dataSet().size()//+" "+partition.getPartition_percentageMain()+" "
-				+partition.getPartition_roaming_data()//+" "+partition.getPartition_percentageRoaming()+" "
-				+partition.getPartition_foreign_data());//+" "+partition.getPartition_percentageForeign());	
+	public void logPartition(Database db, Workload workload, PrintWriter prWriter) {		
+		for(Partition partition : db.getDb_partitions()) {
+			prWriter.print(partition.getPartition_id()+" ");
+			prWriter.print(partition.getPartition_nodeId()+" ");
+			prWriter.print(partition.getPartition_current_load()+" ");
+			prWriter.print(partition.getPartition_dataSet().size()+" ");
+			prWriter.print(partition.getPartition_roaming_data()+" ");
+			prWriter.print(partition.getPartition_foreign_data()+" ");
+		}
 	}
 	
 	public void logTransactionProp(Workload workload, PrintWriter prWriter) {

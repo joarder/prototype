@@ -137,8 +137,7 @@ public class DataMovement {
 		int dst_node_id = -1;
 		int intra_node_data_movements = 0;
 		int inter_node_data_movements = 0;
-		int repeated_data = 0;
-		//Set<Data> observed_workload_data = new TreeSet<Data>();		
+		int repeated_data = 0;		
 		
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {		
@@ -157,8 +156,7 @@ public class DataMovement {
 						dst_node_id = dst_partition.getPartition_nodeId();							
 						
 						workload_data.setData_hmetisClusterId(-1);
-						//observed_workload_data.add(workload_data);
-						if(db.getDb_dmv_strategy() == "s1" || db.getDb_dmv_strategy() == "s2") {
+						if(workload.getWrl_data_movement_strategy() != "bs") {
 							updateHMetisClusterId(workload, workload_data);
 						}						
 						

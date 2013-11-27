@@ -77,6 +77,7 @@ public class WorkloadGenerator {
 		while(workload_id != DBMSSimulator.SIMULATION_RUN_NUMBERS) {
 			if(workload_id != 0) {
 				workload = this.getWorkload_map().get(workload_id -1);
+				workload.setWrl_id(workload_id);
 				
 				// === Death Management === 	
 				workload.setWrl_transactionDying((int) ((int) workload.getWrl_totalTransactions() * 0.5));				
@@ -86,7 +87,9 @@ public class WorkloadGenerator {
 				
 				// Reducing Old Workload Transactions			
 				TransactionReducer transactionReducer = new TransactionReducer();
-				transactionReducer.reduceTransaction(db, workload);
+				transactionReducer.reduceTransaction(workload);
+				
+				this.print(workload);
 				
 				// === Birth Management ===				
 				workload.setWrl_transactionBorning((int) ((int) workload.getWrl_totalTransactions() * 0.5));
@@ -96,12 +99,23 @@ public class WorkloadGenerator {
 				
 				// Generating New Workload Transactions						
 				TransactionGenerator transactionGenerator = new TransactionGenerator();
-				transactionGenerator.generateTransaction(db, workload);				
+				transactionGenerator.generateTransaction(db, workload, DBMSSimulator.getGlobal_tr_id());	
+				
+				this.print(workload);
 			} else {
 				// === Workload Generation Round 0 ===
 				workload = this.workloadInitialisation(db, DBMSSimulator.WORKLOAD_TYPE, workload_id);
 				workload.setWrl_initTotalTransactions(DBMSSimulator.TRANSACTION_NUMS);
+				
+				workload.setWrl_transactionProp(transactionPropGen(workload.getWrl_transactionTypes(), 
+						DBMSSimulator.TRANSACTION_NUMS));
+				
+				// Generating New Workload Transactions						
+				TransactionGenerator transactionGenerator = new TransactionGenerator();
+				transactionGenerator.generateTransaction(db, workload, DBMSSimulator.getGlobal_tr_id());
 			}			
+			
+			workload.show(db);
 			
 			// Classify the Workload Transactions based on whether they are Distributed or not (Red/Orange/Green List)
 			workloadClassifier.classifyTransactions(workload);
@@ -110,6 +124,7 @@ public class WorkloadGenerator {
 			this.getWorkload_map().put(workload_id, cloneWorkload);
 			
 			workload.updateWrl_workloadFileName(Integer.toString(workload.getWrl_id()));
+			workload.updateWrl_fixFileName(Integer.toString(workload.getWrl_id()));
 			
 			this.generateWorkloadFile(workload);
 			this.generateFixFile(workload);
@@ -212,9 +227,10 @@ public class WorkloadGenerator {
 	
 	// Generates Workload File for Hypergraph partitioning
 	public void generateWorkloadFile(Workload workload) {
-		File workloadFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_workload_file());
+		File workloadFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_workloadFile());
+		
 		Data trData;
-		int totalHyperEdges = workload.getWrl_totalTransactions();// + dbs.getDbs_nodes().size();
+		int totalHyperEdges = workload.getWrl_totalTransactions();
 		int totalDataItems = workload.getWrl_totalDataObjects();
 		int hasTransactionWeight = 1;
 		int hasDataWeight = 1;						
@@ -234,7 +250,7 @@ public class WorkloadGenerator {
 							Iterator<Data> data =  transaction.getTr_dataSet().iterator();
 							while(data.hasNext()) {
 								trData = data.next();
-								//System.out.println("@debug >> fData ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
+								
 								writer.write(Integer.toString(trData.getData_shadowHMetisId()));							
 								
 								if(data.hasNext())
@@ -245,19 +261,6 @@ public class WorkloadGenerator {
 						} // end -- if()-Transaction Class
 					} // end -- for()-Transaction
 				} // end -- for()-Transaction-Types
-				
-				// Adding a single HyperEdge for each Node containing Data items within the Workload
-				/*for(Entry<Integer, Set<Data>> entry : this.getDataNodeTable().entrySet()) {
-					writer.write("1"+" "); // 1 = Node HyperEdge Weight will be always equals to 1
-					Iterator<Data> itr_node = entry.getValue().iterator();
-					while(itr_node.hasNext()) {
-						writer.write(Integer.toString(itr_node.next().getData_shadowHMetisId()));
-						
-						if(itr_node.hasNext())
-							writer.write(" ");
-					} // end -- while() loop
-					writer.write("\n");
-				} // end -- for() loop*/
 
 				// Writing Data Weight
 				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
@@ -282,7 +285,7 @@ public class WorkloadGenerator {
 	// Generates Fix Files (Determines whether a Data is movable from its current Partition or not) 
 	// for Hypergraph partitioning
 	public void generateFixFile(Workload workload) {
-		File fixFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_fixfile());
+		File fixFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_fixFile());
 		
 		try {
 			fixFile.createNewFile();
@@ -312,7 +315,7 @@ public class WorkloadGenerator {
 		}		
 	}
 	
-	public static void print(Workload workload) {
+	public void print(Workload workload) {
 		System.out.print("[MSG] Total "+workload.getWrl_totalTransactions()+" transactions of "+workload.getWrl_transactionTypes()
 				+" types having a distribution of ");										
 		workload.printWrl_transactionProp(workload.getWrl_transactionProportions());
