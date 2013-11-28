@@ -40,6 +40,7 @@ public class Transaction implements Comparable<Transaction> {
 		this.setTr_id(transaction.getTr_id());
 		this.setTr_label(transaction.getTr_label());
 		this.setTr_ranking(transaction.getTr_ranking());
+		this.setTr_frequency(transaction.getTr_frequency());
 		this.setTr_weight(transaction.getTr_weight());		
 		this.setTr_dtCost(transaction.getTr_dtCost());
 		this.setTr_psCost(transaction.getTr_psCost());
@@ -188,8 +189,9 @@ public class Transaction implements Comparable<Transaction> {
 	
 	// Prints out all of the contents of the representative Transaction
 	public void show() {
-		System.out.print(" "+this.getTr_label()+"[CDT("+this.getTr_dtCost()+"), " +
-				"FRQ("+this.getTr_weight()+"), Data("+this.getTr_dataSet().size()+")]");
+		System.out.print(" "+this.getTr_label()+"("+this.getTr_dtCost()+")["
+				+this.getTr_weight()+"/"+this.getTr_ranking()+"/"+this.getTr_frequency()
+				+"|Data("+this.getTr_dataSet().size()+")]");
 		
 		System.out.print("{");
 		Iterator<Data> data =  this.getTr_dataSet().iterator();
@@ -204,7 +206,9 @@ public class Transaction implements Comparable<Transaction> {
 	
 	@Override
 	public String toString() {	
-		return (this.getTr_label()+"("+this.getTr_weight()+"|"+this.getTr_dataSet().size()+" data)");
+		return (this.getTr_label()+"("+this.getTr_dtCost()+")["
+				+this.getTr_weight()+"/"+this.getTr_ranking()+"/"+this.getTr_frequency()
+				+"|Data("+this.getTr_dataSet().size()+")]");
 	}
 
 	@Override

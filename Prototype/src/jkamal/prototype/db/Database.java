@@ -162,34 +162,25 @@ public class Database {
 		return node_partitions;
 	}
 	
-	public void show() {
-		System.out.println("[OUT] Database Details====");
+	public void show() {		
+		System.out.println("[OUT] ==== Database Details ====");
 		System.out.println("      Database: "+this.getDb_name());
 		System.out.println("      Number of Partitions: "+this.getDb_partitions().size());		
-		System.out.println("[OUT] Partition Table Details====");		
+		System.out.println("[OUT] ==== Partition Table Details ====");		
 		
 		ArrayList<Integer> overloadedPartition = new ArrayList<Integer>();
-		int comma = -1;
-		
+		int comma = -1;		
 		for(Entry<Integer, Set<Integer>> entry : this.getDb_nodes().entrySet()) {
-			System.out.print("      N"+entry.getKey()+" {");
-			
-			comma = entry.getValue().size();
+			System.out.println("    --N"+entry.getKey());//+" {");
+				
 			for(Integer partition_id : entry.getValue()) {
 				Partition partition = this.getPartition(partition_id);
 				
-				System.out.print(partition.toString());
-				
-				if(comma != 1)
-					System.out.print(", ");
-			
-				--comma;
+				System.out.println("    ----"+partition.toString());
 				
 				if(partition.isPartition_overloaded())
 					overloadedPartition.add(partition.getPartition_id());
-			}
-			
-			System.out.print("}\n");			
+			}									
 		}
 		
 		if(overloadedPartition.size() != 0) {

@@ -267,10 +267,12 @@ public class Data implements Comparable<Data> {
 	@Override
 	public String toString() {		
 		if(this.isData_isRoaming())
-			return (this.data_label+"("+this.data_weight+"|P"+this.data_partition_id+"(H"+this.data_home_partition_id
+			return (this.data_label+"("+this.getData_weight()+"/"+this.getData_ranking()+"/"+this.getData_frequency()
+					+"|P"+this.data_partition_id+"(H"+this.data_home_partition_id
 					+")/N"+this.data_node_id+"(H"+this.data_home_node_id+"))");// @C("+this.data_hmetis_cluster_id+") @h("+this.data_shadow_hmetis_id+")");
 		else
-			return (this.data_label+"("+this.data_weight+"|P"+this.data_partition_id
+			return (this.data_label+"("+this.getData_weight()+"/"+this.getData_ranking()+"/"+this.getData_frequency()
+					+"|P"+this.data_partition_id
 					+"/N"+this.data_node_id+")");// @C("+this.data_hmetis_cluster_id+") //@h("+this.data_shadow_hmetis_id+")");
 	}
 		

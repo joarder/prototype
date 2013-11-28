@@ -58,7 +58,7 @@ public class TransactionGenerator {
 			
 			int typedTransactions = 0;
 			// j -- a specific Transaction type in the Transaction proportion array
-			for(int j = 0; j < prop[i]; j++) { System.out.println(">> "+prop[i]);
+			for(int j = 0; j < prop[i]; j++) { //System.out.println(">> "+prop[i]);
 				++global_tr_id;
 				DBMSSimulator.incGlobal_tr_id();
 				
@@ -73,13 +73,9 @@ public class TransactionGenerator {
 					if(trDataList.contains(data_id) && k > 0) {
 						--k;
 					} else {
-						trDataList.add(data_id);
+						trDataList.add(data_id);						
 						
 						data = db.search(data_id);
-												
-						data.incData_frequency();
-						data.calculateData_weight();
-								
 						data.getData_transaction_involved().add(global_tr_id);
 						
 						trDataSet.add(data);						
@@ -87,30 +83,20 @@ public class TransactionGenerator {
 				} // end--k for() loop
 																
 				transaction = new Transaction(global_tr_id, trDataSet);				
-				
 				transaction.setTr_ranking(i+1);
-				transaction.incTr_frequency();
-				transaction.calculateTr_weight();
-				transaction.generateTransactionCost(db);
-				
 				workload.incWrl_totalTransaction();
 				
 				if(workload.getWrl_transactionMap().containsKey(i)) {
 					workload.getWrl_transactionMap().get(i).add(transaction);
 					++typedTransactions;
 				} else
-					transactionList.add(transaction);
-								
-				System.out.println("@ T"+transaction.getTr_id()+" is created ...");
+					transactionList.add(transaction);							
 			} // end--j for() loop
 										
 			if(workload.getWrl_id() == 0)
 				workload.getWrl_transactionMap().put(i, transactionList);
-			else {
-				System.out.println(" *** ");
-				workload.incWrl_transactionProportions(i, typedTransactions);
-				workload.printWrl_transactionProp(workload.getWrl_transactionProportions());
-			}						
+			else 				
+				workload.incWrl_transactionProportions(i, typedTransactions);									
 		} // end--i for() loop
 	}	
 	

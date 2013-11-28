@@ -5,9 +5,13 @@
 package jkamal.prototype.bootstrap;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
+
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
+import jkamal.prototype.db.Node;
 import jkamal.prototype.db.Partition;
 
 public class Bootstrapping {
@@ -25,7 +29,6 @@ public class Bootstrapping {
 		ArrayList<Data> dataList;
 		Data data;												
 		int node_id = 1; //1
-		int partition_capacity = 0;
 		int partition_nums = (int) Math.ceil((double) DATA_OBJECTS/(db.getDb_partition_size() * 0.8));
 		int data_id = 1; //0
 		int data_nums = 0;
@@ -37,7 +40,8 @@ public class Bootstrapping {
 				node_id = 1;
 			
 			// Create a new Partition and attach it to the Database			
-			partition = new Partition(partition_id, String.valueOf(partition_id), node_id, db.getDb_partition_size());			
+			partition = new Partition(partition_id, String.valueOf(partition_id), node_id, db.getDb_partition_size());
+			
 			db.getDb_partitions().add(partition);
 			data_nums = (int) ((int)(partition.getPartition_capacity())*0.8);						
 			
@@ -48,9 +52,7 @@ public class Bootstrapping {
 			for(int k = 1; k <= data_nums && data_id <= DATA_OBJECTS; k++) {
 				// Create a new Data Item within the Partition
 				data = new Data(data_id, String.valueOf(data_id), partition_id, node_id, false);
-				partition.getPartition_dataSet().add(data);
-				partition_capacity = partition.getPartition_capacity();
-				partition.setPartition_capacity(partition_capacity+1);	 // Partition capacity is determined by the number of data items				
+				partition.getPartition_dataSet().add(data);												
 				
 				// Put an entry into the Partition Data lookup table
 				partition.getPartition_dataLookupTable().put(data.getData_id(), partition.getPartition_id());
@@ -73,7 +75,17 @@ public class Bootstrapping {
 			
 			++node_id;
 		} // end -- for						
-				
+			
+		// Add node-partitions map entries
+		for(Node n : dbs.getDbs_nodes()) {
+			Set<Integer> partitionSet = new TreeSet<Integer>();			
+			for(Partition p : n.getNode_partitions()) {
+				partitionSet.add(p.getPartition_id());
+			}
+			
+			db.getDb_nodes().put(n.getNode_id(), partitionSet);
+		}
+		
 		System.out.println("[MSG] Total Data Items: "+global_data);
 		System.out.println("[MSG] Total Partitions: "+db.getDb_partitions().size());
 	}

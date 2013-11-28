@@ -112,7 +112,7 @@ public class WorkloadDataPreparer {
 	    		    	
 	    	// Iterating each data objects
 	    	for(Data data : partition.getPartition_dataSet()) {	    		
-	    		data.setData_ranking(this.getZipf_rank_map().get(data.getData_id()));
+	    		data.setData_ranking(this.getZipf_rank_map().get(data.getData_id())+1); // default Data ranking is 1
 	    		data.setData_cumulativeProbability(
 	    				Math.round( this.getZipf_cumulative_probability_map().get(data.getData_id()) * 100.0)/100.0);	    		
 	    		data.setData_normalisedCumulativeProbability(

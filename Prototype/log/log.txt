@@ -1,0 +1,167 @@
+[ACT] Creating Database Server "test-dbs" with 3 Nodes ...
+[ACT] Creating Database "test-db" within test-dbs Database Server ...
+[ACT] Started Bootstrapping Process ...
+[ACT] Generating 100 synthetic data items ...
+[ACT] Creating Partition P1 with 8 Data objects and placing it into node N1
+[ACT] Creating Partition P2 with 8 Data objects and placing it into node N2
+[ACT] Creating Partition P3 with 8 Data objects and placing it into node N3
+[ACT] Creating Partition P4 with 8 Data objects and placing it into node N1
+[ACT] Creating Partition P5 with 8 Data objects and placing it into node N2
+[ACT] Creating Partition P6 with 8 Data objects and placing it into node N3
+[ACT] Creating Partition P7 with 8 Data objects and placing it into node N1
+[ACT] Creating Partition P8 with 8 Data objects and placing it into node N2
+[ACT] Creating Partition P9 with 8 Data objects and placing it into node N3
+[ACT] Creating Partition P10 with 8 Data objects and placing it into node N1
+[ACT] Creating Partition P11 with 8 Data objects and placing it into node N2
+[ACT] Creating Partition P12 with 8 Data objects and placing it into node N3
+[ACT] Creating Partition P13 with 4 Data objects and placing it into node N1
+[MSG] Total Data Items: 100
+[MSG] Total Partitions: 13
+[MSG] Data creation and placement into partitions done.
+[OUT] Database Server Details===
+      Database Server: test-dbs
+      Number of Nodes: 3
+[OUT] Node Details===
+      N1 with 5 Partitions. Current Load 50.0%
+      N2 with 4 Partitions. Current Load 40.0%
+      N3 with 4 Partitions. Current Load 40.0%
+[OUT] ==== Database Details ====
+      Database: test-db
+      Number of Partitions: 13
+[OUT] ==== Partition Table Details ====
+    --N1
+    ----P1[10|80.0%]-H(8)
+    ----P4[10|80.0%]-H(8)
+    ----P7[10|80.0%]-H(8)
+    ----P10[10|80.0%]-H(8)
+    ----P13[10|40.0%]-H(4)
+    --N2
+    ----P2[10|80.0%]-H(8)
+    ----P5[10|80.0%]-H(8)
+    ----P8[10|80.0%]-H(8)
+    ----P11[10|80.0%]-H(8)
+    --N3
+    ----P3[10|80.0%]-H(8)
+    ----P6[10|80.0%]-H(8)
+    ----P9[10|80.0%]-H(8)
+    ----P12[10|80.0%]-H(8)
+[OUT] Workload details for simulation round 0
+      W0 [10 Transactions (containing 18 Data)  having a distribution of {0, 0, 7, 2, 1}
+      -----------------------------------------------------------------------------------------------------------------
+      T1(1)[3/3/1|Data(4)]{d89(3/3/1|P12/N3), d92(9/3/3|P12/N3), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1)}
+      T2(2)[3/3/1|Data(4)]{d71(2/1/2|P9/N3), d84(2/2/1|P11/N2), d98(16/2/8|P13/N1), d100(12/2/6|P13/N1)}
+      T3(1)[3/3/1|Data(4)]{d93(3/1/3|P12/N3), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
+      T4(2)[3/3/1|Data(4)]{d71(2/1/2|P9/N3), d87(2/1/2|P11/N2), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1)}
+      T5(1)[3/3/1|Data(4)]{d73(3/3/1|P10/N1), d93(3/1/3|P12/N3), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
+      T6(1)[3/3/1|Data(4)]{d63(2/2/1|P8/N2), d86(2/1/2|P11/N2), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1)}
+      T7(2)[3/3/1|Data(4)]{d87(2/1/2|P11/N2), d92(9/3/3|P12/N3), d94(4/2/2|P12/N3), d98(16/2/8|P13/N1)}
+      T8(1)[4/4/1|Data(5)]{d1(6/6/1|P1/N1), d79(1/1/1|P10/N1), d92(9/3/3|P12/N3), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
+      T9(1)[4/4/1|Data(5)]{d33(6/6/1|P5/N2), d83(2/2/1|P11/N2), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
+      T10(2)[5/5/1|Data(6)]{d72(1/1/1|P9/N3), d86(2/1/2|P11/N2), d93(3/1/3|P12/N3), d94(4/2/2|P12/N3), d98(16/2/8|P13/N1), d100(12/2/6|P13/N1)}
+      -----------------------------------------------------------------------------------------------------------------
+      # Distributed Transactions: 10 (100.0% of Total 10 Workload Transactions)
+      # Impact of Distributed Transactions: 1.41 (for a particular workload round)
+[OUT] ==== Database Details ====
+      Database: test-db
+      Number of Partitions: 13
+[OUT] ==== Partition Table Details ====
+    --N1
+    ----P1[10|80.0%]-H(8)
+    ----P4[10|80.0%]-H(8)
+    ----P7[10|80.0%]-H(8)
+    ----P10[10|80.0%]-H(8)
+    ----P13[10|40.0%]-H(4)
+    --N2
+    ----P2[10|80.0%]-H(8)
+    ----P5[10|80.0%]-H(8)
+    ----P8[10|80.0%]-H(8)
+    ----P11[10|80.0%]-H(8)
+    --N3
+    ----P3[10|80.0%]-H(8)
+    ----P6[10|80.0%]-H(8)
+    ----P9[10|80.0%]-H(8)
+    ----P12[10|80.0%]-H(8)
+@-- W0
+[ACT] Varying current workload by reducing old transactions ...
+[MSG] Total 7 transactions of 5 types having a distribution of {0, 0, 5, 1, 1} are currently in the workload.
+[ACT] Varying current workload by generating new transactions ...
+[MSG] Total 10 transactions of 5 types having a distribution of {0, 0, 8, 1, 1} are currently in the workload.
+[OUT] Workload details for simulation round 1
+      W1 [10 Transactions (containing 39 Data)  having a distribution of {0, 0, 8, 1, 1}
+      -----------------------------------------------------------------------------------------------------------------
+      T1(1)[6/3/2|Data(4)]{d89(6/3/2|P12/N3), d92(12/3/4|P12/N3), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1)}
+      T3(1)[6/3/2|Data(4)]{d93(4/1/4|P12/N3), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1), d100(14/2/7|P13/N1)}
+      T5(1)[6/3/2|Data(4)]{d73(6/3/2|P10/N1), d93(4/1/4|P12/N3), d99(8/1/8|P13/N1), d100(14/2/7|P13/N1)}
+      T6(1)[6/3/2|Data(4)]{d63(4/2/2|P8/N2), d86(3/1/3|P11/N2), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1)}
+      T7(2)[6/3/2|Data(4)]{d87(3/1/3|P11/N2), d92(12/3/4|P12/N3), d94(6/2/3|P12/N3), d98(18/2/9|P13/N1)}
+      T11(1)[3/3/1|Data(4)]{d89(6/3/2|P12/N3), d92(12/3/4|P12/N3), d98(22/2/11|P13/N1), d99(9/1/9|P13/N1)}
+      T12(2)[3/3/1|Data(4)]{d71(3/1/3|P9/N3), d84(4/2/2|P11/N2), d98(22/2/11|P13/N1), d100(16/2/8|P13/N1)}
+      T13(1)[3/3/1|Data(4)]{d93(4/1/4|P12/N3), d98(22/2/11|P13/N1), d99(9/1/9|P13/N1), d100(16/2/8|P13/N1)}
+      T9(1)[8/4/2|Data(5)]{d33(12/6/2|P5/N2), d83(4/2/2|P11/N2), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1), d100(14/2/7|P13/N1)}
+      T10(2)[10/5/2|Data(6)]{d72(2/1/2|P9/N3), d86(3/1/3|P11/N2), d93(4/1/4|P12/N3), d94(6/2/3|P12/N3), d98(18/2/9|P13/N1), d100(14/2/7|P13/N1)}
+      -----------------------------------------------------------------------------------------------------------------
+      # Distributed Transactions: 10 (100.0% of Total 10 Workload Transactions)
+      # Impact of Distributed Transactions: 1.33 (for a particular workload round)
+[OUT] ==== Database Details ====
+      Database: test-db
+      Number of Partitions: 13
+[OUT] ==== Partition Table Details ====
+    --N1
+    ----P1[10|80.0%]-H(8)
+    ----P4[10|80.0%]-H(8)
+    ----P7[10|80.0%]-H(8)
+    ----P10[10|80.0%]-H(8)
+    ----P13[10|40.0%]-H(4)
+    --N2
+    ----P2[10|80.0%]-H(8)
+    ----P5[10|80.0%]-H(8)
+    ----P8[10|80.0%]-H(8)
+    ----P11[10|80.0%]-H(8)
+    --N3
+    ----P3[10|80.0%]-H(8)
+    ----P6[10|80.0%]-H(8)
+    ----P9[10|80.0%]-H(8)
+    ----P12[10|80.0%]-H(8)
+@-- W1
+[ACT] Varying current workload by reducing old transactions ...
+[MSG] Total 7 transactions of 5 types having a distribution of {0, 0, 6, 0, 1} are currently in the workload.
+[ACT] Varying current workload by generating new transactions ...
+[MSG] Total 10 transactions of 5 types having a distribution of {0, 0, 9, 0, 1} are currently in the workload.
+[OUT] Workload details for simulation round 2
+      W2 [10 Transactions (containing 38 Data)  having a distribution of {0, 0, 9, 0, 1}
+      -----------------------------------------------------------------------------------------------------------------
+      T1(1)[9/3/3|Data(4)]{d89(9/3/3|P12/N3), d92(15/3/5|P12/N3), d98(20/2/10|P13/N1), d99(9/1/9|P13/N1)}
+      T5(1)[9/3/3|Data(4)]{d73(9/3/3|P10/N1), d93(5/1/5|P12/N3), d99(9/1/9|P13/N1), d100(16/2/8|P13/N1)}
+      T7(2)[9/3/3|Data(4)]{d87(4/1/4|P11/N2), d92(15/3/5|P12/N3), d94(8/2/4|P12/N3), d98(20/2/10|P13/N1)}
+      T11(1)[6/3/2|Data(4)]{d89(9/3/3|P12/N3), d92(15/3/5|P12/N3), d98(24/2/12|P13/N1), d99(10/1/10|P13/N1)}
+      T12(2)[6/3/2|Data(4)]{d71(4/1/4|P9/N3), d84(6/2/3|P11/N2), d98(24/2/12|P13/N1), d100(18/2/9|P13/N1)}
+      T13(1)[6/3/2|Data(4)]{d93(5/1/5|P12/N3), d98(24/2/12|P13/N1), d99(10/1/10|P13/N1), d100(18/2/9|P13/N1)}
+      T14(1)[3/3/1|Data(4)]{d89(9/3/3|P12/N3), d92(15/3/5|P12/N3), d98(28/2/14|P13/N1), d99(11/1/11|P13/N1)}
+      T15(2)[3/3/1|Data(4)]{d71(4/1/4|P9/N3), d84(6/2/3|P11/N2), d98(28/2/14|P13/N1), d100(20/2/10|P13/N1)}
+      T16(1)[3/3/1|Data(4)]{d93(5/1/5|P12/N3), d98(28/2/14|P13/N1), d99(11/1/11|P13/N1), d100(20/2/10|P13/N1)}
+      T10(2)[15/5/3|Data(6)]{d72(3/1/3|P9/N3), d86(4/1/4|P11/N2), d93(5/1/5|P12/N3), d94(8/2/4|P12/N3), d98(20/2/10|P13/N1), d100(16/2/8|P13/N1)}
+      -----------------------------------------------------------------------------------------------------------------
+      # Distributed Transactions: 10 (100.0% of Total 10 Workload Transactions)
+      # Impact of Distributed Transactions: 1.48 (for a particular workload round)
+[OUT] ==== Database Details ====
+      Database: test-db
+      Number of Partitions: 13
+[OUT] ==== Partition Table Details ====
+    --N1
+    ----P1[10|80.0%]-H(8)
+    ----P4[10|80.0%]-H(8)
+    ----P7[10|80.0%]-H(8)
+    ----P10[10|80.0%]-H(8)
+    ----P13[10|40.0%]-H(4)
+    --N2
+    ----P2[10|80.0%]-H(8)
+    ----P5[10|80.0%]-H(8)
+    ----P8[10|80.0%]-H(8)
+    ----P11[10|80.0%]-H(8)
+    --N3
+    ----P3[10|80.0%]-H(8)
+    ----P6[10|80.0%]-H(8)
+    ----P9[10|80.0%]-H(8)
+    ----P12[10|80.0%]-H(8)
+@-- W2
+@ - 1-workload.txt

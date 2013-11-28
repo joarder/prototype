@@ -54,7 +54,7 @@ public class Workload implements Comparable<Workload> {
 	
 	public Workload(int id, int trTypes, int db_id) {
 		this.setWrl_id(id);
-		this.setWrl_label("WL-"+Integer.toString(this.getWrl_id()));
+		this.setWrl_label(null);
 		this.setWrl_database_id(db_id);
 		
 		this.setWrl_transactionTypes(trTypes);
@@ -70,7 +70,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_transactionBirthProp(new int[this.getWrl_transactionTypes()]);
 		this.setWrl_transactionDeathProp(new int[this.getWrl_transactionTypes()]);		
 		
-		this.setWrl_totalData(0);
+		this.setWrl_totalDataObjects(0);
 		this.setWrl_intraNodeDataMovements(0);
 		this.setWrl_interNodeDataMovements(0);
 		
@@ -130,7 +130,7 @@ public class Workload implements Comparable<Workload> {
 		this.setWrl_initTotalTransactions(workload.getWrl_initTotalTransactions());
 		this.setWrl_totalTransaction(workload.getWrl_totalTransactions());
 						
-		this.setWrl_totalData(workload.getWrl_totalDataObjects());
+		this.setWrl_totalDataObjects(workload.getWrl_totalDataObjects());
 		this.setWrl_intraNodeDataMovements(workload.getWrl_intraNodeDataMovements());
 		this.setWrl_interNodeDataMovements(workload.getWrl_interNodeDataMovements());
 				
@@ -296,7 +296,7 @@ public class Workload implements Comparable<Workload> {
 		return wrl_totalData;
 	}
 
-	public void setWrl_totalData(int wrl_totalData) {
+	public void setWrl_totalDataObjects(int wrl_totalData) {
 		this.wrl_totalData = wrl_totalData;
 	}
 
@@ -519,7 +519,7 @@ public class Workload implements Comparable<Workload> {
 	}
 	
 	public void show(Database db) {				
-		System.out.println("[OUT] "+this.getMessage()+" Workload Details for Simulation Round-"+this.getWrl_id());
+		System.out.println("[OUT] Workload details for simulation round "+this.getWrl_id());
 		System.out.print("      "+this.toString() +" having a distribution of ");				
 		this.printWrl_transactionProp(this.getWrl_transactionProportions());
 				
@@ -532,10 +532,11 @@ public class Workload implements Comparable<Workload> {
 			} // end -- for()-Transaction
 		} // end -- for()-Transaction Types						
 				
+		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
+		
 		this.calculateDTPercentage();	
 		this.calculateDTImapct();
 		
-		System.out.println();
 		System.out.println("      # Distributed Transactions: "+this.getWrl_DtNumbers()
 				+" ("+this.getWrl_percentageDistributedTransactions()+"% of " 
 				+"Total "+this.getWrl_totalTransactions()+" Workload Transactions)");
@@ -551,8 +552,7 @@ public class Workload implements Comparable<Workload> {
 					+"Total "+this.getWrl_totalDataObjects()+" Workload Data)");
 		}
 		
-		db.show();
-		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
+		db.show();		
 	}
 	
 	@Override

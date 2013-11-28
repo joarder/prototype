@@ -7,6 +7,8 @@ package jkamal.prototype.workload;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
+
+import jkamal.prototype.db.Data;
 import jkamal.prototype.main.DBMSSimulator;
 
 public class TransactionReducer {
@@ -24,17 +26,18 @@ public class TransactionReducer {
 		for(int i = 0; i < workload.getWrl_transactionTypes(); i++) {
 			size = workload.getWrl_transactionDeathProportions()[i];			
 			
-			System.out.println("@ "+size+" >> i = "+i);
+			//System.out.println("@ "+size+" >> i = "+i);
 			
 			if(size != 0) {
 				transactionList = workload.getWrl_transactionMap().get(i);
-				random_transactions = this.randomSelection(size);
+				random_transactions = this.randomTransactions(size);
 				
-				System.out.println("* "+random_transactions.size());
+				//System.out.println("* "+random_transactions.size());
 				
 				for(int j : random_transactions) {
-					System.out.println("> "+j+" T"+transactionList.get(j).getTr_id());
-					transactionList.remove(j);
+					//System.out.println("> "+j+" T"+transactionList.get(j).getTr_id());
+					this.releaseData(transactionList.get(j));
+					transactionList.remove(j); // removing index
 					
 					workload.decWrl_totalTransactions();				
 					workload.decWrl_transactionProportions(i);
@@ -44,8 +47,13 @@ public class TransactionReducer {
 		} // end -- i		
 	}
 	
+	public void releaseData(Transaction transaction) {
+		for(Data data : transaction.getTr_dataSet())
+			data.getData_transaction_involved().remove((Object)transaction.getTr_id()); // removing object	
+	}
+	
 	// Randomly selects Transactions for deletion
-	public Set<Integer> randomSelection(int nums) {
+	public Set<Integer> randomTransactions(int nums) {
 		Set<Integer> random_transactions = new TreeSet<Integer>();
 		DBMSSimulator.random_data.reSeed(0);
 		

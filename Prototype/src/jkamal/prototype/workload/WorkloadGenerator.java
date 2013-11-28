@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
@@ -78,6 +80,7 @@ public class WorkloadGenerator {
 			if(workload_id != 0) {
 				workload = this.getWorkload_map().get(workload_id -1);
 				workload.setWrl_id(workload_id);
+				workload.setWrl_label("W"+workload.getWrl_id());
 				
 				// === Death Management === 	
 				workload.setWrl_transactionDying((int) ((int) workload.getWrl_totalTransactions() * 0.5));				
@@ -89,6 +92,7 @@ public class WorkloadGenerator {
 				TransactionReducer transactionReducer = new TransactionReducer();
 				transactionReducer.reduceTransaction(workload);
 				
+				System.out.println("[ACT] Varying current workload by reducing old transactions ...");
 				this.print(workload);
 				
 				// === Birth Management ===				
@@ -101,71 +105,94 @@ public class WorkloadGenerator {
 				TransactionGenerator transactionGenerator = new TransactionGenerator();
 				transactionGenerator.generateTransaction(db, workload, DBMSSimulator.getGlobal_tr_id());	
 				
+				System.out.println("[ACT] Varying current workload by generating new transactions ...");
 				this.print(workload);
 			} else {
 				// === Workload Generation Round 0 ===
 				workload = this.workloadInitialisation(db, DBMSSimulator.WORKLOAD_TYPE, workload_id);
-				workload.setWrl_initTotalTransactions(DBMSSimulator.TRANSACTION_NUMS);
+				workload.setWrl_label("W"+workload.getWrl_id());
 				
+				workload.setWrl_initTotalTransactions(DBMSSimulator.TRANSACTION_NUMS);				
 				workload.setWrl_transactionProp(transactionPropGen(workload.getWrl_transactionTypes(), 
 						DBMSSimulator.TRANSACTION_NUMS));
 				
 				// Generating New Workload Transactions						
 				TransactionGenerator transactionGenerator = new TransactionGenerator();
 				transactionGenerator.generateTransaction(db, workload, DBMSSimulator.getGlobal_tr_id());
-			}			
+			}									
 			
-			workload.show(db);
+			this.refreshWorkload(db, workload, DBMSSimulator.getGlobal_tr_id());
 			
 			// Classify the Workload Transactions based on whether they are Distributed or not (Red/Orange/Green List)
 			workloadClassifier.classifyTransactions(workload);
 			
-			Workload cloneWorkload = new Workload(workload);			
-			this.getWorkload_map().put(workload_id, cloneWorkload);
-			
-			workload.updateWrl_workloadFileName(Integer.toString(workload.getWrl_id()));
-			workload.updateWrl_fixFileName(Integer.toString(workload.getWrl_id()));
-			
+			// Assign Shadow HMetis Data Id and generate workload and fix files
+			this.assignShadowHMetisDataId(workload);			
 			this.generateWorkloadFile(workload);
 			this.generateFixFile(workload);
 			
+			workload.show(db);
+			
+			// Clone the Workload
+			Workload cloneWorkload = new Workload(workload);
+			System.out.println("@-- W"+workload.getWrl_id());
+			this.getWorkload_map().put(workload_id, cloneWorkload);
+			
 			++workload_id;
 		}
-	}			
+	}
 	
-	public void incrTransactionWeights(Workload workload) {
-		int tr_weight = 0;
+	// Refresh Workload Transactions and Data
+	public void refreshWorkload(Database db, Workload workload, int global_tr_id) {
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {
-				tr_weight = transaction.getTr_weight();
-				transaction.setTr_weight(++tr_weight);
+				transaction.incTr_frequency();
+				transaction.calculateTr_weight();
+				transaction.generateTransactionCost(db);
+				
+				for(Data data : transaction.getTr_dataSet()) {
+					data.incData_frequency();
+					data.calculateData_weight();
+					
+					Set<Integer> trSet = new TreeSet<Integer>();
+					for(Integer tr : data.getData_transaction_involved()) {
+						if(!workload.getWrl_transactionMap().containsKey(tr))
+							trSet.add(tr);
+					}
+					
+					Iterator<Integer> iterator = trSet.iterator();
+					while(iterator.hasNext()) {
+						int remove = iterator.next();
+						data.getData_transaction_involved().remove((Object)remove); // removing object
+					}
+				}
 			}
 		}
 	}
 	
-	// new
+	// Generates Transaction Proportions based on the Zipfian Ranking
 	public int[] transactionPropGen(int ranks, int elements) {		
-		int propArray[] = new int[ranks];
+		int proportionArray[] = new int[ranks];
 		int rankArray[] = zipfLawDistributionGeneration(ranks, elements);
 		
 		// TR Rankings {T1, T2, T3, T4, T5} = {5, 4, 1, 2, 3}; 1 = Higher, 5 = Lower
 		int begin = 0;
 		int end = (rankArray.length - 1);
-		for(int i = 0; i < propArray.length; i++) {
+		for(int i = 0; i < proportionArray.length; i++) {
 			if(i < 2) {
-				propArray[i] = rankArray[end];
+				proportionArray[i] = rankArray[end];
 				-- end;
 			} else {
-				propArray[i] = rankArray[begin];
+				proportionArray[i] = rankArray[begin];
 				++ begin;
 			}			
 			//System.out.println("@debug >> TR-"+(i+1)+" | Counts = "+propArray[i]);
 		}
 		
-		return propArray;
+		return proportionArray;
 	}	
 	
-	//new
+	// Generates Zipfian Ranking for Transactions
 	public int[] zipfLawDistributionGeneration(int ranks, int elements) {
 		double prop[] = new double[ranks];
 		int finalProp[] = new int[ranks];
@@ -175,63 +202,59 @@ public class WorkloadGenerator {
 			prop[rank] = elements / (rank+1); // exponent value is always 1
 			sum += prop[rank];
 		}
-		
-		//System.out.println();		
+			
 		double amplification = elements/sum;		
 		int finalSum = 0;
 		for(int rank = 0; rank < ranks; rank++) {
 			finalProp[rank] = (int) (prop[rank] * amplification);
 			finalSum += finalProp[rank];
-			
-			//System.out.println("@debug >> Rank-"+(rank+1)+" | Counts = "+finalProp[rank]);
-		}		
-		
-		//System.out.println("@debug >> Sum = "+finalSum+" | Difference = "+(elements - finalSum));
+		}				
 		
 		finalProp[0] += (elements - finalSum); // Adjusting the difference by adding it to the highest rank proportion
 		finalSum += (elements - finalSum);
 		
-		//System.out.println("@debug >> * Rank-1 | Counts = "+finalProp[0]);
-		//System.out.println("@debug >> Sum = "+finalSum+" | Difference = "+(elements - finalSum));
-		
 		return finalProp;
 	}
 	
+	// Assigns Shadow HMetis Data Id for Hypergraph partitioning
 	public void assignShadowHMetisDataId(Workload workload) {
-		int total_dataItems = 0;
-		int shadow_hmetis_data_id = 1;
-		//int r = 0;
-		
+		// Cleanup
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
-			for(Transaction transaction : entry.getValue()) {
+			for(Transaction transaction : entry.getValue()) {		
 				for(Data data : transaction.getTr_dataSet()) {
-					if(!data.isData_hasShadowHMetisId()) {					
-						data.setData_shadowHMetisId(shadow_hmetis_data_id);
-						data.setData_hasShadowHMetisId(true);
-						//System.out.println("@debug >> hData("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());						
-						
-						++total_dataItems;
-						++shadow_hmetis_data_id;					
-						//System.out.println("@debug >> Total Data Tagged: "+total_dataItems);
-					} else {
-						//System.out.println("@debug >> *Repeated Data ("+trData.toString()+") | hkey: "+trData.getData_shadow_hmetis_id());
-						//r++;
-						//System.out.println("@debug >> *r(before) = "+r);
+					if(data.isData_hasShadowHMetisId()) {					
+						data.setData_shadowHMetisId(-1);
+						data.setData_hasShadowHMetisId(false);
 					}
 				} // end -- for()-Data
 			} // end -- for()-Transaction
 		} // end -- for()-Transaction Types
 		
-		workload.setWrl_totalData(total_dataItems);
+		
+		int shadow_hmetis_data_id = 1;		
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				for(Data data : transaction.getTr_dataSet()) {
+					if(!data.isData_hasShadowHMetisId()) {					
+						data.setData_shadowHMetisId(shadow_hmetis_data_id);
+						data.setData_hasShadowHMetisId(true);								
+						++shadow_hmetis_data_id;					
+					}
+				} // end -- for()-Data
+			} // end -- for()-Transaction
+		} // end -- for()-Transaction Types
+		
+		workload.setWrl_totalDataObjects(shadow_hmetis_data_id - 1);
 	}
 	
 	// Generates Workload File for Hypergraph partitioning
 	public void generateWorkloadFile(Workload workload) {
-		File workloadFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_workloadFile());
+		File workloadFile = new File(DBMSSimulator.DIR_LOCATION+"\\"
+				+workload.getWrl_id()+"-"+workload.getWrl_workloadFile());
 		
-		Data trData;
-		int totalHyperEdges = workload.getWrl_totalTransactions();
-		int totalDataItems = workload.getWrl_totalDataObjects();
+		Data trData = null;
+		int hyper_edges = workload.getWrl_totalTransactions();
+		int vertices = workload.getWrl_totalDataObjects();
 		int hasTransactionWeight = 1;
 		int hasDataWeight = 1;						
 		
@@ -240,7 +263,7 @@ public class WorkloadGenerator {
 			Writer writer = null;
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workloadFile), "utf-8"));
-				writer.write(totalHyperEdges+" "+totalDataItems+" "+hasTransactionWeight+""+hasDataWeight+"\n");
+				writer.write(hyper_edges+" "+vertices+" "+hasTransactionWeight+""+hasDataWeight+"\n");
 				
 				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 					for(Transaction transaction : entry.getValue()) {
@@ -263,11 +286,29 @@ public class WorkloadGenerator {
 				} // end -- for()-Transaction-Types
 
 				// Writing Data Weight
+				Set<Integer> uniqueDataSet = new TreeSet<Integer>();
+				int newline = 0;
+				
 				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
-					for(Transaction tr : entry.getValue()) {
-						for(Data data : tr.getTr_dataSet()) {
-							writer.write(Integer.toString(data.getData_weight()));
-							writer.write("\n");
+					for(Transaction transaction : entry.getValue()) {
+						if(transaction.getTr_class() != "green") {
+							
+							Iterator<Data> data =  transaction.getTr_dataSet().iterator();							
+							
+							while(data.hasNext()) {
+								trData = data.next();								
+								
+								if(!uniqueDataSet.contains(trData.getData_shadowHMetisId())) {
+									++newline;
+									
+									writer.write(Integer.toString(trData.getData_weight()));																			
+									
+									if(newline != vertices)
+										writer.write("\n");										
+									
+									uniqueDataSet.add(trData.getData_shadowHMetisId());
+								}
+							}							
 						}
 					}
 				}
@@ -285,7 +326,10 @@ public class WorkloadGenerator {
 	// Generates Fix Files (Determines whether a Data is movable from its current Partition or not) 
 	// for Hypergraph partitioning
 	public void generateFixFile(Workload workload) {
-		File fixFile = new File(DBMSSimulator.DIR_LOCATION+"\\"+workload.getWrl_fixFile());
+		File fixFile = new File(DBMSSimulator.DIR_LOCATION+"\\"
+				+workload.getWrl_id()+"-"+workload.getWrl_fixFile());
+		
+		Data trData = null;
 		
 		try {
 			fixFile.createNewFile();
@@ -293,15 +337,31 @@ public class WorkloadGenerator {
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fixFile), "utf-8"));
 				
+				Set<Integer> uniqueDataSet = new TreeSet<Integer>();
+				int newline = 0;
+				
 				for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
-					for(Transaction transaction : entry.getValue()) {			
-						for(Data data : transaction.getTr_dataSet()) {						
-							if(data.isData_isMoveable())
-								writer.write(Integer.toString(data.getData_partitionId()));
-							else
-								writer.write(Integer.toString(-1));
+					for(Transaction transaction : entry.getValue()) {
+						if(transaction.getTr_class() != "green") {							
+							Iterator<Data> data =  transaction.getTr_dataSet().iterator();							
 							
-							writer.write("\n");
+							while(data.hasNext()) {
+								trData = data.next();								
+								
+								if(!uniqueDataSet.contains(trData.getData_shadowHMetisId())) {
+									++newline;
+									
+									if(trData.isData_isMoveable())									
+										writer.write(Integer.toString(trData.getData_partitionId()));
+									else
+										writer.write(Integer.toString(-1));
+									
+									if(newline != workload.getWrl_totalDataObjects())
+										writer.write("\n");										
+									
+									uniqueDataSet.add(trData.getData_shadowHMetisId());
+								}
+							}
 						}
 					}					
 				}

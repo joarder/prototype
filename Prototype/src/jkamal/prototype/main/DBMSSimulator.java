@@ -57,18 +57,15 @@ public class DBMSSimulator {
 		PrintWriter partition_log = logger.getWriter(DIR_LOCATION, "partition");
 		
 		// Database Server and Tenant Database Creation
-		DatabaseServer dbs = new DatabaseServer(0, "test-dbs", DB_SERVERS);
-		
+		DatabaseServer dbs = new DatabaseServer(0, "test-dbs", DB_SERVERS);		
 		System.out.println("[ACT] Creating Database Server \""+dbs.getDbs_name()+"\" with "+dbs.getDbs_nodes().size()+" Nodes ...");
 		
 		// Database creation for tenant id-"0" with Range partitioning model with 1GB Partition size
 		Database db = new Database(0, "test-db", 0, "Range", 0.01);
 		//Database db = new Database(0, "testdb", 0, "Range", 1);
-
 		System.out.println("[ACT] Creating Database \""+db.getDb_name()+"\" within "+dbs.getDbs_name()+" Database Server ...");		
 		
 		// Perform Bootstrapping through synthetic Data generation and placing it into appropriate Partition
-		// following partitioning schemes like Range, Salting, Hashing and Consistent Hashing partitioning
 		System.out.println("[ACT] Started Bootstrapping Process ...");
 		System.out.println("[ACT] Generating "+ DATA_OBJECTS +" synthetic data items ...");
 
@@ -77,21 +74,23 @@ public class DBMSSimulator {
 		System.out.println("[MSG] Data creation and placement into partitions done.");
 		
 		// Printing out details after data loading
-		dbs.print();
+		dbs.show();
 		db.show();						
 		
 		// Logging
 		//logger.log(dbs, db, db_log);
 		
 		//==============================================================================================
-		// Workload generation for the entire simulation
+		// Workload generation for the entire simulation		
 		WorkloadGenerator workloadGenerator = new WorkloadGenerator();		
 		workloadGenerator.generateWorkloads(dbs, db);
 		
-		/*int simulation_run = 0;
-		while(simulation_run != DBMSSimulator.SIMULATION_RUN_NUMBERS) {
+		HGraphClusters hGraphClusters = new HGraphClusters();		
+		int simulation_run = 0;
+		
+		while(simulation_run != 1){//!= DBMSSimulator.SIMULATION_RUN_NUMBERS) {
 			
-			Workload workload = workloadGenerator.getWorkload_map().get(simulation_run);
+			Workload workload = workloadGenerator.getWorkload_map().get(0);
 			workload.setMessage("Initial");
 			
 			//==============================================================================================
@@ -106,6 +105,8 @@ public class DBMSSimulator {
 				e.printStackTrace();
 			}
 			
+			// Read Part file and assign corresponding Data cluster Id			
+			//hGraphClusters.readPartFile(db, workload);
 			
 			++ simulation_run;
 		}
@@ -116,7 +117,7 @@ public class DBMSSimulator {
 		WorkloadReplay workloadReplay = new WorkloadReplay();
 		WorkloadVariation workloadVariation = new WorkloadVariation();
 		HGraphMinCut minCut;
-		HGraphClusters hGraphClusters = new HGraphClusters();
+		
 		DataMovement dataMovement = new DataMovement();	
 		int simulation_round = 0;
 				

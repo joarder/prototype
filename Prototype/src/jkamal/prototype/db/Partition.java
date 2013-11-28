@@ -246,13 +246,13 @@ public class Partition implements Comparable<Partition> {
 	public String toString() {
 		if(this.getPartition_roaming_data() != 0 || this.getPartition_foreign_data() !=0)
 			return (this.getPartition_label()
-					+"[Capacity: "+this.getPartition_capacity()+"|Load: "+this.getPartition_current_load()+"%]-"
+					+"["+this.getPartition_capacity()+"|"+this.getPartition_current_load()+"%]-"
 					+"H("+this.getPartition_dataSet().size()+")/"					
 					+"R("+this.getPartition_roaming_data()+")/"
 					+"F("+this.getPartition_roaming_data()+")");										
 		else	
 			return (this.getPartition_label()
-					+"[Capacity: "+getPartition_capacity()+"|Load: "+this.getPartition_current_load()+"%]-"
+					+"["+getPartition_capacity()+"|"+this.getPartition_current_load()+"%]-"
 					+"H("+this.getPartition_dataSet().size()+")");
 	}
 	
