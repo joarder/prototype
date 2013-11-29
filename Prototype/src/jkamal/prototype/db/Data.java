@@ -6,8 +6,8 @@
 
 package jkamal.prototype.db;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Data implements Comparable<Data> {
 	private int data_id;
@@ -24,7 +24,7 @@ public class Data implements Comparable<Data> {
 	private double data_normalised_cumulative_probability;
 	
 	// Transaction Attributes
-	private List<Integer> data_transaction_involved;
+	private Set<Integer> data_transaction_involved;
 	
 	// HyperGraph Partitioning Attributes
 	private int data_hmetis_cluster_id;
@@ -53,7 +53,7 @@ public class Data implements Comparable<Data> {
 		this.setData_cumulativeProbability(0.0);
 		this.setData_normalisedCumulativeProbability(0.0);
 				
-		this.setData_transaction_involved(new ArrayList<Integer>());
+		this.setData_transaction_involved(new TreeSet<Integer>());
 		
 		this.setData_hmetisClusterId(-1);
 		this.setData_shadowHMetisId(-1);
@@ -82,7 +82,7 @@ public class Data implements Comparable<Data> {
 		this.setData_cumulativeProbability(data.getData_cumulativeProbability());
 		this.setData_normalisedCumulativeProbability(data.getData_normalisedCumulativeProbability());
 		
-		List<Integer> clone_data_transaction_involved = new ArrayList<Integer>();
+		Set<Integer> clone_data_transaction_involved = new TreeSet<Integer>();
 		for(Integer tr_id : data.getData_transaction_involved()) {
 			clone_data_transaction_involved.add(tr_id);
 		}
@@ -173,12 +173,12 @@ public class Data implements Comparable<Data> {
 		this.data_normalised_cumulative_probability = data_normalised_cdf;
 	}
 
-	public List<Integer> getData_transaction_involved() {
+	public Set<Integer> getData_transaction_involved() {
 		return data_transaction_involved;
 	}
 
 	public void setData_transaction_involved(
-			List<Integer> data_transaction_involved) {
+			Set<Integer> data_transaction_involved) {
 		this.data_transaction_involved = data_transaction_involved;
 	}
 
@@ -254,6 +254,9 @@ public class Data implements Comparable<Data> {
 		this.data_isMoveable = data_isMoveable;
 	}
 	
+	public void incData_frequency(int data_frequency) {	
+		this.setData_frequency(++data_frequency);
+	}
 	
 	public void incData_frequency() {
 		int data_frequency = this.getData_frequency();

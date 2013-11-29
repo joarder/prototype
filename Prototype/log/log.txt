@@ -45,22 +45,188 @@
     ----P6[10|80.0%]-H(8)
     ----P9[10|80.0%]-H(8)
     ----P12[10|80.0%]-H(8)
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-5
+@debug >> d98|T-7
+@debug >> d98|T-8
+@debug >> d98|T-11
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-16
+@debug >> d98|T-18
+## >> Size = 12
 [OUT] Workload details for simulation round 0
-      W0 [10 Transactions (containing 18 Data)  having a distribution of {0, 0, 7, 2, 1}
+      W0 [20 transactions (containing 33 unique data)  having a distribution of {1, 2, 11, 4, 2}
       -----------------------------------------------------------------------------------------------------------------
-      T1(1)[3/3/1|Data(4)]{d89(3/3/1|P12/N3), d92(9/3/3|P12/N3), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1)}
-      T2(2)[3/3/1|Data(4)]{d71(2/1/2|P9/N3), d84(2/2/1|P11/N2), d98(16/2/8|P13/N1), d100(12/2/6|P13/N1)}
-      T3(1)[3/3/1|Data(4)]{d93(3/1/3|P12/N3), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
-      T4(2)[3/3/1|Data(4)]{d71(2/1/2|P9/N3), d87(2/1/2|P11/N2), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1)}
-      T5(1)[3/3/1|Data(4)]{d73(3/3/1|P10/N1), d93(3/1/3|P12/N3), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
-      T6(1)[3/3/1|Data(4)]{d63(2/2/1|P8/N2), d86(2/1/2|P11/N2), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1)}
-      T7(2)[3/3/1|Data(4)]{d87(2/1/2|P11/N2), d92(9/3/3|P12/N3), d94(4/2/2|P12/N3), d98(16/2/8|P13/N1)}
-      T8(1)[4/4/1|Data(5)]{d1(6/6/1|P1/N1), d79(1/1/1|P10/N1), d92(9/3/3|P12/N3), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
-      T9(1)[4/4/1|Data(5)]{d33(6/6/1|P5/N2), d83(2/2/1|P11/N2), d98(16/2/8|P13/N1), d99(7/1/7|P13/N1), d100(12/2/6|P13/N1)}
-      T10(2)[5/5/1|Data(6)]{d72(1/1/1|P9/N3), d86(2/1/2|P11/N2), d93(3/1/3|P12/N3), d94(4/2/2|P12/N3), d98(16/2/8|P13/N1), d100(12/2/6|P13/N1)}
+      T1(0)[1/1/1|Data(2)]{d98(24/2/12|P13/N1), d99(14/1/14|P13/N1)}
+      T2(1)[2/2/1|Data(3)]{d92(18/3/6|P12/N3), d98(24/2/12|P13/N1), d99(14/1/14|P13/N1)}
+      T3(2)[2/2/1|Data(3)]{d84(4/2/2|P11/N2), d89(3/3/1|P12/N3), d98(24/2/12|P13/N1)}
+      T4(1)[3/3/1|Data(4)]{d71(2/1/2|P9/N3), d98(24/2/12|P13/N1), d99(14/1/14|P13/N1), d100(14/2/7|P13/N1)}
+      T5(2)[3/3/1|Data(4)]{d87(3/1/3|P11/N2), d93(4/1/4|P12/N3), d98(24/2/12|P13/N1), d100(14/2/7|P13/N1)}
+      T6(1)[3/3/1|Data(4)]{d71(2/1/2|P9/N3), d93(4/1/4|P12/N3), d99(14/1/14|P13/N1), d100(14/2/7|P13/N1)}
+      T7(1)[3/3/1|Data(4)]{d63(4/2/2|P8/N2), d73(6/3/2|P10/N1), d98(24/2/12|P13/N1), d99(14/1/14|P13/N1)}
+      T8(2)[3/3/1|Data(4)]{d86(2/1/2|P11/N2), d94(4/2/2|P12/N3), d98(24/2/12|P13/N1), d99(14/1/14|P13/N1)}
+      T9(2)[3/3/1|Data(4)]{d1(6/6/1|P1/N1), d87(3/1/3|P11/N2), d92(18/3/6|P12/N3), d99(14/1/14|P13/N1)}
+      T10(1)[3/3/1|Data(4)]{d79(2/1/2|P10/N1), d92(18/3/6|P12/N3), d99(14/1/14|P13/N1), d100(14/2/7|P13/N1)}
+      T11(1)[3/3/1|Data(4)]{d33(12/6/2|P5/N2), d83(2/2/1|P11/N2), d98(24/2/12|P13/N1), d100(14/2/7|P13/N1)}
+      T12(1)[3/3/1|Data(4)]{d93(4/1/4|P12/N3), d94(4/2/2|P12/N3), d98(24/2/12|P13/N1), d99(14/1/14|P13/N1)}
+      T13(2)[3/3/1|Data(4)]{d72(3/1/3|P9/N3), d86(2/1/2|P11/N2), d96(1/1/1|P12/N3), d100(14/2/7|P13/N1)}
+      T14(1)[3/3/1|Data(4)]{d47(3/3/1|P6/N3), d92(18/3/6|P12/N3), d95(4/2/2|P12/N3), d99(14/1/14|P13/N1)}
+      T15(2)[4/4/1|Data(5)]{d63(4/2/2|P8/N2), d66(1/1/1|P9/N3), d73(6/3/2|P10/N1), d93(4/1/4|P12/N3), d98(24/2/12|P13/N1)}
+      T16(1)[4/4/1|Data(5)]{d17(5/5/1|P3/N3), d55(1/1/1|P7/N1), d68(1/1/1|P9/N3), d98(24/2/12|P13/N1), d100(14/2/7|P13/N1)}
+      T17(2)[4/4/1|Data(5)]{d33(12/6/2|P5/N2), d70(4/4/1|P9/N3), d88(2/2/1|P11/N2), d92(18/3/6|P12/N3), d99(14/1/14|P13/N1)}
+      T18(2)[4/4/1|Data(5)]{d57(5/5/1|P8/N2), d72(3/1/3|P9/N3), d84(4/2/2|P11/N2), d98(24/2/12|P13/N1), d99(14/1/14|P13/N1)}
+      T19(2)[5/5/1|Data(6)]{d51(3/3/1|P7/N1), d62(1/1/1|P8/N2), d65(6/6/1|P9/N3), d77(2/2/1|P10/N1), d87(3/1/3|P11/N2), d99(14/1/14|P13/N1)}
+      T20(1)[5/5/1|Data(6)]{d72(3/1/3|P9/N3), d78(1/1/1|P10/N1), d79(2/1/2|P10/N1), d92(18/3/6|P12/N3), d95(4/2/2|P12/N3), d99(14/1/14|P13/N1)}
       -----------------------------------------------------------------------------------------------------------------
-      # Distributed Transactions: 10 (100.0% of Total 10 Workload Transactions)
-      # Impact of Distributed Transactions: 1.41 (for a particular workload round)
+      # Distributed Transactions: 19 (95.0% of Total 20 Workload Transactions)
+      # Impact of Distributed Transactions: 1.47 (for a particular workload round)
 [OUT] ==== Database Details ====
       Database: test-db
       Number of Partitions: 13
@@ -81,27 +247,217 @@
     ----P6[10|80.0%]-H(8)
     ----P9[10|80.0%]-H(8)
     ----P12[10|80.0%]-H(8)
-@-- W0
 [ACT] Varying current workload by reducing old transactions ...
-[MSG] Total 7 transactions of 5 types having a distribution of {0, 0, 5, 1, 1} are currently in the workload.
+[MSG] Total 13 transactions of 5 types having a distribution of {1, 2, 6, 3, 1} are currently in the workload.
 [ACT] Varying current workload by generating new transactions ...
-[MSG] Total 10 transactions of 5 types having a distribution of {0, 0, 8, 1, 1} are currently in the workload.
+[MSG] Total 19 transactions of 5 types having a distribution of {1, 2, 11, 4, 1} are currently in the workload.
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-15
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-22
+@debug >> d98|T-23
+@debug >> d98|T-24
+@debug >> d98|T-26
+## >> Size = 13
 [OUT] Workload details for simulation round 1
-      W1 [10 Transactions (containing 39 Data)  having a distribution of {0, 0, 8, 1, 1}
+      W1 [19 transactions (containing 78 unique data)  having a distribution of {1, 2, 11, 4, 1}
       -----------------------------------------------------------------------------------------------------------------
-      T1(1)[6/3/2|Data(4)]{d89(6/3/2|P12/N3), d92(12/3/4|P12/N3), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1)}
-      T3(1)[6/3/2|Data(4)]{d93(4/1/4|P12/N3), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1), d100(14/2/7|P13/N1)}
-      T5(1)[6/3/2|Data(4)]{d73(6/3/2|P10/N1), d93(4/1/4|P12/N3), d99(8/1/8|P13/N1), d100(14/2/7|P13/N1)}
-      T6(1)[6/3/2|Data(4)]{d63(4/2/2|P8/N2), d86(3/1/3|P11/N2), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1)}
-      T7(2)[6/3/2|Data(4)]{d87(3/1/3|P11/N2), d92(12/3/4|P12/N3), d94(6/2/3|P12/N3), d98(18/2/9|P13/N1)}
-      T11(1)[3/3/1|Data(4)]{d89(6/3/2|P12/N3), d92(12/3/4|P12/N3), d98(22/2/11|P13/N1), d99(9/1/9|P13/N1)}
-      T12(2)[3/3/1|Data(4)]{d71(3/1/3|P9/N3), d84(4/2/2|P11/N2), d98(22/2/11|P13/N1), d100(16/2/8|P13/N1)}
-      T13(1)[3/3/1|Data(4)]{d93(4/1/4|P12/N3), d98(22/2/11|P13/N1), d99(9/1/9|P13/N1), d100(16/2/8|P13/N1)}
-      T9(1)[8/4/2|Data(5)]{d33(12/6/2|P5/N2), d83(4/2/2|P11/N2), d98(18/2/9|P13/N1), d99(8/1/8|P13/N1), d100(14/2/7|P13/N1)}
-      T10(2)[10/5/2|Data(6)]{d72(2/1/2|P9/N3), d86(3/1/3|P11/N2), d93(4/1/4|P12/N3), d94(6/2/3|P12/N3), d98(18/2/9|P13/N1), d100(14/2/7|P13/N1)}
+      T1(0)[1/1/1|Data(2)]{d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T2(1)[2/2/1|Data(3)]{d92(18/3/6|P12/N3), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T3(2)[2/2/1|Data(3)]{d84(6/2/3|P11/N2), d89(6/3/2|P12/N3), d98(26/2/13|P13/N1)}
+      T4(1)[3/3/1|Data(4)]{d71(4/1/4|P9/N3), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T6(1)[3/3/1|Data(4)]{d71(4/1/4|P9/N3), d93(5/1/5|P12/N3), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T8(2)[3/3/1|Data(4)]{d86(2/1/2|P11/N2), d94(6/2/3|P12/N3), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T10(1)[3/3/1|Data(4)]{d79(2/1/2|P10/N1), d92(18/3/6|P12/N3), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T12(1)[3/3/1|Data(4)]{d93(5/1/5|P12/N3), d94(6/2/3|P12/N3), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T14(1)[3/3/1|Data(4)]{d47(3/3/1|P6/N3), d92(18/3/6|P12/N3), d95(4/2/2|P12/N3), d99(16/1/16|P13/N1)}
+      T21(1)[3/3/1|Data(4)]{d89(6/3/2|P12/N3), d92(18/3/6|P12/N3), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T22(2)[3/3/1|Data(4)]{d71(4/1/4|P9/N3), d84(6/2/3|P11/N2), d98(26/2/13|P13/N1), d100(12/2/6|P13/N1)}
+      T23(1)[3/3/1|Data(4)]{d93(5/1/5|P12/N3), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T24(2)[3/3/1|Data(4)]{d71(4/1/4|P9/N3), d87(1/1/1|P11/N2), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T25(1)[3/3/1|Data(4)]{d73(6/3/2|P10/N1), d93(5/1/5|P12/N3), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T15(2)[4/4/1|Data(5)]{d63(4/2/2|P8/N2), d66(1/1/1|P9/N3), d73(6/3/2|P10/N1), d93(5/1/5|P12/N3), d98(26/2/13|P13/N1)}
+      T17(2)[4/4/1|Data(5)]{d33(6/6/1|P5/N2), d70(4/4/1|P9/N3), d88(2/2/1|P11/N2), d92(18/3/6|P12/N3), d99(16/1/16|P13/N1)}
+      T18(2)[4/4/1|Data(5)]{d57(5/5/1|P8/N2), d72(2/1/2|P9/N3), d84(6/2/3|P11/N2), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T26(2)[4/4/1|Data(5)]{d63(4/2/2|P8/N2), d86(2/1/2|P11/N2), d94(6/2/3|P12/N3), d98(26/2/13|P13/N1), d99(16/1/16|P13/N1)}
+      T20(1)[5/5/1|Data(6)]{d72(2/1/2|P9/N3), d78(1/1/1|P10/N1), d79(2/1/2|P10/N1), d92(18/3/6|P12/N3), d95(4/2/2|P12/N3), d99(16/1/16|P13/N1)}
       -----------------------------------------------------------------------------------------------------------------
-      # Distributed Transactions: 10 (100.0% of Total 10 Workload Transactions)
-      # Impact of Distributed Transactions: 1.33 (for a particular workload round)
+      # Distributed Transactions: 18 (94.74% of Total 19 Workload Transactions)
+      # Impact of Distributed Transactions: 1.44 (for a particular workload round)
 [OUT] ==== Database Details ====
       Database: test-db
       Number of Partitions: 13
@@ -122,26 +478,273 @@
     ----P6[10|80.0%]-H(8)
     ----P9[10|80.0%]-H(8)
     ----P12[10|80.0%]-H(8)
-@-- W1
 [ACT] Varying current workload by reducing old transactions ...
-[MSG] Total 7 transactions of 5 types having a distribution of {0, 0, 6, 0, 1} are currently in the workload.
+[MSG] Total 12 transactions of 5 types having a distribution of {1, 2, 6, 3, 0} are currently in the workload.
 [ACT] Varying current workload by generating new transactions ...
-[MSG] Total 10 transactions of 5 types having a distribution of {0, 0, 9, 0, 1} are currently in the workload.
+[MSG] Total 18 transactions of 5 types having a distribution of {1, 2, 11, 4, 0} are currently in the workload.
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
+@debug >> d98|T-1
+@debug >> d98|T-2
+@debug >> d98|T-3
+@debug >> d98|T-4
+@debug >> d98|T-8
+@debug >> d98|T-12
+@debug >> d98|T-18
+@debug >> d98|T-21
+@debug >> d98|T-23
+@debug >> d98|T-26
+@debug >> d98|T-27
+@debug >> d98|T-28
+@debug >> d98|T-29
+@debug >> d98|T-30
+@debug >> d98|T-32
+## >> Size = 15
 [OUT] Workload details for simulation round 2
-      W2 [10 Transactions (containing 38 Data)  having a distribution of {0, 0, 9, 0, 1}
+      W2 [18 transactions (containing 72 unique data)  having a distribution of {1, 2, 11, 4, 0}
       -----------------------------------------------------------------------------------------------------------------
-      T1(1)[9/3/3|Data(4)]{d89(9/3/3|P12/N3), d92(15/3/5|P12/N3), d98(20/2/10|P13/N1), d99(9/1/9|P13/N1)}
-      T5(1)[9/3/3|Data(4)]{d73(9/3/3|P10/N1), d93(5/1/5|P12/N3), d99(9/1/9|P13/N1), d100(16/2/8|P13/N1)}
-      T7(2)[9/3/3|Data(4)]{d87(4/1/4|P11/N2), d92(15/3/5|P12/N3), d94(8/2/4|P12/N3), d98(20/2/10|P13/N1)}
-      T11(1)[6/3/2|Data(4)]{d89(9/3/3|P12/N3), d92(15/3/5|P12/N3), d98(24/2/12|P13/N1), d99(10/1/10|P13/N1)}
-      T12(2)[6/3/2|Data(4)]{d71(4/1/4|P9/N3), d84(6/2/3|P11/N2), d98(24/2/12|P13/N1), d100(18/2/9|P13/N1)}
-      T13(1)[6/3/2|Data(4)]{d93(5/1/5|P12/N3), d98(24/2/12|P13/N1), d99(10/1/10|P13/N1), d100(18/2/9|P13/N1)}
-      T14(1)[3/3/1|Data(4)]{d89(9/3/3|P12/N3), d92(15/3/5|P12/N3), d98(28/2/14|P13/N1), d99(11/1/11|P13/N1)}
-      T15(2)[3/3/1|Data(4)]{d71(4/1/4|P9/N3), d84(6/2/3|P11/N2), d98(28/2/14|P13/N1), d100(20/2/10|P13/N1)}
-      T16(1)[3/3/1|Data(4)]{d93(5/1/5|P12/N3), d98(28/2/14|P13/N1), d99(11/1/11|P13/N1), d100(20/2/10|P13/N1)}
-      T10(2)[15/5/3|Data(6)]{d72(3/1/3|P9/N3), d86(4/1/4|P11/N2), d93(5/1/5|P12/N3), d94(8/2/4|P12/N3), d98(20/2/10|P13/N1), d100(16/2/8|P13/N1)}
+      T1(0)[1/1/1|Data(2)]{d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T2(1)[2/2/1|Data(3)]{d92(12/3/4|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T3(2)[2/2/1|Data(3)]{d84(6/2/3|P11/N2), d89(9/3/3|P12/N3), d98(30/2/15|P13/N1)}
+      T4(1)[3/3/1|Data(4)]{d71(3/1/3|P9/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T8(2)[3/3/1|Data(4)]{d86(3/1/3|P11/N2), d94(8/2/4|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T12(1)[3/3/1|Data(4)]{d93(5/1/5|P12/N3), d94(8/2/4|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T21(1)[3/3/1|Data(4)]{d89(9/3/3|P12/N3), d92(12/3/4|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T23(1)[3/3/1|Data(4)]{d93(5/1/5|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T25(1)[3/3/1|Data(4)]{d73(6/3/2|P10/N1), d93(5/1/5|P12/N3), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T27(1)[3/3/1|Data(4)]{d89(9/3/3|P12/N3), d92(12/3/4|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T28(2)[3/3/1|Data(4)]{d71(3/1/3|P9/N3), d84(6/2/3|P11/N2), d98(30/2/15|P13/N1), d100(12/2/6|P13/N1)}
+      T29(1)[3/3/1|Data(4)]{d93(5/1/5|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T30(2)[3/3/1|Data(4)]{d71(3/1/3|P9/N3), d87(1/1/1|P11/N2), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T31(1)[3/3/1|Data(4)]{d73(6/3/2|P10/N1), d93(5/1/5|P12/N3), d99(16/1/16|P13/N1), d100(12/2/6|P13/N1)}
+      T17(2)[4/4/1|Data(5)]{d33(6/6/1|P5/N2), d70(4/4/1|P9/N3), d88(2/2/1|P11/N2), d92(12/3/4|P12/N3), d99(16/1/16|P13/N1)}
+      T18(2)[4/4/1|Data(5)]{d57(5/5/1|P8/N2), d72(1/1/1|P9/N3), d84(6/2/3|P11/N2), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T26(2)[4/4/1|Data(5)]{d63(4/2/2|P8/N2), d86(3/1/3|P11/N2), d94(8/2/4|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
+      T32(2)[4/4/1|Data(5)]{d63(4/2/2|P8/N2), d86(3/1/3|P11/N2), d94(8/2/4|P12/N3), d98(30/2/15|P13/N1), d99(16/1/16|P13/N1)}
       -----------------------------------------------------------------------------------------------------------------
-      # Distributed Transactions: 10 (100.0% of Total 10 Workload Transactions)
+      # Distributed Transactions: 17 (94.44% of Total 18 Workload Transactions)
       # Impact of Distributed Transactions: 1.48 (for a particular workload round)
 [OUT] ==== Database Details ====
       Database: test-db
@@ -163,5 +766,4 @@
     ----P6[10|80.0%]-H(8)
     ----P9[10|80.0%]-H(8)
     ----P12[10|80.0%]-H(8)
-@-- W2
-@ - 1-workload.txt
+@ - 0-workload.txt

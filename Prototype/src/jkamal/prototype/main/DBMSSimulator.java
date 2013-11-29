@@ -8,6 +8,9 @@ package jkamal.prototype.main;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.commons.math3.random.RandomDataGenerator;
 import jkamal.prototype.alg.HGraphMinCut;
 import jkamal.prototype.bootstrap.Bootstrapping;
@@ -23,7 +26,7 @@ public class DBMSSimulator {
 	public final static int DB_SERVERS = 3;
 	public final static String WORKLOAD_TYPE = "TPC-C";
 	public final static int DATA_OBJECTS = 100; // 10GB Data (in Size)
-	public final static int TRANSACTION_NUMS = 10;
+	public final static int TRANSACTION_NUMS = 20;
 	public final static int SIMULATION_RUN_NUMBERS = 3;
 	
 	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
@@ -85,17 +88,22 @@ public class DBMSSimulator {
 		WorkloadGenerator workloadGenerator = new WorkloadGenerator();		
 		workloadGenerator.generateWorkloads(dbs, db);
 		
-		HGraphClusters hGraphClusters = new HGraphClusters();		
-		int simulation_run = 0;
+		HGraphClusters hGraphClusters = new HGraphClusters();
+		DataMovement dataMovement = new DataMovement();
 		
-		while(simulation_run != 1){//!= DBMSSimulator.SIMULATION_RUN_NUMBERS) {
+		Map<Integer, Database> clone_bs_db = new TreeMap<Integer, Database>();
+		Map<Integer, Database> clone_s1_db = new TreeMap<Integer, Database>();
+		Map<Integer, Database> clone_s2_db = new TreeMap<Integer, Database>();
+		
+		int simulation_run = 0;		
+		while(simulation_run != DBMSSimulator.SIMULATION_RUN_NUMBERS) {
 			
-			Workload workload = workloadGenerator.getWorkload_map().get(0);
+			Workload workload = workloadGenerator.getWorkload_map().get(simulation_run);			
 			workload.setMessage("Initial");
 			
 			//==============================================================================================
 			// Run hMetis HyperGraph Partitioning							
-			HGraphMinCut minCut = new HGraphMinCut(db, workload, HMETIS); 		
+			HGraphMinCut minCut = new HGraphMinCut(workload, HMETIS, db.getDb_partitions().size()); 		
 			minCut.runHMetis();
 
 			// Sleep for 5sec to ensure the files are generated
@@ -106,7 +114,15 @@ public class DBMSSimulator {
 			}
 			
 			// Read Part file and assign corresponding Data cluster Id			
-			//hGraphClusters.readPartFile(db, workload);
+			hGraphClusters.readPartFile(workload, db.getDb_partitions().size());			
+			
+			
+			if(simulation_run != 0) {
+				
+			}
+			// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
+			System.out.println("[ACT] Base Strategy[Simulation Round-"+simulation_run+"] :: One(Cluster)-to-One(Partition) Peer");
+			dataMovement.baseStrategy(db, workload);			
 			
 			++ simulation_run;
 		}
@@ -118,7 +134,7 @@ public class DBMSSimulator {
 		WorkloadVariation workloadVariation = new WorkloadVariation();
 		HGraphMinCut minCut;
 		
-		DataMovement dataMovement = new DataMovement();	
+			
 		int simulation_round = 0;
 				
 		random_birth = new RandomDataGenerator();

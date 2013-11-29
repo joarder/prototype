@@ -36,7 +36,7 @@ public class TransactionGenerator {
 		ArrayList<Transaction> transactionList;
 		Transaction transaction;		
 		Set<Data> trDataSet;
-		ArrayList<Integer> trDataList;
+		ArrayList<Integer> trDataList;		
 		Data data;
 		Double rand = 0.0;
 		int[] prop;
@@ -74,9 +74,13 @@ public class TransactionGenerator {
 						--k;
 					} else {
 						trDataList.add(data_id);						
-						
-						data = db.search(data_id);
-						data.getData_transaction_involved().add(global_tr_id);
+												
+						if(workload.getWrl_id() != 0)
+							data = new Data(db.search(data_id));
+						else 
+							data = db.search(data_id);
+							
+						data.getData_transaction_involved().add(global_tr_id);																														
 						
 						trDataSet.add(data);						
 					}					

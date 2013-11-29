@@ -78,9 +78,9 @@ public class WorkloadGenerator {
 		
 		while(workload_id != DBMSSimulator.SIMULATION_RUN_NUMBERS) {
 			if(workload_id != 0) {
-				workload = this.getWorkload_map().get(workload_id -1);
+				workload = new Workload(this.getWorkload_map().get(workload_id -1));
 				workload.setWrl_id(workload_id);
-				workload.setWrl_label("W"+workload.getWrl_id());
+				workload.setWrl_label("W"+workload_id);
 				
 				// === Death Management === 	
 				workload.setWrl_transactionDying((int) ((int) workload.getWrl_totalTransactions() * 0.5));				
@@ -107,11 +107,11 @@ public class WorkloadGenerator {
 				
 				System.out.println("[ACT] Varying current workload by generating new transactions ...");
 				this.print(workload);
+				
+				this.refreshWorkload(db, workload, DBMSSimulator.getGlobal_tr_id());
 			} else {
 				// === Workload Generation Round 0 ===
-				workload = this.workloadInitialisation(db, DBMSSimulator.WORKLOAD_TYPE, workload_id);
-				workload.setWrl_label("W"+workload.getWrl_id());
-				
+				workload = this.workloadInitialisation(db, DBMSSimulator.WORKLOAD_TYPE, workload_id);				
 				workload.setWrl_initTotalTransactions(DBMSSimulator.TRANSACTION_NUMS);				
 				workload.setWrl_transactionProp(transactionPropGen(workload.getWrl_transactionTypes(), 
 						DBMSSimulator.TRANSACTION_NUMS));
@@ -119,9 +119,9 @@ public class WorkloadGenerator {
 				// Generating New Workload Transactions						
 				TransactionGenerator transactionGenerator = new TransactionGenerator();
 				transactionGenerator.generateTransaction(db, workload, DBMSSimulator.getGlobal_tr_id());
-			}									
-			
-			this.refreshWorkload(db, workload, DBMSSimulator.getGlobal_tr_id());
+				
+				this.refreshWorkload(db, workload, DBMSSimulator.getGlobal_tr_id());
+			}						
 			
 			// Classify the Workload Transactions based on whether they are Distributed or not (Red/Orange/Green List)
 			workloadClassifier.classifyTransactions(workload);
@@ -134,37 +134,77 @@ public class WorkloadGenerator {
 			workload.show(db);
 			
 			// Clone the Workload
-			Workload cloneWorkload = new Workload(workload);
-			System.out.println("@-- W"+workload.getWrl_id());
+			Workload cloneWorkload = new Workload(workload);			
 			this.getWorkload_map().put(workload_id, cloneWorkload);
-			
+
 			++workload_id;
 		}
 	}
 	
 	// Refresh Workload Transactions and Data
 	public void refreshWorkload(Database db, Workload workload, int global_tr_id) {
+		Map<Integer, Integer> dataFrequencyTracker = new TreeMap<Integer, Integer>();		
+		Map<Integer, Set<Integer>> dataInvolvedTransactionsTracker = new TreeMap<Integer, Set<Integer>>();
+		Set<Integer> involvedTransactions = null;
+		
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {
-				transaction.incTr_frequency();
+				transaction.setTr_frequency(1); // resetting Transaction frequency				
 				transaction.calculateTr_weight();
-				transaction.generateTransactionCost(db);
+				transaction.generateTransactionCost(db);								
 				
 				for(Data data : transaction.getTr_dataSet()) {
-					data.incData_frequency();
+					// Remove already removed Transaction Ids from Data-Transaction involved List
+					Set<Integer> toBeRemovedTransactionSet = new TreeSet<Integer>();
+					for(Integer tr : data.getData_transaction_involved()) {
+						
+						if(workload.getTransaction(tr) == null)
+							toBeRemovedTransactionSet.add(tr);
+					}						
+					
+					Iterator<Integer> iterator = toBeRemovedTransactionSet.iterator();
+					while(iterator.hasNext()) {
+						int toBeRemovedTransaction = iterator.next();
+						data.getData_transaction_involved().remove((Object)toBeRemovedTransaction); // removing object					
+					}
+					
+					// Refresh Data Frequency and recalculate Weight
+					if(!dataFrequencyTracker.containsKey(data.getData_id())) {
+						data.setData_frequency(1);
+						data.calculateData_weight();
+						
+						dataFrequencyTracker.put(data.getData_id(), data.getData_frequency());
+					} else {
+						data.incData_frequency(dataFrequencyTracker.get(data.getData_id()));
+						data.calculateData_weight();
+						
+						dataFrequencyTracker.remove(data.getData_id());
+						dataFrequencyTracker.put(data.getData_id(), data.getData_frequency());
+					}
+					
+					// 
+					if(!dataInvolvedTransactionsTracker.containsKey(data.getData_id())) {
+						involvedTransactions = new TreeSet<Integer>();
+						involvedTransactions.add(transaction.getTr_id());
+						dataInvolvedTransactionsTracker.put(data.getData_id(), involvedTransactions);
+					} else {
+						dataInvolvedTransactionsTracker.get(data.getData_id()).add(transaction.getTr_id());
+					}
+				}
+			}
+		}
+		
+		// Refresh the whole Workload with the updated Data frequency
+		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
+			for(Transaction transaction : entry.getValue()) {
+				for(Data data : transaction.getTr_dataSet()) {	
+					data.setData_frequency(dataFrequencyTracker.get(data.getData_id()));
 					data.calculateData_weight();
 					
-					Set<Integer> trSet = new TreeSet<Integer>();
-					for(Integer tr : data.getData_transaction_involved()) {
-						if(!workload.getWrl_transactionMap().containsKey(tr))
-							trSet.add(tr);
-					}
+					Set<Integer> dataTransactions = new TreeSet<Integer>();
+					dataTransactions = dataInvolvedTransactionsTracker.get(data.getData_id());
 					
-					Iterator<Integer> iterator = trSet.iterator();
-					while(iterator.hasNext()) {
-						int remove = iterator.next();
-						data.getData_transaction_involved().remove((Object)remove); // removing object
-					}
+					data.setData_transaction_involved(dataTransactions);
 				}
 			}
 		}

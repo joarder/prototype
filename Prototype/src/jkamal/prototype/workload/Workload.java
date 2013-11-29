@@ -54,7 +54,7 @@ public class Workload implements Comparable<Workload> {
 	
 	public Workload(int id, int trTypes, int db_id) {
 		this.setWrl_id(id);
-		this.setWrl_label(null);
+		this.setWrl_label("W"+id);
 		this.setWrl_database_id(db_id);
 		
 		this.setWrl_transactionTypes(trTypes);
@@ -557,8 +557,8 @@ public class Workload implements Comparable<Workload> {
 	
 	@Override
 	public String toString() {	
-		return (this.wrl_label+" ["+this.getWrl_totalTransactions()+" Transactions (containing "+this.getWrl_totalDataObjects()
-				+" Data) ");//+this.getWrl_transactionTypes());//+" types having a distribution of ");//+this.printWrl_transactionProp()+"]");
+		return (this.wrl_label+" ["+this.getWrl_totalTransactions()+" transactions (containing "+this.getWrl_totalDataObjects()
+				+" unique data) ");//+this.getWrl_transactionTypes());//+" types having a distribution of ");//+this.printWrl_transactionProp()+"]");
 	}
 
 	@Override
