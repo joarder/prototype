@@ -19,16 +19,35 @@ import jkamal.prototype.workload.Transaction;
 import jkamal.prototype.workload.Workload;
 
 public class DataMovement {
-	private String strategy;
+	private int intra_node_data_movements;
+	private int inter_node_data_movements;
 	
 	public DataMovement() {}
-	
-	public String getStrategy() {
-		return strategy;
+
+	private int getIntra_node_data_movements() {
+		return intra_node_data_movements;
 	}
 
-	public void setStrategy(String strategy) {
-		this.strategy = strategy;
+	private void setIntra_node_data_movements(int intra_node_data_movements) {
+		this.intra_node_data_movements = intra_node_data_movements;
+	}
+	
+	private void incIntra_node_data_movements() {
+		int intra = this.getIntra_node_data_movements();
+		this.setIntra_node_data_movements(++intra);
+	}
+
+	private int getInter_node_data_movements() {
+		return inter_node_data_movements;
+	}
+
+	private void setInter_node_data_movements(int inter_node_data_movements) {
+		this.inter_node_data_movements = inter_node_data_movements;
+	}
+	
+	private void incInter_node_data_movements() {
+		int inter = this.getInter_node_data_movements();
+		this.setInter_node_data_movements(++inter);
 	}
 
 	public void baseStrategy(Database db, Workload workload) {
@@ -54,9 +73,8 @@ public class DataMovement {
 		// Perform Actual Data Movement
 		this.move(db, workload, keyMap);
 		workload.setWrl_hasDataMoved(true);					
-		workload.setMessage("Base Strategy");
+		workload.setMessage("bs");
 				
-		//this.refreshDatabase(db, workload);
 		this.metricsGeneration(db, workload);		
 		workload.show(db);		
 	}
@@ -79,14 +97,14 @@ public class DataMovement {
 		MatrixElement colMax;
 		for(int col = 1; col < mapping.getN(); col++) {
 			colMax = mapping.findColMax(col);
-			keyMap.put(colMax.getCol_pos()-1, colMax.getRow_pos()-1); // which cluster will go to which partition
-			//System.out.println("-#-Col("+col+") [ACT] C"+(colMax.getCol_pos()-1)+"|P"+(colMax.getRow_pos()-1));
+			keyMap.put(colMax.getCol_pos(), colMax.getRow_pos()); // which cluster will go to which partition
+			//System.out.println("-#-Col("+col+") [ACT] C"+(colMax.getCol_pos())+"|P"+(colMax.getRow_pos()));
 		}
 		
 		// Perform Actual Data Movement
 		this.move(db, workload, keyMap);
 		workload.setWrl_hasDataMoved(true);
-		workload.setMessage("Strategy-1");
+		workload.setMessage("s1");
 		
 		this.metricsGeneration(db, workload);
 		workload.show(db);		
@@ -136,10 +154,41 @@ public class DataMovement {
 		// Perform Actual Data Movement	
 		this.move(db, workload, keyMap);
 		workload.setWrl_hasDataMoved(true);				
-		workload.setMessage("Strategy-2");
+		workload.setMessage("s2");
 
 		this.metricsGeneration(db, workload);			
 		workload.show(db);
+	}
+	
+	private void updateData(Data data, int dst_partition_id, int dst_node_id, boolean roaming) {		
+		data.setData_partitionId(dst_partition_id);					
+		data.setData_nodeId(dst_node_id);
+		
+		if(roaming)
+			data.setData_isRoaming(true);
+		else
+			data.setData_isRoaming(false);
+	}
+	
+	private void updatePartition(Database db, Data data, int current_partition_id, int dst_partition_id) {					
+		Partition current_partition = db.getPartition(current_partition_id);
+		Partition dst_partition = db.getPartition(dst_partition_id);
+		Partition home_partition = db.getPartition(data.getData_homePartitionId());
+		
+		// Actual Movement
+		dst_partition.getPartition_dataSet().add(data);		
+		current_partition.getPartition_dataSet().remove(data);
+		
+		// Update Lookup Table
+		home_partition.getPartition_dataLookupTable().remove(data.getData_id());
+		home_partition.getPartition_dataLookupTable().put(data.getData_id(), dst_partition_id);						
+	}
+	
+	private void updateMovementCounts(int dst_node_id, int current_node_id) {
+		if(dst_node_id != current_node_id)
+			this.incInter_node_data_movements();
+		else
+			this.incIntra_node_data_movements();
 	}
 	
 	// Perform Actual Data Movement
@@ -152,10 +201,7 @@ public class DataMovement {
 		int dst_partition_id = -1;
 		int home_node_id = -1;
 		int current_node_id = -1;		
-		int dst_node_id = -1;
-		int intra_node_data_movements = 0;
-		int inter_node_data_movements = 0;
-		//int repeated_data = 0;		
+		int dst_node_id = -1;		
 		
 		Set<Integer> dataSet = new TreeSet<Integer>();
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
@@ -163,11 +209,6 @@ public class DataMovement {
 				for(Data data : transaction.getTr_dataSet()) {					
 					Data dbData = db.search(data.getData_id());
 					
-					if(dbData == null) System.out.println("@debug >> ? "+data.getData_id());
-					
-					System.out.println("@debug >> *"+dbData.toString()+" | "+data.toString());
-					
-					//if(dbData.getData_hmetisClusterId() != -1) {// && !observed_workload_data.contains(workload_data)) { // to check for repeated data
 					if(!dataSet.contains(dbData.getData_id())) {
 						dataSet.add(dbData.getData_id());
 						
@@ -181,19 +222,50 @@ public class DataMovement {
 						
 						dst_partition_id = keyMap.get(dbData.getData_hmetisClusterId());
 						dst_partition = db.getPartition(dst_partition_id);
-						dst_node_id = dst_partition.getPartition_nodeId();							
+						dst_node_id = dst_partition.getPartition_nodeId();
 						
-						//System.out.println("@debug >> d="+dst_node_id+" | c="+current_node_id);
-						//System.out.print("@debug >> Before ");
-						//home_partition.show();
-						
-						dbData.setData_hmetisClusterId(-1);
-						//if(workload.getWrl_data_movement_strategy() != "bs") {
-						//	updateHMetisClusterId(workload, data);
-						//}						
+						dbData.setData_hmetisClusterId(-1);						
 						
 						if(dst_partition_id != current_partition_id) { // Data needs to be moved					
 							if(dbData.isData_isRoaming()) { // Data is already Roaming
+								if(dst_partition_id == home_partition_id) {
+									this.updateData(dbData, dst_partition_id, dst_node_id, false);
+									this.updatePartition(db, dbData, current_partition_id, dst_partition_id);
+									this.updateMovementCounts(dst_node_id, current_node_id);
+									
+									current_partition.decPartition_foreign_data();
+									home_partition.decPartition_roaming_data();
+									
+								} else if(dst_partition_id == current_partition_id) {									
+									// Nothing to do									
+								} else {
+									this.updateData(dbData, dst_partition_id, dst_node_id, true);
+									this.updatePartition(db, dbData, current_partition_id, dst_partition_id);
+									this.updateMovementCounts(dst_node_id, current_node_id);
+									
+									dst_partition.incPartition_foreign_data();
+									current_partition.decPartition_foreign_data();
+									
+								}
+							} else {
+								this.updateData(dbData, dst_partition_id, dst_node_id, true);
+								this.updatePartition(db, dbData, current_partition_id, dst_partition_id);
+								this.updateMovementCounts(dst_node_id, current_node_id);
+								
+								dst_partition.incPartition_foreign_data();								
+								home_partition.incPartition_roaming_data();
+							}
+						}
+					}
+								
+								
+								
+								
+								
+								
+								
+								
+								/*
 								//System.out.print("@debug >> Roaming ? "+dbData.isData_isRoaming());
 								// Case-1: Roaming within/Returning to Home Node
 								// Case-1a: Roaming within/Returning to Home Node and Home Partition
@@ -304,25 +376,15 @@ public class DataMovement {
 																				
 						} else { // Case-5 : Repeated Data
 							//++repeated_data;						
-						} // end -- if-else()										
+						} // end -- if-else()*/										
 					} // end -- for()-Data
 				} // end -- for()-Transaction
 			} // end -- for()-Transaction-Type		
 		
 		//System.out.println(">> * Repeated Data: "+repeated_data);
 		
-		workload.setWrl_intraNodeDataMovements(intra_node_data_movements);
-		workload.setWrl_interNodeDataMovements(inter_node_data_movements);
-	}
-
-	public void refreshDbData(Data data, int pid, int nid, boolean r) {		
-		data.setData_partitionId(pid);					
-		data.setData_nodeId(nid);
-		
-		if(r)
-			data.setData_isRoaming(true);
-		else
-			data.setData_isRoaming(false);
+		workload.setWrl_intraNodeDataMovements(this.getIntra_node_data_movements());
+		workload.setWrl_interNodeDataMovements(this.getInter_node_data_movements());
 	}
 	
 	public void refreshDatabase(Database db, Workload workload) {

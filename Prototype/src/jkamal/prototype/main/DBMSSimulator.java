@@ -25,11 +25,11 @@ import jkamal.prototype.workload.WorkloadGenerator;
 public class DBMSSimulator {	
 	public final static int DB_SERVERS = 3;
 	public final static String WORKLOAD_TYPE = "TPC-C";
-	public final static int DATA_OBJECTS = 100; // 10GB Data (in Size)
-	public final static int TRANSACTION_NUMS = 20;
+	public final static int DATA_OBJECTS = 1000; // 10GB Data (in Size)
+	public final static int TRANSACTION_NUMS = 100;
 	public final static int SIMULATION_RUN_NUMBERS = 3;
 	
-	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
+	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
 	public final static String HMETIS = "hmetis";
 	
 	public static RandomDataGenerator random_birth;
@@ -52,12 +52,7 @@ public class DBMSSimulator {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		random_data = new RandomDataGenerator();
-		
-		SimulationMetricsLogger logger = new SimulationMetricsLogger();
-		PrintWriter db_log = logger.getWriter(DIR_LOCATION, "db");
-		PrintWriter workload_log = logger.getWriter(DIR_LOCATION, "workload");
-		PrintWriter partition_log = logger.getWriter(DIR_LOCATION, "partition");
+		random_data = new RandomDataGenerator();				
 		
 		// Database Server and Tenant Database Creation
 		DatabaseServer dbs = new DatabaseServer(0, "test-dbs", DB_SERVERS);		
@@ -65,6 +60,7 @@ public class DBMSSimulator {
 		
 		// Database creation for tenant id-"0" with Range partitioning model with 1GB Partition size
 		Database db = new Database(0, "test-db", 0, "Range", 0.01);
+		//Database db = new Database(0, "test-db", 0, "Range", 0.1);
 		//Database db = new Database(0, "testdb", 0, "Range", 1);
 		System.out.println("[ACT] Creating Database \""+db.getDb_name()+"\" within "+dbs.getDbs_name()+" Database Server ...");		
 		
@@ -78,10 +74,7 @@ public class DBMSSimulator {
 		
 		// Printing out details after data loading
 		dbs.show();
-		db.show();						
-		
-		// Logging
-		//logger.log(dbs, db, db_log);
+		db.show();
 		
 		//==============================================================================================
 		// Workload generation for the entire simulation		
@@ -92,22 +85,26 @@ public class DBMSSimulator {
 		HGraphClusters hGraphClusters_s1 = new HGraphClusters();
 		HGraphClusters hGraphClusters_s2 = new HGraphClusters();
 		
-		DataMovement dataMovement = new DataMovement();
+		DataMovement bs_dataMovement = new DataMovement();
+		DataMovement s1_dataMovement = new DataMovement();
+		DataMovement s2_dataMovement = new DataMovement();
+
+		Database bs_db = new Database(db);
+		Database s1_db = new Database(db);
+		Database s2_db = new Database(db);
 		
-		Map<Integer, Database> clone_bs_db = new TreeMap<Integer, Database>();
-		Map<Integer, Database> clone_s1_db = new TreeMap<Integer, Database>();
-		Map<Integer, Database> clone_s2_db = new TreeMap<Integer, Database>();
+		SimulationMetricsLogger logger = new SimulationMetricsLogger();
+		PrintWriter bs_db_log = logger.getWriter(DIR_LOCATION, "bs_db_log");
+		PrintWriter s1_db_log = logger.getWriter(DIR_LOCATION, "s1_db_log");
+		PrintWriter s2_db_log = logger.getWriter(DIR_LOCATION, "s2_db_log");
 		
-		int simulation_run = 0;
-		clone_bs_db.put(simulation_run, db);
-		clone_s1_db.put(simulation_run, db);
-		clone_s2_db.put(simulation_run, db);
+		PrintWriter workload_log = logger.getWriter(DIR_LOCATION, "workload_log");		
+		PrintWriter partition_log = logger.getWriter(DIR_LOCATION, "partition_log");
 		
-		Database bs_db = null;
-						
-		while(simulation_run != DBMSSimulator.SIMULATION_RUN_NUMBERS) {			
+		int simulation_run = 0;	
+		while(simulation_run != 1){//DBMSSimulator.SIMULATION_RUN_NUMBERS) {			
 			Workload workload = workloadGenerator.getWorkload_map().get(simulation_run);			
-			workload.setMessage("Initial");
+			workload.setMessage("in");
 			
 			//==============================================================================================
 			// Run hMetis HyperGraph Partitioning							
@@ -122,232 +119,84 @@ public class DBMSSimulator {
 			}						
 			
 		//=== Base Strategy
-			System.out.println("[ACT] Replaying Workload Capture using Base Strategy ...");
-			System.out.println("***********************************************************************************************************************");
+			// Logging
+			logger.setData_movement(false);
+			collectLog(logger, bs_db, workload, bs_db_log, workload_log, partition_log);
 			
-			if(simulation_run == 0)
-				bs_db = clone_bs_db.get(0);			
+			System.out.println("[ACT] Replaying Workload Capture using Base Strategy ...");
+			System.out.println("***********************************************************************************************************************");	
 			
 			// Read Part file and assign corresponding Data cluster Id			
-			hGraphClusters_bs.readPartFile(bs_db, workload, db.getDb_partitions().size());
+			hGraphClusters_bs.readPartFile(bs_db, workload, bs_db.getDb_partitions().size());
 			
 			// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
-			System.out.println("[ACT] Base Strategy[Simulation Round-"+simulation_run
-					+"] :: One(Cluster)-to-One(Partition) Peer");
-			dataMovement.baseStrategy(bs_db, workload);	
+			System.out.println("[ACT] Base Strategy[Simulation Round-"+simulation_run+"] :: One(Cluster)-to-One(Partition) Peer");
+			bs_dataMovement.baseStrategy(bs_db, workload);
 			
-			//clone_bs_db.put((simulation_run + 1), bs_db);
+			logger.setData_movement(true);
+			collectLog(logger, bs_db, workload, bs_db_log, workload_log, partition_log);
 			
 			System.out.println("***********************************************************************************************************************");
 			
-/*		//=== Strategy-1
+		//=== Strategy-1
+			// Logging
+			logger.setData_movement(false);
+			collectLog(logger, s1_db, workload, s1_db_log, workload_log, partition_log);
+			
 			System.out.println("[ACT] Replaying Workload Capture using Strategy-1 ...");
 			System.out.println("***********************************************************************************************************************");
-
-			Database s1_db = clone_bs_db.get(simulation_run);
 			
-			System.out.println("[ACT] Strategy-1[Simulation Round-"+simulation_run
-					+"] :: One(Cluster)-to-One(Partition) [Column Max]");			
-			dataMovement.strategy1(s1_db, workload);
+			// Read Part file and assign corresponding Data cluster Id			
+			hGraphClusters_s1.readPartFile(s1_db, workload, s1_db.getDb_partitions().size());
 			
-			clone_s1_db.put((simulation_run + 1), s1_db);
+			System.out.println("[ACT] Strategy-1[Simulation Round-"+simulation_run+"] :: One(Cluster)-to-One(Partition) [Column Max]");			
+			s1_dataMovement.strategy1(s1_db, workload);
 			
-			//workload.show(s1_db);
+			logger.setData_movement(true);
+			collectLog(logger, s1_db, workload, s1_db_log, workload_log, partition_log);
 			
 			System.out.println("***********************************************************************************************************************");
 			
 		//=== Strategy-2
+			// Logging
+			logger.setData_movement(false);
+			collectLog(logger, s2_db, workload, s2_db_log, workload_log, partition_log);
+			
 			System.out.println("[ACT] Replaying Workload Capture using Strategy-2 ...");
 			System.out.println("***********************************************************************************************************************");
+
+			// Read Part file and assign corresponding Data cluster Id			
+			hGraphClusters_s2.readPartFile(s2_db, workload, s2_db.getDb_partitions().size());
 			
-			Database s2_db = clone_s2_db.get(simulation_run);
+			System.out.println("[ACT] Strategy-2[Simulation Round-"+simulation_run+"] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]");			
+			s2_dataMovement.strategy2(s2_db, workload);
 			
-			System.out.println("[ACT] Strategy-2[Simulation Round-"+simulation_run
-					+"] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]");			
-			dataMovement.strategy2(s2_db, workload);
-			
-			clone_s2_db.put((simulation_run + 1), s2_db);
-			
-			//workload.show(s2_db);
+			logger.setData_movement(true);
+			collectLog(logger, s2_db, workload, s2_db_log, workload_log, partition_log);
 			
 			System.out.println("***********************************************************************************************************************");
-*/			
+			
 			++ simulation_run;
 		}
 		
-		
-		/*
-		Workload workload = null;
-		WorkloadReplay workloadReplay = new WorkloadReplay();
-		WorkloadVariation workloadVariation = new WorkloadVariation();
-		HGraphMinCut minCut;
-		
-			
-		int simulation_round = 0;
-				
-		random_birth = new RandomDataGenerator();
-		random_death = new RandomDataGenerator();
-		
-	    random_birth.reSeed(0);
-	    random_death.reSeed(1);	    
-	    				
-	    
-	    workloadVariation.generateVariation(SIMULATION_RUN_NUMBERS);	    
-	    		
-		System.out.println("***********************************************************************************************************************");
-		//============================================================================================== 		
-		// Prototype Run Rounds
-		while(simulation_round != SIMULATION_RUN_NUMBERS) {								
-			System.out.println("[RUN] Running Simulation Round-"+simulation_round+" ...");
-			
-			if(simulation_round != 0) {						
-				workload.setWrl_id(simulation_round);				
-				System.out.println("[MSG] Total "+workload.getWrl_totalTransactions()+" previous transactions have been carried forward to the current Workload");
-
-				// Death Management				
-				workload.setWrl_transactionDying((int) ((int) workload.getWrl_totalTransactions() 
-						* workloadVariation.getTransactionDeathRate(simulation_round)));				
-				workload.setWrl_transactionDeathRate(workloadVariation.getTransactionDeathRate(simulation_round));				
-				
-				// Birth Management				
-				workload.setWrl_transactionBorning((int) ((int) workload.getWrl_totalTransactions() 
-						* workloadVariation.getTransactionBirthRate(simulation_round)));
-				workload.setWrl_transactionBirthRate(workloadVariation.getTransactionBirthRate(simulation_round));
-				//;
-			} else {	
-				// Initial
-				workload = workloadGenerator.workloadInitialisation(db, "TPC-C", 0);
-				workload.setWrl_initTotalTransactions(TRANSACTION_NUMS);
-				
-				// Printing Output Messages
-				System.out.print("[ACT] Generating an initial workload with "+ TRANSACTION_NUMS +" transactions of "
-						+workload.getWrl_transactionTypes()+" types having a proportion of ");				
-			}  // end -- if-else()
-			
-			// Generate Synthetic Workload
-			workload = workloadGenerator.generateWorkloads(dbs, db, workload);
-			
-			workload.setMessage("Initial");
-			workload.show(db);
-			System.out.println();
-			System.out.println("[MSG] Workload generation completed for Simulation Round-"+simulation_round);	
-			
-			//==============================================================================================
-			// Perform workload analysis and use HyperGraph partitioning tool (hMetis) to reduce the cost of 
-			// distributed transactions as well as maintain the load balance among the data partitions				
-			System.out.println("[ACT] Run HyperGraph Partitioning on the Workload ...");
-			
-			// Sleep for 5sec to ensure the files are generated		
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			//==============================================================================================
-			// Run hMetis HyperGraph Partitioning							
-			minCut = new HGraphMinCut(db, workload, HMETIS); 		
-			minCut.runHMetis();
-
-			// Sleep for 5sec to ensure the files are generated
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}		
-			
-			//==============================================================================================
-			// Read Part file and assign corresponding Data cluster Id			
-			hGraphClusters.readPartFile(db, workload);		
-
-			//==============================================================================================
-			// Capture Database and Workload states for replaying					
-			workloadReplay.captureWorkload(simulation_round, db, workload);
-							
-			// Logging Before Data Movement				
-			logger.logWorkload(db, workload, workload_log);
-			logger.logPartition(db, workload, partition_log);
-			
-			//==============================================================================================
-			// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
-			System.out.println("[ACT] Base Strategy[Simulation Round-"+simulation_round+"] :: One(Cluster)-to-One(Partition) Peer");
-			db.setDb_dmv_strategy("bs");
-			dataMovement.baseStrategy(db, workload);
-
-			// Logging After Data Movement
-			logger.setData_movement(true);
-			logger.logWorkload(db, workload, workload_log);
-			logger.logPartition(db, workload, partition_log);
-			logger.setData_movement(false);
-			
-			// Increase Simulation Round by 1
-			++simulation_round;			
-			System.out.println("***********************************************************************************************************************");
-		}
-		
-		// Evaluating Strategy-1
-		System.out.println("[ACT] Replaying Workload Capture using Strategy-1 ...");
-		System.out.println("***********************************************************************************************************************");
-		int strategy1_run_round = 0;
-		while(strategy1_run_round != SIMULATION_RUN_NUMBERS) {					
-			Database db1 = new Database(workloadReplay.getDb_replayMap().get(strategy1_run_round));
-			Workload workload1 = new Workload(workloadReplay.getWrl_replayMap().get(strategy1_run_round));
-			//workload1.print(db1);
-			//System.out.println();
-			
-			// Logging Before Data Movement
-			logger.logWorkload(db1, workload1, workload_log);
-			logger.logPartition(db1, workload1, partition_log);
-			
-			System.out.println("[ACT] Strategy-1[Simulation Round-"+strategy1_run_round
-					+"] :: One(Cluster)-to-One(Partition) [Column Max]");
-			db1.setDb_dmv_strategy("s1");
-			dataMovement.strategy1(db1, workload1);			
-			
-			// Logging After Data Movement
-			logger.setData_movement(true);
-			logger.logWorkload(db1, workload1, workload_log);
-			logger.logPartition(db1, workload1, partition_log);
-			logger.setData_movement(false);
-			
-			++strategy1_run_round;	
-			System.out.println("***********************************************************************************************************************");
-		}
-		
-		// Evaluating Strategy-2
-		System.out.println("[ACT] Replaying Workload Capture using Strategy-2 ...");
-		System.out.println("***********************************************************************************************************************");
-		int strategy2_run_round = 0;
-		while(strategy2_run_round != SIMULATION_RUN_NUMBERS) {			
-			Database db2 = new Database(workloadReplay.getDb_replayMap().get(strategy2_run_round));
-			Workload workload2 = new Workload(workloadReplay.getWrl_replayMap().get(strategy2_run_round));
-			//workload2.print(db2);
-			//System.out.println();
-			
-			// Logging Before Data Movement
-			logger.logWorkload(db2, workload2, workload_log);
-			logger.logPartition(db2, workload2, partition_log);
-			
-			System.out.println("[ACT] Strategy-2[Simulation Round-"+strategy2_run_round
-					+"] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]");
-			db2.setDb_dmv_strategy("s2");
-			dataMovement.strategy2(db2, workload2);			
-			
-			// Logging After Data Movement
-			logger.setData_movement(true);
-			logger.logWorkload(db2, workload2, workload_log);
-			logger.logPartition(db2, workload2, partition_log);
-			logger.setData_movement(false);
-			
-			++strategy2_run_round;
-			System.out.println("***********************************************************************************************************************");
-		}*/
-		
 		// End Logging
+		bs_db_log.flush();
+		s1_db_log.flush();
+		s2_db_log.flush();
 		workload_log.flush();
 		partition_log.flush();
 		
+		bs_db_log.close();
+		s1_db_log.close();
+		s2_db_log.close();
 		workload_log.close();
 		partition_log.close();
+	}
+	
+	private static void collectLog(SimulationMetricsLogger logger, Database db, Workload workload
+			, PrintWriter db_writer, PrintWriter wrl_writer, PrintWriter part_writer) {
+		logger.logDb(db, workload, db_writer);
+		logger.logWorkload(db, workload, wrl_writer);
+		logger.logPartition(db, workload, part_writer);	
 	}
 }

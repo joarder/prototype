@@ -76,26 +76,8 @@ public class SimulationMetricsLogger {
 		this.partitionsBeforeDM = partitionsBeforeDM;
 	}
 
-	public PrintWriter getWriter(String dir, String content) {
-		String trace_type = null;
-		
-		switch(content) {
-		case "db": 
-			trace_type = this.getDb_logger();
-			break;
-		case "workload":
-			trace_type = this.getWorkload_logger();
-			break;
-		case "partition":
-			trace_type = this.getPartition_logger();
-			break;
-		default:
-			trace_type = null;
-			System.out.println("[DBG] Invalid trace type !!!");
-			break;
-		}
-		
-		File logFile = new File(dir+"\\"+trace_type);
+	public PrintWriter getWriter(String dir, String trace) {		
+		File logFile = new File(dir+"\\"+trace+".txt");
 		PrintWriter prWriter = null;
 		
 		try {
@@ -155,58 +137,56 @@ public class SimulationMetricsLogger {
 	}
 	
 	public void logDb(Database db, Workload workload, PrintWriter writer) {
-		for(Entry<Integer, Set<Integer>> entry : db.getDb_nodes().entrySet()) {			
+		int partitions = db.getDb_partitions().size();
+		
+		for(int i = 1; i <= partitions; i++) {
+			Partition partition = db.getPartition(i);
 			
-			Set<Integer> node_partitions = db.getNodePartitions(entry.getKey());
-			for(Integer partition_id : node_partitions) {
-				Partition partition = db.getPartition(partition_id);
+			for(Data data : partition.getPartition_dataSet()) {
+				if(!this.data_movement)
+					writer.print("bf ");
+				else 
+					writer.print("af ");
 				
-				for(Data data : partition.getPartition_dataSet()) {										
-					if(data.getData_transaction_involved().size() != 0) {
-					
-						for(Integer transaction_id : data.getData_transaction_involved()) {
-							Transaction transaction = workload.getTransaction(transaction_id);
-							
-							this.logData(workload, entry, partition, data, writer);
-							
-							writer.print("T"+transaction.getTr_id()+" ");
-						
-							writer.print(transaction.getTr_ranking()+" ");
-							writer.print(transaction.getTr_frequency()+" ");
-							writer.print(transaction.getTr_weight()+" ");
-						}
-					} else {						
-						this.logData(workload, entry, partition, data, writer);
+				this.logData(workload, partition, data, writer);
+				
+				if(data.getData_transaction_involved().size() != 0) {					
+					for(Integer transaction_id : data.getData_transaction_involved()) {
+						Transaction transaction = workload.getTransaction(transaction_id);
+
+						writer.print("T"+transaction.getTr_id()+" ");						
+						writer.print(transaction.getTr_weight()+" ");
+						writer.print(transaction.getTr_ranking()+" ");
+						writer.print(transaction.getTr_frequency()+" ");							
 					}
-					
-					writer.println();
 				}
+				
+				writer.println();
 			}
-		}
+		}			
 	}
 	
-	private void logData(Workload workload, Entry<Integer, Set<Integer>> entry, Partition partition, Data data, 
-			PrintWriter writer) {
-		
+	private void logData(Workload workload, Partition partition, Data data, PrintWriter writer) {
 		writer.print("W"+workload.getWrl_id()+" ");
 		writer.print("D"+data.getData_id()+" ");
-		writer.print("N"+entry.getKey()+" ");
+		writer.print("N"+data.getData_nodeId()+" ");
 		writer.print("P"+partition.getPartition_id()+" ");
 		
-		writer.print(data.getData_ranking()+" ");
-		writer.print(data.getData_frequency()+" ");
 		writer.print(data.getData_weight()+" ");
+		writer.print(data.getData_ranking()+" ");
+		writer.print(data.getData_frequency()+" ");		
 	}
 	
 	public void logWorkload(Database db, Workload workload, PrintWriter writer) {		
 		if(!this.isData_movement()) {
 			writer.print(workload.getWrl_id()+" ");			
-			writer.print("in ");
+			writer.print(workload.getMessage()+" ");
 			
 			writer.print(workload.getWrl_DtNumbers()+" ");
 			writer.print(workload.getWrl_DtImpact()+" ");																		
 		} else {					
-			writer.print(workload.getWrl_data_movement_strategy()+" ");
+			//writer.print(workload.getWrl_data_movement_strategy()+" ");
+			writer.print(workload.getMessage()+" ");
 			
 			writer.print(workload.getWrl_DtNumbers()+" ");
 			writer.print(workload.getWrl_DtImpact()+" ");								
@@ -223,12 +203,20 @@ public class SimulationMetricsLogger {
 	
 	public void logPartition(Database db, Workload workload, PrintWriter prWriter) {		
 		for(Partition partition : db.getDb_partitions()) {
-			prWriter.print(partition.getPartition_id()+" ");
-			prWriter.print(partition.getPartition_nodeId()+" ");
-			prWriter.print(partition.getPartition_current_load()+" ");
-			prWriter.print(partition.getPartition_dataSet().size()+" ");
-			prWriter.print(partition.getPartition_roaming_data()+" ");
-			prWriter.print(partition.getPartition_foreign_data()+" ");
+			if(!this.data_movement)
+				prWriter.print("bf ");
+			else 
+				prWriter.print("af ");
+			
+			prWriter.print("W"+workload.getWrl_id()+" ");
+			prWriter.print(workload.getMessage()+" ");
+			prWriter.print("P"+partition.getPartition_id()+" ");
+			prWriter.print("N"+partition.getPartition_nodeId()+" ");
+			prWriter.print("-L "+partition.getPartition_current_load()+" ");
+			prWriter.print("-H "+partition.getPartition_dataSet().size()+" ");
+			prWriter.print("-R "+partition.getPartition_roaming_data()+" ");
+			prWriter.print("-F "+partition.getPartition_foreign_data());
+			prWriter.println();
 		}
 	}
 	
