@@ -51,7 +51,7 @@ public class Bootstrapping {
 			dataList = new ArrayList<Data>();																											
 			for(int k = 1; k <= data_nums && data_id <= DATA_OBJECTS; k++) {
 				// Create a new Data Item within the Partition
-				data = new Data(data_id, String.valueOf(data_id), partition_id, node_id, false);
+				data = new Data(data_id, partition_id, node_id, false);
 				partition.getPartition_dataSet().add(data);												
 				
 				// Put an entry into the Partition Data lookup table

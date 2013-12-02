@@ -108,7 +108,7 @@ public class WorkloadGenerator {
 				System.out.println("[ACT] Varying current workload by generating new transactions ...");
 				this.print(workload);
 				
-				this.refreshWorkload(db, workload, DBMSSimulator.getGlobal_tr_id());
+				this.refreshWorkload(db, workload);
 			} else {
 				// === Workload Generation Round 0 ===
 				workload = this.workloadInitialisation(db, DBMSSimulator.WORKLOAD_TYPE, workload_id);				
@@ -120,7 +120,7 @@ public class WorkloadGenerator {
 				TransactionGenerator transactionGenerator = new TransactionGenerator();
 				transactionGenerator.generateTransaction(db, workload, DBMSSimulator.getGlobal_tr_id());
 				
-				this.refreshWorkload(db, workload, DBMSSimulator.getGlobal_tr_id());
+				this.refreshWorkload(db, workload);
 			}						
 			
 			// Classify the Workload Transactions based on whether they are Distributed or not (Red/Orange/Green List)
@@ -142,7 +142,7 @@ public class WorkloadGenerator {
 	}
 	
 	// Refresh Workload Transactions and Data
-	public void refreshWorkload(Database db, Workload workload, int global_tr_id) {
+	public void refreshWorkload(Database db, Workload workload) {
 		Map<Integer, Integer> dataFrequencyTracker = new TreeMap<Integer, Integer>();		
 		Map<Integer, Set<Integer>> dataInvolvedTransactionsTracker = new TreeMap<Integer, Set<Integer>>();
 		Set<Integer> involvedTransactions = null;

@@ -30,7 +30,7 @@ public class DBMSSimulator {
 	public final static int SIMULATION_RUN_NUMBERS = 3;
 	
 	public final static String DIR_LOCATION = "C:\\Users\\jkamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
-	public final static String HMETIS = "khmetis";
+	public final static String HMETIS = "hmetis";
 	
 	public static RandomDataGenerator random_birth;
 	public static RandomDataGenerator random_death;
@@ -88,16 +88,24 @@ public class DBMSSimulator {
 		WorkloadGenerator workloadGenerator = new WorkloadGenerator();		
 		workloadGenerator.generateWorkloads(dbs, db);
 		
-		HGraphClusters hGraphClusters = new HGraphClusters();
+		HGraphClusters hGraphClusters_bs = new HGraphClusters();
+		HGraphClusters hGraphClusters_s1 = new HGraphClusters();
+		HGraphClusters hGraphClusters_s2 = new HGraphClusters();
+		
 		DataMovement dataMovement = new DataMovement();
 		
 		Map<Integer, Database> clone_bs_db = new TreeMap<Integer, Database>();
 		Map<Integer, Database> clone_s1_db = new TreeMap<Integer, Database>();
 		Map<Integer, Database> clone_s2_db = new TreeMap<Integer, Database>();
 		
-		int simulation_run = 0;		
-		while(simulation_run != DBMSSimulator.SIMULATION_RUN_NUMBERS) {
-			
+		int simulation_run = 0;
+		clone_bs_db.put(simulation_run, db);
+		clone_s1_db.put(simulation_run, db);
+		clone_s2_db.put(simulation_run, db);
+		
+		Database bs_db = null;
+						
+		while(simulation_run != DBMSSimulator.SIMULATION_RUN_NUMBERS) {			
 			Workload workload = workloadGenerator.getWorkload_map().get(simulation_run);			
 			workload.setMessage("Initial");
 			
@@ -106,24 +114,64 @@ public class DBMSSimulator {
 			HGraphMinCut minCut = new HGraphMinCut(workload, HMETIS, db.getDb_partitions().size()); 		
 			minCut.runHMetis();
 
-			// Sleep for 5sec to ensure the files are generated
+			// Wait for 5 seconds to ensure that the Part file have been generated properly
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			}						
+			
+		//=== Base Strategy
+			System.out.println("[ACT] Replaying Workload Capture using Base Strategy ...");
+			System.out.println("***********************************************************************************************************************");
+			
+			if(simulation_run == 0)
+				bs_db = clone_bs_db.get(0);			
 			
 			// Read Part file and assign corresponding Data cluster Id			
-			hGraphClusters.readPartFile(workload, db.getDb_partitions().size());			
+			hGraphClusters_bs.readPartFile(bs_db, workload, db.getDb_partitions().size());
 			
-			
-			if(simulation_run != 0) {
-				
-			}
 			// Perform Data Movement following One(Cluster)-to-One(Partition) and Many(Cluster)-to-One(Partition)
-			System.out.println("[ACT] Base Strategy[Simulation Round-"+simulation_run+"] :: One(Cluster)-to-One(Partition) Peer");
-			dataMovement.baseStrategy(db, workload);			
+			System.out.println("[ACT] Base Strategy[Simulation Round-"+simulation_run
+					+"] :: One(Cluster)-to-One(Partition) Peer");
+			dataMovement.baseStrategy(bs_db, workload);	
 			
+			//clone_bs_db.put((simulation_run + 1), bs_db);
+			
+			System.out.println("***********************************************************************************************************************");
+			
+/*		//=== Strategy-1
+			System.out.println("[ACT] Replaying Workload Capture using Strategy-1 ...");
+			System.out.println("***********************************************************************************************************************");
+
+			Database s1_db = clone_bs_db.get(simulation_run);
+			
+			System.out.println("[ACT] Strategy-1[Simulation Round-"+simulation_run
+					+"] :: One(Cluster)-to-One(Partition) [Column Max]");			
+			dataMovement.strategy1(s1_db, workload);
+			
+			clone_s1_db.put((simulation_run + 1), s1_db);
+			
+			//workload.show(s1_db);
+			
+			System.out.println("***********************************************************************************************************************");
+			
+		//=== Strategy-2
+			System.out.println("[ACT] Replaying Workload Capture using Strategy-2 ...");
+			System.out.println("***********************************************************************************************************************");
+			
+			Database s2_db = clone_s2_db.get(simulation_run);
+			
+			System.out.println("[ACT] Strategy-2[Simulation Round-"+simulation_run
+					+"] :: One(Cluster)-to-One(Unique Partition) [Sub Matrix Max]");			
+			dataMovement.strategy2(s2_db, workload);
+			
+			clone_s2_db.put((simulation_run + 1), s2_db);
+			
+			//workload.show(s2_db);
+			
+			System.out.println("***********************************************************************************************************************");
+*/			
 			++ simulation_run;
 		}
 		

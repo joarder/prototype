@@ -175,7 +175,7 @@ public class Partition implements Comparable<Partition> {
 	// Returns a Data object queried by it's Data Id from the Partition
 	public Data getData_byDataId(int data_id) {		
 		for(Data data : this.getPartition_dataSet()) {
-			if(data.getData_id() == data_id)
+			if(data.getData_id() == data_id)				
 				return data;
 		}
 		
@@ -228,10 +228,10 @@ public class Partition implements Comparable<Partition> {
 	public void show() {
 		int comma = this.getPartition_dataSet().size();
 		
-		System.out.print("{");
+		System.out.print("       {");
 		
 		for(Data data : this.getPartition_dataSet()) {
-			System.out.print(data.toString());
+			System.out.print(data.getData_id());
 			
 			if(comma != 1)
 				System.out.print(", ");
@@ -247,9 +247,9 @@ public class Partition implements Comparable<Partition> {
 		if(this.getPartition_roaming_data() != 0 || this.getPartition_foreign_data() !=0)
 			return (this.getPartition_label()
 					+"["+this.getPartition_capacity()+"|"+this.getPartition_current_load()+"%]-"
-					+"H("+this.getPartition_dataSet().size()+")/"					
+					+"H("+this.getPartition_dataSet().size()+")-"					
 					+"R("+this.getPartition_roaming_data()+")/"
-					+"F("+this.getPartition_roaming_data()+")");										
+					+"F("+this.getPartition_foreign_data()+")");										
 		else	
 			return (this.getPartition_label()
 					+"["+getPartition_capacity()+"|"+this.getPartition_current_load()+"%]-"
@@ -263,8 +263,8 @@ public class Partition implements Comparable<Partition> {
 		}
 		
 		Partition partition = (Partition) object;
-		  return (getPartition_label().equals(partition.getPartition_label()));
-		}
+		return (getPartition_label().equals(partition.getPartition_label()));
+	}
 
 	@Override
 	public int hashCode() {

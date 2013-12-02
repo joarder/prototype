@@ -33,9 +33,10 @@ public class MappingTable {
 		
 		// Define row1 and col1 as the Partition IDs and HGraph Cluster IDs
 		for(int i = 1; i < M; i++) {			
-			mapping[i][0].setCounts(i-1);
+			mapping[i][0].setCounts(i);
+			
 			for(int j = 1; j < N; j++) {
-				mapping[0][j].setCounts(j-1);
+				mapping[0][j].setCounts(j);
 			}
 		}
 		
@@ -46,12 +47,13 @@ public class MappingTable {
 		for(Entry<Integer, ArrayList<Transaction>> entry : workload.getWrl_transactionMap().entrySet()) {
 			for(Transaction transaction : entry.getValue()) {							
 				for(Data data : transaction.getTr_dataSet()) {
-					//System.out.println("--> "+data.toString());
+					Data dbData = db.search(data.getData_id());
 					
-					partition_id = data.getData_partitionId();
-					cluster_id = data.getData_hmetisClusterId();			
+					partition_id = dbData.getData_partitionId();
+					cluster_id = dbData.getData_hmetisClusterId();										
+					//System.out.println("@debug >> "+data.toString()+" | P"+partition_id+" | C"+cluster_id);
 					
-					e = mapping[partition_id+1][cluster_id+1];
+					e = mapping[partition_id][cluster_id];
 					e.setCounts(e.getCounts()+1);
 				} // end -- for()-Data
 			} // end -- for()-Transaction

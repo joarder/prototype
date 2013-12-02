@@ -40,10 +40,10 @@ public class Data implements Comparable<Data> {
 	private boolean data_isRoaming;							
 	
 	// Default Constructor
-	public Data(int id, String label, int pid, int nid, boolean roaming) {
+	public Data(int id, int pid, int nid, boolean roaming) {
 		this.setData_id(id); // default data id = -1 means undefined.
-		this.setData_label("d"+label);
-		this.setData_value("Value:"+this.getData_label());
+		this.setData_label("d"+id);
+		this.setData_value(this.getData_label());
 		this.setData_size(1); // 1.0 = 1 MegaBytes
 		this.setData_frequency(0);
 		this.setData_weight(0);
@@ -271,8 +271,8 @@ public class Data implements Comparable<Data> {
 	public String toString() {		
 		if(this.isData_isRoaming())
 			return (this.data_label+"("+this.getData_weight()+"/"+this.getData_ranking()+"/"+this.getData_frequency()
-					+"|P"+this.data_partition_id+"(H"+this.data_home_partition_id
-					+")/N"+this.data_node_id+"(H"+this.data_home_node_id+"))");// @C("+this.data_hmetis_cluster_id+") @h("+this.data_shadow_hmetis_id+")");
+					+"|P"+this.data_partition_id+"("+this.data_home_partition_id
+					+")/N"+this.data_node_id+"("+this.data_home_node_id+"))");// @C("+this.data_hmetis_cluster_id+") @h("+this.data_shadow_hmetis_id+")");
 		else
 			return (this.data_label+"("+this.getData_weight()+"/"+this.getData_ranking()+"/"+this.getData_frequency()
 					+"|P"+this.data_partition_id
@@ -286,8 +286,8 @@ public class Data implements Comparable<Data> {
 		}
 		
 		Data data = (Data) object;
-		  return this.getData_label().equals(data.getData_label());
-		}
+		return this.getData_label().equals(data.getData_label());
+	}
 
 	@Override
 	public int hashCode() {
@@ -296,8 +296,7 @@ public class Data implements Comparable<Data> {
 
 	@Override
 	public int compareTo(Data data) {		
-		return (((int)this.getData_id() < (int)data.getData_id()) ? -1:
-			((int)this.getData_id() > (int)data.getData_id()) ? 1:0);
+		return (((int)this.getData_id() < (int)data.getData_id()) ? -1 : ((int)this.getData_id() > (int)data.getData_id()) ? 1:0);
 		
 	}
 }

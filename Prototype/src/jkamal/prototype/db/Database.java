@@ -4,7 +4,6 @@
 
 package jkamal.prototype.db;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -119,12 +118,13 @@ public class Database {
 	}
 	
 	// Searches for a specific Data by it's Id
-	public Data search(int data_id) {		
+	public Data search(int data_id) {
 		for(Partition partition : this.getDb_partitions()) {
 			int partition_id = partition.lookupPartitionId_byDataId(data_id);
+			System.out.println("@debug >> searching d"+data_id+" | Found in P"+partition_id);
 			
-			if(partition_id != -1) 
-				return(partition.getData_byDataId(data_id));
+			if(partition_id != -1)				
+				return(this.getPartition(partition_id).getData_byDataId(data_id));
 		}			
 		
 		return null;
@@ -168,15 +168,17 @@ public class Database {
 		System.out.println("      Number of Partitions: "+this.getDb_partitions().size());		
 		System.out.println("[OUT] ==== Partition Table Details ====");		
 		
-		ArrayList<Integer> overloadedPartition = new ArrayList<Integer>();
+		Set<Integer> overloadedPartition = new TreeSet<Integer>();
 		int comma = -1;		
 		for(Entry<Integer, Set<Integer>> entry : this.getDb_nodes().entrySet()) {
 			System.out.println("    --N"+entry.getKey());//+" {");
 				
 			for(Integer partition_id : entry.getValue()) {
 				Partition partition = this.getPartition(partition_id);
+				partition.getCurrentLoad();
 				
 				System.out.println("    ----"+partition.toString());
+				//partition.show();
 				
 				if(partition.isPartition_overloaded())
 					overloadedPartition.add(partition.getPartition_id());

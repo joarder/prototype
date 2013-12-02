@@ -420,14 +420,16 @@ public class Workload implements Comparable<Workload> {
 	}
 
 	// Calculate DT Impacts for the Workload
-	public void calculateDTImapct() {
+	public void calculateDTImapct(Database db) {
 		int total_impact = 0;
 		int total_trFreq = 0;
 		
 		for(Entry<Integer, ArrayList<Transaction>> entry : this.getWrl_transactionMap().entrySet()) 
 			for(Transaction transaction : entry.getValue()) {
+				transaction.generateTransactionCost(db);
+				
 				total_impact += transaction.getTr_dtCost() * transaction.getTr_weight();
-				total_trFreq += transaction.getTr_weight();
+				total_trFreq += transaction.getTr_frequency();
 			}
 				
 		//double dt_impact = (double) total_impact/this.getWrl_totalTransaction();
@@ -528,14 +530,14 @@ public class Workload implements Comparable<Workload> {
 			for(Transaction transaction : entry.getValue()) {
 				transaction.generateTransactionCost(db);
 				System.out.print("     ");
-				transaction.show();
+				transaction.show(db);
 			} // end -- for()-Transaction
 		} // end -- for()-Transaction Types						
 				
 		System.out.println("      -----------------------------------------------------------------------------------------------------------------");
 		
 		this.calculateDTPercentage();	
-		this.calculateDTImapct();
+		this.calculateDTImapct(db);
 		
 		System.out.println("      # Distributed Transactions: "+this.getWrl_DtNumbers()
 				+" ("+this.getWrl_percentageDistributedTransactions()+"% of " 
@@ -544,10 +546,10 @@ public class Workload implements Comparable<Workload> {
 				+" (for a particular workload round)");
 		
 		if(this.isWrl_hasDataMoved()) {
-			System.out.println("      # Intra-Node Data Movements (Avoided): "+this.getWrl_intraNodeDataMovements()
+			System.out.println("      # Intra-Node Data Movements: "+this.getWrl_intraNodeDataMovements()
 					+" ("+this.getWrl_percentageIntraNodeDataMovement()+"% of "
 					+"Total "+this.getWrl_totalDataObjects()+" Workload Data)");
-			System.out.println("      # Inter-Node Data Movements (Performed): "+this.getWrl_interNodeDataMovements()
+			System.out.println("      # Inter-Node Data Movements: "+this.getWrl_interNodeDataMovements()
 					+" ("+this.getWrl_percentageInterNodeDataMovement()+"% of "
 					+"Total "+this.getWrl_totalDataObjects()+" Workload Data)");
 		}

@@ -188,15 +188,16 @@ public class Transaction implements Comparable<Transaction> {
 	}
 	
 	// Prints out all of the contents of the representative Transaction
-	public void show() {
+	public void show(Database db) {
 		System.out.print(" "+this.getTr_label()+"("+this.getTr_dtCost()+")["
 				+this.getTr_weight()+"/"+this.getTr_ranking()+"/"+this.getTr_frequency()
 				+"|Data("+this.getTr_dataSet().size()+")]");
 		
 		System.out.print("{");
-		Iterator<Data> data =  this.getTr_dataSet().iterator();
+		Iterator<Data> data =  this.getTr_dataSet().iterator();		
 		while(data.hasNext()) {
-			System.out.print(data.next().toString());
+			//System.out.print(data.next().toString());
+			System.out.print(db.search(data.next().getData_id()).toString());
 			if(data.hasNext())
 				System.out.print(", ");
 		}				
