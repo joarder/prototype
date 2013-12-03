@@ -9,13 +9,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import jkamal.prototype.db.Data;
+import jkamal.prototype.db.Database;
 import jkamal.prototype.main.DBMSSimulator;
 
 public class TransactionReducer {
 	public TransactionReducer() {}
 	
 	// This function will reduce the required number of Transactions for a specific Workload with a specific Database
-	public void reduceTransaction(Workload workload) {
+	public void reduceTransaction(Database db, Workload workload) {
 		ArrayList<Transaction> transactionList = null;
 		Set<Integer> random_transactions = null;
 		int size = 0;
@@ -36,7 +37,7 @@ public class TransactionReducer {
 				
 				for(int j : random_transactions) {
 					//System.out.println("> "+j+" T"+transactionList.get(j).getTr_id());
-					this.releaseData(transactionList.get(j));
+					this.releaseData(db, transactionList.get(j));
 					transactionList.remove(j); // removing index
 					
 					workload.decWrl_totalTransactions();				
@@ -47,9 +48,13 @@ public class TransactionReducer {
 		} // end -- i		
 	}
 	
-	public void releaseData(Transaction transaction) {
-		for(Data data : transaction.getTr_dataSet())
-			data.getData_transaction_involved().remove((Object)transaction.getTr_id()); // removing object	
+	public void releaseData(Database db, Transaction transaction) {
+		for(Data data : transaction.getTr_dataSet()) {
+			data.getData_transaction_involved().remove((Object)transaction.getTr_id()); // removing object
+			
+			Data dbData = db.search(data.getData_id());
+			dbData.getData_transaction_involved().remove((Object)transaction.getTr_id()); // removing object
+		}
 	}
 	
 	// Randomly selects Transactions for deletion

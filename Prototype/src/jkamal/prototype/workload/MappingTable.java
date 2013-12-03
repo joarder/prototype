@@ -52,6 +52,7 @@ public class MappingTable {
 					partition_id = dbData.getData_partitionId();
 					cluster_id = dbData.getData_hmetisClusterId();										
 					//System.out.println("@debug >> "+data.toString()+" | P"+partition_id+" | C"+cluster_id);
+					//System.out.println("@debug >> *"+dbData.toString()+" | P"+partition_id+" | C"+cluster_id);
 					
 					e = mapping[partition_id][cluster_id];
 					e.setCounts(e.getCounts()+1);

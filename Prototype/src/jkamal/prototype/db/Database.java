@@ -42,10 +42,11 @@ public class Database {
 		}		
 		this.setDb_partitions(cloneDbPartitions);
 		
-		Map<Integer, Set<Integer>> clone_db_nodes = new TreeMap<Integer, Set<Integer>>();
-		Set<Integer> clone_partitions = new TreeSet<Integer>();
+		Map<Integer, Set<Integer>> clone_db_nodes = new TreeMap<Integer, Set<Integer>>();		
 		for(Entry<Integer, Set<Integer>> entry : db.getDb_nodes().entrySet()) {
+			Set<Integer> clone_partitions = new TreeSet<Integer>();
 			for(Integer partition_id : entry.getValue()) {
+				//System.out.println("@debug >> N="+entry.getKey()+" | P="+partition_id);
 				clone_partitions.add(partition_id);
 			}
 			
@@ -121,7 +122,7 @@ public class Database {
 	public Data search(int data_id) {
 		for(Partition partition : this.getDb_partitions()) {
 			int partition_id = partition.lookupPartitionId_byDataId(data_id);
-			System.out.println("@debug >> searching d"+data_id+" | Found in P"+partition_id);
+			//System.out.println("@debug >> searching d"+data_id+" | Found in P"+partition_id);
 			
 			if(partition_id != -1)				
 				return(this.getPartition(partition_id).getData_byDataId(data_id));

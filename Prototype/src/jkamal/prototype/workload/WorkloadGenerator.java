@@ -90,7 +90,7 @@ public class WorkloadGenerator {
 				
 				// Reducing Old Workload Transactions			
 				TransactionReducer transactionReducer = new TransactionReducer();
-				transactionReducer.reduceTransaction(workload);
+				transactionReducer.reduceTransaction(db, workload);
 				
 				System.out.println("[ACT] Varying current workload by reducing old transactions ...");
 				this.print(workload);
