@@ -9,11 +9,12 @@ package jkamal.prototype.main;
 import java.io.IOException;
 import java.io.PrintWriter;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import jkamal.prototype.alg.HGraphMinCut;
-import jkamal.prototype.bootstrap.Bootstrapping;
+
 import jkamal.prototype.db.DataMovement;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
+import jkamal.prototype.alg.HGraphMinCut;
+import jkamal.prototype.bootstrap.Bootstrapping;
 import jkamal.prototype.io.SimulationMetricsLogger;
 import jkamal.prototype.workload.HGraphClusters;
 import jkamal.prototype.workload.Workload;

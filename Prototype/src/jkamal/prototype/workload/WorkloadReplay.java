@@ -6,7 +6,6 @@ package jkamal.prototype.workload;
 
 import java.util.Map;
 import java.util.TreeMap;
-
 import jkamal.prototype.db.Database;
 
 public class WorkloadReplay {

@@ -9,6 +9,7 @@ package jkamal.prototype.db;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import jkamal.prototype.db.Data;
 
 public class GlobalDataMap {
 	private Map<Integer, Data> data_items;

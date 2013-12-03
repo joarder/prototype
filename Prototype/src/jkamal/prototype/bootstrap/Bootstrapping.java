@@ -7,7 +7,6 @@ package jkamal.prototype.bootstrap;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
-
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
 import jkamal.prototype.db.DatabaseServer;
