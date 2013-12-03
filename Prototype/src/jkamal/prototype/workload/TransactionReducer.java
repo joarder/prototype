@@ -49,7 +49,7 @@ public class TransactionReducer {
 	
 	public void releaseData(Transaction transaction) {
 		for(Data data : transaction.getTr_dataSet())
-			data.getData_transaction_involved().remove((Object)transaction.getTr_id()); // removing object	
+			data.getData_transaction_involved().remove(transaction.getTr_id()); // removing object	
 	}
 	
 	// Randomly selects Transactions for deletion
