@@ -8,9 +8,6 @@ package jkamal.prototype.main;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.commons.math3.random.RandomDataGenerator;
 import jkamal.prototype.alg.HGraphMinCut;
 import jkamal.prototype.bootstrap.Bootstrapping;
@@ -25,8 +22,8 @@ import jkamal.prototype.workload.WorkloadGenerator;
 public class DBMSSimulator {	
 	public final static int DB_SERVERS = 3;
 	public final static String WORKLOAD_TYPE = "TPC-C";
-	public final static int DATA_OBJECTS = 1000; // 10GB Data (in Size)
-	public final static int TRANSACTION_NUMS = 100;
+	public final static int DATA_OBJECTS = 100; // 10GB Data (in Size)
+	public final static int TRANSACTION_NUMS = 10;
 	public final static int SIMULATION_RUN_NUMBERS = 3;
 	
 	public final static String DIR_LOCATION = "C:\\Users\\Joarder Kamal\\git\\Prototype\\Prototype\\exec\\native\\hMetis\\1.5.3-win32";	
@@ -102,7 +99,7 @@ public class DBMSSimulator {
 		PrintWriter partition_log = logger.getWriter(DIR_LOCATION, "partition_log");
 		
 		int simulation_run = 0;	
-		while(simulation_run != 1){//DBMSSimulator.SIMULATION_RUN_NUMBERS) {			
+		while(simulation_run != DBMSSimulator.SIMULATION_RUN_NUMBERS) {			
 			Workload workload = workloadGenerator.getWorkload_map().get(simulation_run);			
 			workload.setMessage("in");
 			

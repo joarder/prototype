@@ -10,8 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import jkamal.prototype.db.Data;
 import jkamal.prototype.db.Database;
@@ -137,7 +135,7 @@ public class SimulationMetricsLogger {
 	}
 	
 	public void logDb(Database db, Workload workload, PrintWriter writer) {
-		int partitions = db.getDb_partitions().size();
+		int partitions = db.getDb_partitions().size();		
 		
 		for(int i = 1; i <= partitions; i++) {
 			Partition partition = db.getPartition(i);
@@ -153,6 +151,10 @@ public class SimulationMetricsLogger {
 				if(data.getData_transaction_involved().size() != 0) {					
 					for(Integer transaction_id : data.getData_transaction_involved()) {
 						Transaction transaction = workload.getTransaction(transaction_id);
+						System.out.println("@debug >> Tid = "+transaction_id+" | Did = "+data.getData_id());
+						
+						if(transaction == null)
+							System.out.println("@debug >> **");
 
 						writer.print("T"+transaction.getTr_id()+" ");						
 						writer.print(transaction.getTr_weight()+" ");
